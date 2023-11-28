@@ -2,13 +2,16 @@
   "compilerOptions": {
     "target": "ES2020",
     "useDefineForClassFields": true,
-    "module": "ESNext",
     "lib": [
       "ES2020",
       "DOM",
       "DOM.Iterable"
     ],
+    "module": "ESNext",
     "skipLibCheck": true,
+    "types": [
+      "vite/client"
+    ],
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -16,19 +19,11 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "jsxImportSource": "preact",
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    /* Shadcn/ui path resolving */
-    "baseUrl": ".",
-    "paths": {
-      "@/*": [
-        "./src/*"
-      ]
-    }
+    "noFallthroughCasesInSwitch": true
   },
   "include": [
     "src"
@@ -37,5 +32,5 @@
     {
       "path": "./tsconfig.node.json"
     }
-  ],
+  ]
 }

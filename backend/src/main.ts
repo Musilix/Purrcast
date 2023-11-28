@@ -10,6 +10,12 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter(),
   );
-  await app.listen(3000);
+
+  app.enableCors({
+    origin: ['http://localhost:3000', /\.localhost:3000\.com$/],
+  });
+
+  // TODO - change this address to private net IP
+  await app.listen(8080, '0.0.0.0');
 }
 bootstrap();

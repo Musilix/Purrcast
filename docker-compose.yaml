@@ -1,14 +1,20 @@
+version: "1.0"
 services:
   backend:
-    build: ./backend
+    build:
+      context: ./backend
     ports:
-      - "8000:8000"
-    container_name: backend
+      - "8080:8080"
+    container_name: purrcast-backend
     restart: always
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
     ports:
       - "3000:3000"
-    container_name: frontend
-    restart: on-failure:5
+    container_name: purrcast-frontend
+    restart: no
+    volumes:
+      - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules

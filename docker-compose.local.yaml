@@ -1,24 +1,39 @@
 services:
-  postgres:
-      image: postgres:13  # Replace with the specific version you need
-      environment:
-        POSTGRES_DB: '${POSTGRES_DB:-mylocaldb}'  # Default values can be set here
-        POSTGRES_USER: '${POSTGRES_USER:-user}'  # Replace 'user' with your desired username
-        POSTGRES_PASSWORD: '${POSTGRES_PASSWORD}'  # It's better to set this in an .env file
-      volumes:
-        - pgdata:/var/lib/postgresql/data  # Persist database data
-      healthcheck:
-        test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
-        interval: 10s
-        timeout: 5s
-        retries: 5
-      networks:
-        - localnet
-      restart: on-failure  # Helps to automatically restart the service if it fails
+  backend:
+    build:
+      target: dev
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+  frontend:
+    build:
+      target: dev
+    environment:
+      REACT_APP_ENV: development
+    volumes:
+      - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules
+  # postgres:
+  #   image: postgres:13 # Replace with the specific version you need
+  #   environment:
+  #     POSTGRES_DB: "${POSTGRES_DB:-mylocaldb}" # Default values can be set here
+  #     POSTGRES_USER: "${POSTGRES_USER:-user}" # Replace 'user' with your desired username
+  #     POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}" # It's better to set this in an .env file
+  #   volumes:
+  #     - pgdata:/var/lib/postgresql/data # Persist database data
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #   networks:
+  #     - localnet
+  #   restart: on-failure # Helps to automatically restart the service if it fails
 
-  networks:
-    localnet:
+  # networks:
+  #   localnet:
 
-  volumes:
-    pgdata:
-    
+  # volumes:
+  #   pgdata:

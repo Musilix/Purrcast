@@ -1,36 +1,64 @@
-# Builder Stage
-FROM node:20.9.0 AS builder
+###################
+# BUILD FOR LOCAL DEVELOPMENT
+###################
 
-# Set working directory in container
+FROM node:20.9.0 As devbuild
+
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
+COPY --chown=node:node package*.json .
 
-# Install app dependencies - npm ci installs from package lock, only=production only install devDependencies
-RUN npm ci --only=production
+RUN npm ci
 
-# Bundle app source inside Docker image
-COPY . .
+COPY --chown=node:node ./ /usr/src/app/
 
-# Build the application
-RUN npm run build
-
-# -------------------------------------------------------------------------------------------
-# --- Runner Stage --------------------------------------------------------------------------
-# -------------------------------------------------------------------------------------------
-
-FROM node:20.9.0 AS runner
-WORKDIR /usr/src/app
-
-# Copy the built application from the builder stage
-COPY --from=builder /usr/src/app .
-
-# Use non-root user for better security
 USER node
 
-# Your app binds to port 3000 so you'll use the EXPOSE instruction to have it mapped by the docker daemon
-EXPOSE 3000
+###################
+# BUILD FOR PRODUCTION
+###################
 
-# Define the command to run your app using CMD which defines your runtime
-CMD [ "node", "dist/main.js" ]
+# FROM node:20.9.0 As build
+
+# WORKDIR /usr/src/app
+
+# COPY --chown=node:node package*.json ./
+
+# COPY --chown=node:node --from=devbuild /usr/src/app/node_modules ./node_modules
+
+# COPY --chown=node:node . .
+
+# RUN npm run build
+
+# ENV NODE_ENV production
+
+# RUN npm ci --only=production && npm cache clean --force
+
+# USER node
+
+###################
+# LOCAL RUNTIME
+###################
+FROM node:20.9.0 As dev
+
+WORKDIR /usr/src/app
+
+COPY --chown=node:node --from=devbuild /usr/src/app/node_modules ./node_modules
+COPY --chown=node:node --from=devbuild /usr/src/app .
+
+EXPOSE 8080
+
+CMD [ "npm", "run", "start:dev" ]
+
+###################
+# PRODUCTION RUNTIME
+###################
+
+# FROM node:20.9.0 As production
+
+# COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
+# COPY --chown=node:node --from=build /usr/src/app/dist ./dist
+
+# EXPOSE 8080
+
+# CMD [ "node", "dist/main.js" ]
