@@ -11,17 +11,47 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+#data-wrap {
+  padding: 10px;
+  margin: 25px 0px;
+  border-radius: 5px;
+  background-color: #333333;
+}
+
+div#new-user-wrap {
+  text-align: left;
+}
+
+div#new-user-wrap form>* {
+  margin: 10px 0px !important;
+  text-align: left;
+}
+
+input {
+
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+
+  border-radius: 5px;
+  border: 1px solid gray;
 }
 
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
