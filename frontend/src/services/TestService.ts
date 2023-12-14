@@ -21,4 +21,21 @@ export default class TestService {
 
     return data;
   }
+
+  async addUser(username: string, name?: string): Promise<User> {
+    let data: User;
+
+    try {
+      const res = await axios.post(`http://localhost:8080/users`, {
+        name: name,
+        username: username,
+      });
+      data = res.data;
+    } catch (e) {
+      console.error(`There was an issue with the test request: ${e}`);
+      return { id: -1, username: "", name: "" };
+    }
+
+    return data;
+  }
 }
