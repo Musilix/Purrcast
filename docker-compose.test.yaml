@@ -1,24 +1,4 @@
 services:
-  backend:
-    build:
-      target: dev
-    environment:
-      NODE_ENV: development
-    volumes:
-      - ./backend:/usr/src/app
-      - /usr/src/app/node_modules
-    networks:
-      - localnet
-  frontend:
-    build:
-      target: dev
-    environment:
-      REACT_APP_ENV: development
-    volumes:
-      - ./frontend:/usr/src/app
-      - /usr/src/app/node_modules
-    networks:
-      - localnet
   postgres:
     image: postgres:16.0
     container_name: purrcast_dev_db

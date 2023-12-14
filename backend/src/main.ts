@@ -4,6 +4,7 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { AppModule } from './app.module';
+import { __prod__ } from './constants';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -12,7 +13,9 @@ async function bootstrap() {
   );
 
   app.enableCors({
-    origin: ['http://localhost:3000', /\.localhost:3000\.com$/],
+    origin: !__prod__
+      ? ['http://localhost:3000', /\.localhost:3000\.com$/]
+      : ['custom-domain.com', /\.custom-domain\.com$/],
   });
 
   // TODO - change this address to private net IP
