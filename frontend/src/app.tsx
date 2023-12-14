@@ -50,7 +50,7 @@ function App() {
 
   return (
     <>
-      <img src="../public/purrcast.gif" alt="Purrcast Logo" style={{ width: "300px", height: "300px" }} />
+      <img src="/purrcast.gif" alt="Purrcast Logo" style={{ width: "300px", height: "300px" }} />
       <h1 style={{ margin: "0px" }}>Purrcast Test Feed</h1>
       <h3>Today is estimated to be _ in _</h3>
       <button onClick={(e) => handleTestClick(e)}>Look at Current Users</button>
