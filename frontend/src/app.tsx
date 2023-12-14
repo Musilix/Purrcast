@@ -1,6 +1,6 @@
 import { useState } from 'react';
 // import testPosts from "../src/test.json";
-import './App.css';
+import './app.css';
 import TestService from './services/TestService';
 // import { Post } from './types/Post';
 
