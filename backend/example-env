@@ -1,0 +1,6 @@
+let this serve as a reminder file
+if you are developing locally and spin up a container for your database, make sure it;s running
+on a network that our backend container is also running on. In our case, it's the localnet network.
+
+After confirming that, you will need to reference to the database url by using the db containers name, like such:
+DATABASE_URL=postgresql://user:password@db_container_name:5432/database_name

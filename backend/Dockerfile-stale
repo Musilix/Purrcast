@@ -1,0 +1,48 @@
+# Builder Stage
+FROM node:20.9.0 AS builder
+
+# Set working directory in container
+WORKDIR /usr/src/app
+
+# Set environment to production
+ENV NODE_ENV production
+
+# Copy package.json and package-lock.json first to leverage Docker cache
+# This layer will only be rebuilt if package*.json files change
+COPY package*.json ./
+
+# Install app dependencies - npm ci installs from package-lock.json
+# --only=production ensures only production dependencies are installed
+RUN npm ci --only=production
+
+# Copy the rest of the app source, setting the ownership to the node user
+# This layer will be rebuilt every time there are changes in the source code
+COPY --chown=node:node . .
+
+# Switch to the node user before running the build
+USER node
+
+# Build the application
+# This will run every time there's a change in the source code
+RUN npm run build
+
+# -------------------------------------------------------------------------------------------
+# --- Runner Stage --------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------
+
+FROM node:20.9.0 AS runner
+WORKDIR /usr/src/app
+
+# Copy the built application from the builder stage
+COPY --from=builder /usr/src/app .
+
+# Use non-root user for better security
+USER node
+
+ENV NODE_ENV production
+
+# Your app binds to port 3000 so you'll use the EXPOSE instruction to have it mapped by the docker daemon
+EXPOSE 3000
+
+# Define the command to run your app using CMD which defines your runtime
+CMD [ "node", "dist/main.js" ]
