@@ -1,0 +1,31 @@
+{
+  "posts": [
+    {
+      "id": 0,
+      "post_img": "/kitty.gif",
+      "location": "Atlanta, GA",
+      "name": "Bartholomue",
+      "user": {
+        "name": "Kareem"
+      }
+    },
+    {
+      "id": 1,
+      "post_img": "/react.svg",
+      "location": "Portland, OR",
+      "name": "Gunt",
+      "user": {
+        "name": "Kareem"
+      }
+    },
+    {
+      "id": 2,
+      "post_img": "assets/kitty.gif",
+      "location": "Corvallis, OR",
+      "name": "Boolean",
+      "user": {
+        "name": "Joey"
+      }
+    }
+  ]
+}
