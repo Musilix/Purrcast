@@ -8,11 +8,15 @@ jobs:
     name: Deploy app
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Checkout code
-        working-directory: ./backend
+      - name: Checkout Backend Code
+        uses: actions/checkout@v3
+        with:
+          path: './backend'
+          
       # - name: Deploy Prisma Migs to Prod
       #   run:  npx prisma migrate deploy
+      # 
+      
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - run: flyctl deploy --remote-only
         env:
