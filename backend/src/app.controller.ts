@@ -22,4 +22,9 @@ export class AppController {
       statusCode: 200,
     };
   }
+
+  @Get('/node-env')
+  getNodeEnvironment(): string {
+    return process.env.NODE_ENV;
+  }
 }
