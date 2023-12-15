@@ -5,7 +5,7 @@ import { TestData } from './temp-entities/TestData.entity';
 export class AppService {
   getHello(): TestData {
     return {
-      data: { message: 'Hello World!' },
+      data: { message: 'Hello Sqworld!' },
       statusCode: 200,
     };
   }
