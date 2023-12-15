@@ -4,23 +4,24 @@ on:
     branches:
       - main
 jobs:
+  deploy_migrations_to_prod:
+    name: Deploy Prisma Migrations to Prod
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test
+        run: 'echo test'
+    # - name: Deploy Prisma Migs to Prod
+    #   run:  npx prisma migrate deploy
+        
   deploy:
-    name: Deploy app
+    name: Deploy API to Fly.io
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Backend Code
         uses: actions/checkout@v3
-        with:
-          path: './backend'
-
-      - name: List contents of backend directory
-        run: ls -R ./backend
-          
-      # - name: Deploy Prisma Migs to Prod
-      #   run:  npx prisma migrate deploy
-      # 
       
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - run: flyctl deploy --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        working-directory: ./backend
