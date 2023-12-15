@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Deploy Prisma Migs to Prod
         run:  npx prisma migrate deploy
-        working-directory: ./backend
+        working-directory: backend
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
   
