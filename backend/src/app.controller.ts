@@ -13,8 +13,13 @@ export class AppController {
     return helloData;
   }
 
-  @Get()
-  getEnvironment(): string {
-    return __prod__ ? 'Production' : 'Development';
+  @Get('/env')
+  getEnvironment(): TestData {
+    return {
+      data: {
+        message: __prod__ ? 'Production' : 'Development',
+      },
+      statusCode: 200,
+    };
   }
 }
