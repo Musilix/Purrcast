@@ -15,7 +15,10 @@ async function bootstrap() {
   app.enableCors({
     origin: !__prod__
       ? ['http://localhost:3000', /\.localhost:3000\.com$/]
-      : ['custom-domain.com', /\.custom-domain\.com$/],
+      : [
+          'https://incandescent-stroopwafel-e0f3f8.netlify.app',
+          /\.incandescent-stroopwafel-e0f3f8.netlify.app$/,
+        ],
   });
 
   // TODO - change this address to private net IP
