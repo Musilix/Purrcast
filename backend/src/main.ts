@@ -15,7 +15,7 @@ async function bootstrap() {
   app.enableCors({
     origin: !__prod__
       ? ['http://localhost:3000', /\.localhost:3000\.com$/]
-      : ['https://purrcast.xyz/', /\.purrcast.xyz$/],
+      : ['https://purrcast.xyz', /\.purrcast\.xyz$/],
   });
 
   // TODO - change this address to private net IP
