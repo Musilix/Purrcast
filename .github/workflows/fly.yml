@@ -10,8 +10,10 @@ jobs:
     steps:
       - name: Deploy Prisma Migs to Prod
         run:  npx prisma migrate deploy
+        working-directory: ./backend
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  
   deploy:
     name: Deploy API to Fly.io
     runs-on: ubuntu-latest
