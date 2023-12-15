@@ -12,7 +12,7 @@ export default class TestService {
 
     try {
       // TODO - change backend hostname once domain a domain is established
-      const res = await axios.get(`http://localhost:8080/users`);
+      const res = await axios.get(`${import.meta.env.VITE_API_HOST}/users`);
       data = res.data;
     } catch (e) {
       console.error(`There was an issue with the test request: ${e}`);
@@ -26,7 +26,7 @@ export default class TestService {
     let data: User;
 
     try {
-      const res = await axios.post(`http://localhost:8080/users`, {
+      const res = await axios.post(`${import.meta.env.VITE_API_HOST}/users`, {
         name: name,
         username: username,
       });
