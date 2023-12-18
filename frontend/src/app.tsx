@@ -1,7 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // import testPosts from "../src/test.json";
+import axios from 'axios';
 import './app.css';
 import TestService from './services/TestService';
+import { Post } from './types/Post';
+import Response from './types/Response';
 // import { Post } from './types/Post';
 
 //TODO - probably move this somewhere else
@@ -11,11 +14,23 @@ interface User {
   name: string;
 }
 function App() {
-  const [testValue, setTestValue] = useState<string | User[]>("...");
+  const [testValue, setTestValue] = useState<User[] | string>("...");
   const testService = new TestService();
 
   const [username, setUsername] = useState<string>("")
   const [name, setName] = useState<string>("")
+
+  const [splashPosts, setSplashPosts] = useState<Post[]>([]);
+
+  const [postImage, setPostImage] = useState<File | undefined>();
+
+  // on component mount
+  useEffect(() => {
+    //get posts
+    testService.getSplashPosts().then((res: Response<Post[]>) => {
+      setSplashPosts(res.data ?? []);
+    });
+  }, []);
 
   // Form Related Junk - put this into a hook probably
   const handleUserNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,6 +54,35 @@ function App() {
     setUsername("");
   }
 
+  const handlePostSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log("Submitting new post: ", postImage);
+
+    // TODO - add proper validation and move implementation to service
+    if (postImage) {
+      const formData = new FormData();
+      formData.append("file", postImage);
+
+      const res = await axios.post(`${import.meta.env.VITE_API_HOST}/upload`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+
+      console.log(res);
+    }
+  }
+
+  const handlePostChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+
+    const extractedFile = e.target as HTMLInputElement & {
+
+      files: FileList;
+    }
+
+    setPostImage(extractedFile.files[0]);
+  }
 
   // Question - is it ok to have async functions in the event handler?
   const handleTestClick = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -85,6 +129,32 @@ function App() {
           <input id="username-input" type="text" name="username" placeholder="Username" value={username} required onChange={handleUserNameChange} />
           <input id="name-input" type="text" name="name" placeholder="Name (optional)" value={name} onChange={handleNameChange} />
           <button type="submit">Add New User</button>
+        </form>
+      </div>
+
+      <div id="post-wrap">
+        {
+          splashPosts && splashPosts.length > 0 ? (
+            <ul>
+              {splashPosts.map((post) => (
+                <li key={post.id}>
+                  <img src={post.post_img} />
+                  <p>{`Posted by: ${post.post_img}`}</p>
+                  <p>{post.location}</p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No Posts</p>
+          )
+        }
+      </div>
+      <div id="new-post-wrap">
+        <h3>Make a New Post</h3>
+        <p>Upload a photo of your cat!</p>
+        <form id="new-post-form" onSubmit={handlePostSubmit} encType='multipart/form-data'>
+          <input type="file" name="postImage" id="postImageFile" onChange={(e) => handlePostChange(e)} />
+          <button type="submit">Share</button>
         </form>
       </div>
     </>
