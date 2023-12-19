@@ -18,18 +18,4 @@ export class AppController {
     const helloData = this.appService.getHello();
     return helloData;
   }
-
-  @Post('upload')
-  @UseInterceptors(FileInterceptor('file'))
-  uploadFile(@UploadedFile() file: Express.Multer.File) {
-    if (file === undefined) {
-      return `No file was uploaded. ${file}`;
-    } else {
-      return {
-        size: file.size,
-        name: file.originalname,
-        type: file.mimetype,
-      };
-    }
-  }
 }

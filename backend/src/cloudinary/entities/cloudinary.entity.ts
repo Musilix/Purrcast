@@ -1,0 +1,1 @@
+export type Cloudinary = typeof import('cloudinary');

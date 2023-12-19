@@ -63,6 +63,13 @@ function App() {
       const formData = new FormData();
       formData.append("file", postImage);
 
+      //TODO - switch to this
+      // const res = await axios.post(`${import.meta.env.VITE_API_HOST}/`, formData, {
+      //   headers: {
+      //     'Content-Type': 'multipart/form-data'
+      //   }
+      // })
+
       const res = await axios.post(`${import.meta.env.VITE_API_HOST}/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
@@ -153,7 +160,7 @@ function App() {
         <h3>Make a New Post</h3>
         <p>Upload a photo of your cat!</p>
         <form id="new-post-form" onSubmit={handlePostSubmit} encType='multipart/form-data'>
-          <input type="file" name="postImage" id="postImageFile" onChange={(e) => handlePostChange(e)} />
+          <input type="file" name="postImage" id="postImageFile" accept="image/*" onChange={(e) => handlePostChange(e)} />
           <button type="submit">Share</button>
         </form>
       </div>
