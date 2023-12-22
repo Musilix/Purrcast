@@ -1,9 +1,11 @@
-import { User } from "./User";
+import { User } from './User';
 
 export interface Post {
   id: number;
-  post_img: string;
-  location: string;
-  name: string;
-  user: User;
+  authorId: number;
+  contentId: string;
+  createdAt: Date;
+  updatedAt: Date;
+  published: boolean;
+  author: User;
 }

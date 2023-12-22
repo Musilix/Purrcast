@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { CreatePostDto } from './dto/create-post.dto';
-import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { ConfigService } from '@nestjs/config';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { PrismaService } from 'src/prisma/prisma.service';
+// import { CreatePostDto } from './dto/create-post.dto';
 
 @Injectable()
 export class PostService {
@@ -21,9 +21,9 @@ export class PostService {
   //   }
   // }
 
-  upload(file: any) {
+  async upload(file: any) {
     try {
-      const res = this.cloudinary.upload(file, {
+      const res = await this.cloudinary.upload(file, {
         type: 'upload',
         access_control: 'anonymous',
         use_filename: true,
@@ -32,15 +32,40 @@ export class PostService {
         format: 'jpg',
       });
 
+      // TODO: change to true implementation
+      // get user data placeholder
+      const user = await this.prisma.user.findUnique({ where: { id: 1 } });
+      await this.prisma.post.create({
+        data: {
+          contentId: `v${res.version}/${res.public_id}.png`,
+          authorId: user.id,
+          published: true,
+        },
+      });
+
       return res;
     } catch (e) {
       return new Error('Unable to upload file');
     }
   }
 
-  // findAll() {
-  //   return `This action returns all post`;
-  // }
+  async getImage(postId: string) {
+    try {
+      const res = await this.cloudinary.getUpload(postId);
+      return res;
+    } catch (e) {
+      return new Error('Unable to get image');
+    }
+  }
+
+  async findAll() {
+    const res = await this.prisma.post.findMany({
+      include: {
+        author: true,
+      },
+    });
+    return res;
+  }
 
   // findOne(id: number) {
   //   return `This action returns a #${id} post`;

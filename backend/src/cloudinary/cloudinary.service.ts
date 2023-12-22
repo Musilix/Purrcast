@@ -9,7 +9,7 @@ export class CloudinaryService {
     try {
       //TODO - abstract this out to a data uri encoder helper?
       const b64 = Buffer.from(file.buffer).toString('base64');
-      let dataURI = 'data:' + file.mimetype + ';base64,' + b64;
+      const dataURI = 'data:' + file.mimetype + ';base64,' + b64;
 
       const result = await this.Cloudinary.uploader.upload(dataURI, {
         resource_type: 'image',

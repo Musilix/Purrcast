@@ -1,6 +1,7 @@
 import {
-  Body,
+  // Body,
   Controller,
+  Get,
   // Delete,
   // Get,
   // Param,
@@ -9,10 +10,10 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { CreatePostDto } from './dto/create-post.dto';
+// import { CreatePostDto } from './dto/create-post.dto';
 // import { UpdatePostDto } from './dto/update-post.dto';
-import { PostService } from './post.service';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { PostService } from './post.service';
 
 @Controller('post')
 export class PostController {
@@ -48,10 +49,10 @@ export class PostController {
     }
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.postService.findAll();
-  // }
+  @Get()
+  findAll() {
+    return this.postService.findAll();
+  }
 
   // @Get(':id')
   // findOne(@Param('id') id: string) {

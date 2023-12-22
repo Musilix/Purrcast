@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { CloudinaryService } from './cloudinary.service';
 import * as cloudinaryLib from 'cloudinary';
+import { CloudinaryService } from './cloudinary.service';
 
 export const cloudinaryProvider = {
   provide: 'Cloudinary',

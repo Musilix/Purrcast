@@ -1,6 +1,6 @@
-import axios, { isAxiosError } from "axios";
-import { Post } from "../types/Post";
-import Response from "../types/Response";
+import axios, { isAxiosError } from 'axios';
+import { Post } from '../types/Post';
+import Response from '../types/Response';
 
 //TODO - probably move this somewhere else
 interface User {
@@ -18,7 +18,7 @@ export default class TestService {
       data = res.data;
     } catch (e) {
       console.error(`There was an issue with the test request: ${e}`);
-      return "Nothing";
+      return 'Nothing';
     }
 
     return data;
@@ -35,7 +35,7 @@ export default class TestService {
       data = res.data;
     } catch (e) {
       console.error(`There was an issue with the test request: ${e}`);
-      return "Error Adding User";
+      return 'Error Adding User';
     }
 
     return data;
@@ -46,7 +46,7 @@ export default class TestService {
     let error: string | undefined;
 
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_HOST}/posts`);
+      const res = await axios.get(`${import.meta.env.VITE_API_HOST}/post`);
       data = res.data;
     } catch (e) {
       if (isAxiosError(e)) {
@@ -56,10 +56,10 @@ export default class TestService {
           error = `Error: ${e.response.status} - ${e.response.data.message}`;
         } else if (e.request) {
           // The request was made but no response was received
-          error = "Error: No response from server";
+          error = 'Error: No response from server';
         } else {
           // Something happened in setting up the request
-          error = "Error: Request failed";
+          error = 'Error: Request failed';
         }
       }
     }

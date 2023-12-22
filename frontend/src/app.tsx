@@ -22,12 +22,14 @@ function App() {
 
   const [splashPosts, setSplashPosts] = useState<Post[]>([]);
 
-  const [postImage, setPostImage] = useState<File | undefined>();
+  const [postImage, setPostImage] = useState<File | null>();
 
   // on component mount
   useEffect(() => {
     //get posts
+    console.log("Mounting App. Getting posts...")
     testService.getSplashPosts().then((res: Response<Post[]>) => {
+      console.log(res);
       setSplashPosts(res.data ?? []);
     });
   }, []);
@@ -70,13 +72,15 @@ function App() {
       //   }
       // })
 
-      const res = await axios.post(`${import.meta.env.VITE_API_HOST}/upload`, formData, {
+      const res = await axios.post(`${import.meta.env.VITE_API_HOST}/post/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
-      })
+      });
 
       console.log(res);
+
+      setPostImage(null);
     }
   }
 
@@ -145,9 +149,9 @@ function App() {
             <ul>
               {splashPosts.map((post) => (
                 <li key={post.id}>
-                  <img src={post.post_img} />
-                  <p>{`Posted by: ${post.post_img}`}</p>
-                  <p>{post.location}</p>
+                  <img src={`${import.meta.env.VITE_CLOUDINARY_URL}/${post.contentId}`} />
+                  <p>{`Posted by: ${post.author.name}`}</p>
+                  <p>{post.author.location}</p>
                 </li>
               ))}
             </ul>
