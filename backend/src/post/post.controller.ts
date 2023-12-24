@@ -30,6 +30,12 @@ export class PostController {
   //   return this.postService.create(createPostDto);
   // }
 
+  // Necessary endpoint when generating a signed url to access assets that were uploaded with an access_control>access_type of token
+  // @Get('signed-url')
+  // getSignedUrl() {
+  //   return this.postService.getSignedUrl();
+  // }
+
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   uploadFile(@UploadedFile() file: Express.Multer.File) {

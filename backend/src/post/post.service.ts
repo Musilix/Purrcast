@@ -1,15 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import sharp from 'sharp';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-// import { CreatePostDto } from './dto/create-post.dto';
-
+import { TestData } from 'src/temp-entities/TestData.entity';
 @Injectable()
 export class PostService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly cloudinary: CloudinaryService,
-    private readonly configService: ConfigService,
   ) {}
 
   // create(createPostDto: CreatePostDto) {
@@ -21,31 +19,67 @@ export class PostService {
   //   }
   // }
 
-  async upload(file: any) {
+  async upload(image: any): Promise<TestData> {
     try {
-      const res = await this.cloudinary.upload(file, {
-        type: 'upload',
-        access_control: 'anonymous',
-        use_filename: true,
+      // resize image before sending it to cloudinary
+      const resizedImageBuffer = await sharp(image.buffer)
+        .resize(350)
+        .toBuffer();
+      const resizedImageMimeType = image.mimetype;
+
+      const resizedImage = {
+        buffer: resizedImageBuffer,
+        mimetype: resizedImageMimeType,
+      };
+
+      /* 
+        The options sent to our cloudinary service's upload method here are using an upload type of just 'upload'.
+          If we wanted to strengthen our security, we could use the 'authenticated' upload type or even private
+      */
+      const res = await this.cloudinary.upload(resizedImage, {
+        resource_type: 'image',
         unique_filename: true,
         overwrite: false,
-        format: 'jpg',
+        format: 'png',
+        type: 'upload', //TODO - change this to authenticated or private if we decide to utilize token-based access control
+        // TODO - in the future, it may be necessary to hide assets with access_control settings
+        // If I continue to use cloudinary, I will need to contact them for a encrpytion key to generate valid tokens for authenticated users to access assets
+        // access_control: {
+        //   access_type: 'token',
+
+        // },
       });
 
-      // TODO: change to true implementation
       // get user data placeholder
-      const user = await this.prisma.user.findUnique({ where: { id: 1 } });
-      await this.prisma.post.create({
-        data: {
-          contentId: `v${res.version}/${res.public_id}.png`,
-          authorId: user.id,
-          published: true,
-        },
-      });
+      if (res.version !== undefined || res.public_id !== undefined) {
+        // TODO: change to true implementation where we utilize users creds sent with req body to /upload
+        const user = await this.prisma.user.findUnique({ where: { id: 1 } });
 
-      return res;
+        await this.prisma.post.create({
+          data: {
+            contentId: `v${res.version}/${res.public_id}.png`,
+            authorId: user.id,
+            published: true,
+          },
+        });
+
+        return {
+          data: {
+            message: 'File uploaded successfully.',
+            payload: res,
+          },
+          statusCode: 200,
+        };
+      } else {
+        throw new Error('Unable to upload file.');
+      }
     } catch (e) {
-      return new Error('Unable to upload file');
+      return {
+        data: {
+          message: `Unable to upload file`,
+        },
+        statusCode: 500,
+      };
     }
   }
 
@@ -60,6 +94,9 @@ export class PostService {
 
   async findAll() {
     const res = await this.prisma.post.findMany({
+      where: {
+        published: true,
+      },
       include: {
         author: true,
       },

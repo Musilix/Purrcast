@@ -3,6 +3,7 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  width: 75%;
 }
 
 .logo {
@@ -45,6 +46,14 @@ input {
 
   border-radius: 5px;
   border: 1px solid gray;
+}
+
+#splash-intro-wrap {
+  padding: 25px;
+  margin: 50px 0px;
+  background-color: #333333;
+  border-radius: 5px;
+  border: 1px solid rgba(0, 0, 0, 0.5);
 }
 
 @keyframes logo-spin {
