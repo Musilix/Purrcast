@@ -48,7 +48,7 @@ export class PostController {
     //   authorId: 1,
     //   location: this.prisma.user.find({where: {id: 1}}).location;
     // }
-    if (file === undefined) {
+    if (file === undefined || file === null) {
       return `No file was uploaded. ${file}`;
     } else {
       return this.postService.upload(file);

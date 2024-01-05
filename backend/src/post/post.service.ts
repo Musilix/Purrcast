@@ -21,6 +21,7 @@ export class PostService {
 
   async upload(image: any): Promise<TestData> {
     try {
+      //TODO: Move this to a sharp helper pipe
       // resize image before sending it to cloudinary
       const resizedImageBuffer = await sharp(image.buffer)
         .resize(350)
@@ -51,8 +52,9 @@ export class PostService {
       });
 
       // get user data placeholder
-      if (res.version !== undefined || res.public_id !== undefined) {
+      if (res.version !== undefined && res.public_id !== undefined) {
         // TODO: change to true implementation where we utilize users creds sent with req body to /upload
+        //NOTE: if this user search fails, the post creation will fail due to a 500 server error...
         const user = await this.prisma.user.findUnique({ where: { id: 1 } });
 
         await this.prisma.post.create({
@@ -74,6 +76,8 @@ export class PostService {
         throw new Error('Unable to upload file.');
       }
     } catch (e) {
+      console.error(`${e}`);
+
       return {
         data: {
           message: `Unable to upload file`,

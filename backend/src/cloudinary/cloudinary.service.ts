@@ -17,6 +17,7 @@ export class CloudinaryService {
       return new Error('Unable to sign url');
     }
   }
+
   async upload(file: any, options?: any) {
     try {
       //TODO - abstract this out to a data uri encoder helper?
