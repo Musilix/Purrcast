@@ -8,8 +8,6 @@ primary_region = "sea"
 
 [build]
   build-target = "production"
-  [build.args]
-    NODE_ENV = "production"
 
 [http_service]
   internal_port = 8080
@@ -27,3 +25,6 @@ primary_region = "sea"
   cpu_kind = "shared"
   cpus = 4
   memory_mb = 2048
+  
+[env]
+  NODE_ENV = "production"

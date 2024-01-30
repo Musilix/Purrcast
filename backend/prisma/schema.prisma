@@ -11,8 +11,7 @@ model Post {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  title     String   @db.VarChar(255)
-  content   String?
+  contentId String   @db.VarChar(255)
   published Boolean  @default(false)
   author    User     @relation(fields: [authorId], references: [id])
   authorId  Int
@@ -26,11 +25,12 @@ model Profile {
 }
 
 model User {
-  id      Int      @id @default(autoincrement())
+  id       Int      @id @default(autoincrement())
   // Change this to be something related to Clerk in the future probably
   // email   String   @unique
-  name    String? 
-  username String @unique
-  posts   Post[]
-  profile Profile?
+  name     String?
+  username String   @unique
+  location String   @default("Earth") @db.VarChar(255)
+  posts    Post[]
+  profile  Profile?
 }
