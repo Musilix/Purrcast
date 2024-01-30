@@ -1,6 +1,6 @@
-import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
-// import { isProd } from "./constants";
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
+import path from 'path';
 
 // https://vitejs.dev/config/
 // https://vitejs.dev/config/
@@ -14,6 +14,11 @@ export default defineConfig({
     },
     watch: {
       usePolling: true,
+    },
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
     },
   },
 });

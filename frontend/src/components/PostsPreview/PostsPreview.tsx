@@ -2,17 +2,15 @@ import { useEffect, useState } from "react";
 import TestService from "../../services/TestService";
 import { Post } from "../../types/Post";
 import Response from "../../types/Response";
-import "./PostsPreview.css";
+import PostPreviewCard from "../PostPreviewCard/PostPreviewCard";
 
 export default function PostsPreview() {
   const testService = new TestService();
   const [splashPosts, setSplashPosts] = useState<Post[]>([]);
 
   useEffect(() => {
-    //get posts
-    console.log("Mounting App. Getting posts...")
+    console.log("Mounting App. Getting preview posts...")
     testService.getSplashPosts().then((res: Response<Post[]>) => {
-      console.log(res);
       setSplashPosts(res.data ?? []);
     });
   }, []);
@@ -25,14 +23,17 @@ export default function PostsPreview() {
             <ul>
               {splashPosts.map((post) => (
                 <li className="post-content" key={post.id}>
-                  <img className="post-img" src={`${import.meta.env.VITE_CLOUDINARY_PUBLIC_URL}/${post.contentId}`} />
-                  <p className="post-author">{`Posted by ${post.author.name}`}</p>
-                  <p className="post-author-location">{post.author.location}</p>
+                  <PostPreviewCard />
                 </li>
               ))}
             </ul>
           ) : (
-            <p>No Posts</p>
+            <>
+              <p>No Posts to Show. Try refreshing?</p>
+
+              <PostPreviewCard />
+            </>
+
           )
         }
       </div>
