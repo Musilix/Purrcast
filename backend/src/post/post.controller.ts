@@ -19,23 +19,9 @@ import { PostService } from './post.service';
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
-  // @Post()
-  // create(@Body() createPostDto: CreatePostDto) {
-  //   console.log(
-  //     `Creating a new Post with the following information: ${JSON.stringify(
-  //       createPostDto,
-  //     )}`,
-  //   );
-
-  //   return this.postService.create(createPostDto);
-  // }
-
-  // Necessary endpoint when generating a signed url to access assets that were uploaded with an access_control>access_type of token
-  // @Get('signed-url')
-  // getSignedUrl() {
-  //   return this.postService.getSignedUrl();
-  // }
-
+  // TODO: make this the official creation endpoint
+  // A new post getting created only needs 1 thing from the user - the photo they are uploading
+  // the rest of the information can be gathered from the user's cookie, such as their location and user id
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   uploadFile(@UploadedFile() file: Express.Multer.File) {

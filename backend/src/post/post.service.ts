@@ -10,15 +10,6 @@ export class PostService {
     private readonly cloudinary: CloudinaryService,
   ) {}
 
-  // create(createPostDto: CreatePostDto) {
-  //   try {
-  //     const res = this.prisma.post.create({ data: createPostDto });
-  //     return res;
-  //   } catch (e) {
-  //     return new Error('Unable to create new post');
-  //   }
-  // }
-
   async upload(image: any): Promise<TestData> {
     try {
       //TODO: Move this to a sharp helper pipe
