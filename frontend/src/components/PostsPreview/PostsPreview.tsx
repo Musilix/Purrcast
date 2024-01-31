@@ -17,7 +17,7 @@ export default function PostsPreview() {
 
   return (
     <>
-      <div id="post-wrap">
+      <div id="post-wrap" className="w-1/2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 grid-flow-row place-items-center gap-5">
         {
           splashPosts && splashPosts.length > 0 ? (
             <ul>
@@ -31,6 +31,10 @@ export default function PostsPreview() {
             <>
               <p>No Posts to Show. Try refreshing?</p>
 
+              <PostPreviewCard skeleton={false} />
+              <PostPreviewCard skeleton={false} />
+              <PostPreviewCard skeleton={false} />
+              <PostPreviewCard skeleton={false} />
               <PostPreviewCard />
             </>
 

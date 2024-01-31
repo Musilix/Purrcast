@@ -1,33 +1,60 @@
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardDescription, CardFooter, CardTitle } from "@/components/ui/card";
+import { Post } from "@/types/Post";
+import { Skeleton } from "../ui/skeleton";
 
-export default function PostPreviewCard() {
+interface PostPreviewCardProps {
+    post?: Post;
+    skeleton?: boolean;
+}
+
+function SkeletonCard() {
     return (
-        <Card className="w-[350px]">
-            <CardHeader>
-                <CardTitle>Create project</CardTitle>
-                <CardDescription>Deploy your new project in one-click.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <form>
-                    <div className="grid w-full items-center gap-4">
-                        <div className="flex flex-col space-y-1.5">
-                            <Label htmlFor="name">Name</Label>
-                            <Input id="name" placeholder="Name of your project" />
-                        </div>
-                        <div className="flex flex-col space-y-1.5">
-                            <Label htmlFor="framework">Framework</Label>
-                            <Input id="name" placeholder="Name of your project" />
-                        </div>
-                    </div>
-                </form>
+        <>
+            <CardContent className="p-5">
+                <Skeleton className="w-[100px] h-[100px] object-cover rounded-sm" />
             </CardContent>
-            <CardFooter className="flex justify-between">
-                <Button variant="outline">Cancel</Button>
-                <Button>Deploy</Button>
+
+            <CardFooter className="flex justify-between flex-col pb-5">
+
+                <Skeleton className="h-5 p-2 w-11/12" />
+                <Skeleton className="h-3 p-2 w-3/5" />
+
             </CardFooter>
-        </Card>
+        </>
+    )
+}
+
+function RealCard() {
+    return (
+        <>
+            <CardContent className="p-5">
+                <img loading="lazy" src="https://source.unsplash.com/random/350x350" alt="Random Image" className="w-full h-full object-cover rounded-sm" />
+            </CardContent>
+
+            <CardFooter className="flex justify-between flex-col pb-5">
+                <CardTitle>Posted by Jaja</CardTitle>
+                <CardDescription>Corvallis, OR</CardDescription>
+
+                {/* <CardTitle>{`Posted by ${post.author}`}</CardTitle>
+                        <CardDescription>{post.author.location}</CardDescription> */}
+            </CardFooter>
+        </>
+    )
+}
+
+export default function PostPreviewCard({ post = {} as Post, skeleton = true }: PostPreviewCardProps) {
+    return (
+        <a href={`/post/${post.id}`}>
+            <Card className="hover:bg-muted cursor-pointer transition-colors">
+                {
+                    (!skeleton) ? (
+                        <RealCard />
+                    ) : (
+                        <SkeletonCard />
+                    )
+                }
+            </Card>
+        </a >
+
     );
 }
