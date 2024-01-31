@@ -11,15 +11,15 @@ function SkeletonCard() {
     return (
         <>
             <CardContent className="p-5">
-                <Skeleton className="w-[100px] h-[100px] object-cover rounded-sm" />
+                <Skeleton className="w-full h-full object-cover rounded-sm" />
             </CardContent>
 
-            <CardFooter className="flex justify-between flex-col pb-5">
+            <div className="flex justify-between flex-col pb-5">
 
                 <Skeleton className="h-5 p-2 w-11/12" />
                 <Skeleton className="h-3 p-2 w-3/5" />
 
-            </CardFooter>
+            </div>
         </>
     )
 }
