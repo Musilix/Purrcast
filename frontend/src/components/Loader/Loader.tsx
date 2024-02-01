@@ -1,4 +1,5 @@
 import { AuthContext } from "@/context/AuthContext";
+import { Loader2 } from 'lucide-react';
 import { useContext } from "react";
 
 export default function Loader({ children }: { children: React.ReactNode }) {
@@ -7,7 +8,7 @@ export default function Loader({ children }: { children: React.ReactNode }) {
     if (isAuthLoading)
         return (
             <div className="h-dvh w-1/2 flex flex-col place-content-center place-items-center">
-                <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Loading...</h1>
+                <Loader2 size={50} color={'hsl(var(--primary))'} className="animate-spin" />
             </div>
         )
     else
