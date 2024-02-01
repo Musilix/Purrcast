@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { useState } from 'react';
+import { NavMenu } from './components/NavMeun/NavMenu';
 import PostsPreview from './components/PostsPreview/PostsPreview';
 import { Separator } from './components/ui/separator';
-import { NavMenu } from './components/NavMeun/NavMenu';
 
 function App() {
   const [uploadError, setUploadError] = useState<string>("");
@@ -56,7 +56,7 @@ function App() {
         </div>
 
       </header>
-      <main className="flex flex-col flex-auto flex-wrap justify-around w-1/2 md:w-3/5 max-w-screen-lg space-y-10 py-6 lg:py-8 ">
+      <main className="flex flex-col flex-auto flex-wrap justify-center w-1/2 md:w-3/5 max-w-screen-lg space-y-10 py-6 lg:py-8 ">
         {/* <img src="/purrcast.gif" alt="Purrcast Logo"/>*/}
 
         <section id="splash-intro" className="w-full">
@@ -73,13 +73,13 @@ function App() {
             I took that very personally and so Purrcast was built to act as a centralized place for you to post and look at photos of peoples cats in your area to determine if it's going to rain soon or maybe just drizzle.
           </p>
         </section>
+        <section id="splash-prev-posts" className="w-full">
+          <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
+            Posts being made by other users
+          </h2>
+          <PostsPreview />
+        </section>
 
-        {/* <Separator className="my-full" /> */}
-
-        <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-          Posts being made by other users
-        </h2>
-        <PostsPreview />
 
         {/* 
       <div id="new-post-wrap">
@@ -97,59 +97,3 @@ function App() {
 }
 
 export default App
-
-// <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-//                             <li className="row-span-3">
-//                                 <NavigationMenuLink asChild>
-//                                     <a
-//                                         className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
-//                                         href="/"
-//                                     >
-//                                         {/* <Icons.logo className="h-6 w-6" /> */}
-//                                         <div className="mb-2 mt-4 text-lg font-medium">
-//                                             shadcn/ui
-//                                         </div>
-//                                         <p className="text-sm leading-tight text-muted-foreground">
-//                                             Beautifully designed components built with Radix UI and
-//                                             Tailwind CSS.
-//                                         </p>
-//                                     </a>
-//                                 </NavigationMenuLink>
-//                             </li>
-//                             <ListItem href="/docs" title="Introduction">
-//                                 Re-usable components built using Radix UI and Tailwind CSS.
-//                             </ListItem>
-//                             <ListItem href="/docs/installation" title="Installation">
-//                                 How to install dependencies and structure your app.
-//                             </ListItem>
-//                             <ListItem href="/docs/primitives/typography" title="Typography">
-//                                 Styles for headings, paragraphs, lists...etc
-//                             </ListItem>
-//                         </ul><ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-//                             <li className="row-span-3">
-//                                 <NavigationMenuLink asChild>
-//                                     <a
-//                                         className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
-//                                         href="/"
-//                                     >
-//                                         {/* <Icons.logo className="h-6 w-6" /> */}
-//                                         <div className="mb-2 mt-4 text-lg font-medium">
-//                                             shadcn/ui
-//                                         </div>
-//                                         <p className="text-sm leading-tight text-muted-foreground">
-//                                             Beautifully designed components built with Radix UI and
-//                                             Tailwind CSS.
-//                                         </p>
-//                                     </a>
-//                                 </NavigationMenuLink>
-//                             </li>
-//                             <ListItem href="/docs" title="Introduction">
-//                                 Re-usable components built using Radix UI and Tailwind CSS.
-//                             </ListItem>
-//                             <ListItem href="/docs/installation" title="Installation">
-//                                 How to install dependencies and structure your app.
-//                             </ListItem>
-//                             <ListItem href="/docs/primitives/typography" title="Typography">
-//                                 Styles for headings, paragraphs, lists...etc
-//                             </ListItem>
-//                         </ul>
