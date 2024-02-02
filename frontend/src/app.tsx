@@ -4,7 +4,6 @@ import NewPostForm from "@/components/NewPostForm/NewPostForm";
 import { Route } from "wouter";
 import Login from "./components/Login/Login";
 import Post from "./components/Post/Post";
-import PostsPreview from "./components/PostsPreview/PostsPreview";
 import Profile from "./components/Profile/Profile";
 import Test from "./components/Test/Test";
 import { ThemeProvider } from "./components/ThemeProvider/ThemeProvider";
