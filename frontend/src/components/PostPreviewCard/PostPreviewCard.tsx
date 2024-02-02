@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardFooter, CardTitle } from "@/components/ui/card";
 import { Post } from "@/types/Post";
 import SkeletonPreviewCard from "../SkeletonPreviewCard/SkeletonPreviewCard";
+import { Link } from "wouter";
 
 interface PostPreviewCardProps {
     post?: Post;
@@ -27,7 +28,7 @@ function RealCard() {
 
 export default function PostPreviewCard({ post = {} as Post, skeleton = true }: PostPreviewCardProps) {
     return (
-        <a href={`/post/${post.id}`} className="w-full h-full">
+        <Link href={`/post/${post.id}`} className="w-full h-full">
             <Card className="hover:bg-muted cursor-pointer transition-colors h-full">
                 {
                     (!skeleton) ? (
@@ -37,7 +38,7 @@ export default function PostPreviewCard({ post = {} as Post, skeleton = true }: 
                     )
                 }
             </Card>
-        </a >
+        </Link>
 
     );
 }

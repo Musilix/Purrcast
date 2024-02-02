@@ -11,6 +11,7 @@ import {
     NavigationMenuTrigger,
     navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
+import { Link } from "wouter";
 
 const components: { title: string; href: string; description: string }[] = [
     {
@@ -33,31 +34,30 @@ const components: { title: string; href: string; description: string }[] = [
     }
 ]
 
-export function NavMenu({ className = '' }) {
+export function NavMenu() {
     return (
         <div>
             <NavigationMenu>
                 <NavigationMenuList>
-                    {/* <NavigationMenuItem>
-                        <a href="/profile">
+                    <NavigationMenuItem>
+                        <Link href="/">
                             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                 Home
                             </NavigationMenuLink>
-                        </a>
-                    </NavigationMenuItem> */}
+                        </Link>
+                    </NavigationMenuItem>
 
                     <NavigationMenuItem className="m-0">
                         <NavigationMenuTrigger>Profile</NavigationMenuTrigger>
                         <NavigationMenuContent>
                             <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
                                 {components.map((component) => (
-                                    <ListItem
-                                        key={component.title}
-                                        title={component.title}
-                                        href={component.href}
-                                    >
-                                        {component.description}
-                                    </ListItem>
+                                    <Link key={component.title}
+                                        href={component.href}>
+                                        <ListItem title={component.title}>
+                                            {component.description}
+                                        </ListItem>
+                                    </Link>
                                 ))}
                             </ul>
                         </NavigationMenuContent>
