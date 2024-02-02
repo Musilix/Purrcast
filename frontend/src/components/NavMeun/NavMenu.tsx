@@ -1,6 +1,6 @@
-import * as React from "react"
+import * as React from "react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 // import { Icons } from "@/components/icons"
 import {
     NavigationMenu,
@@ -10,7 +10,7 @@ import {
     NavigationMenuList,
     NavigationMenuTrigger,
     navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu"
+} from "@/components/ui/navigation-menu";
 import { Link } from "wouter";
 
 const components: { title: string; href: string; description: string }[] = [
@@ -21,10 +21,10 @@ const components: { title: string; href: string; description: string }[] = [
             "Edit your profile information, including your name, email, and password.",
     },
     {
-        title: "Settings",
-        href: "/profile/settings",
+        title: "View Posts",
+        href: "/profile/posts",
         description:
-            "Manage your account settings, including your email, password, and security preferences.",
+            "View all of your posts and manage them from one place.",
     },
     {
         title: "Sign Out",
@@ -37,7 +37,7 @@ const components: { title: string; href: string; description: string }[] = [
 export function NavMenu() {
     return (
         <div>
-            <NavigationMenu>
+            <NavigationMenu className="flex flex-row w-full justify-between">
                 <NavigationMenuList>
                     <NavigationMenuItem>
                         <Link href="/">

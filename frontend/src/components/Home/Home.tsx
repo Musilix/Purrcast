@@ -5,7 +5,7 @@ import { Link } from 'wouter';
 export default function Home() {
     return (
         <>
-            <main className="flex flex-col flex-auto flex-wrap justify-center w-1/2 md:w-3/5 max-w-screen-lg space-y-10 py-6 lg:py-8 ">
+            <main className="flex flex-col flex-auto flex-wrap justify-center w-1/2 md:w-3/5 max-w-screen-lg space-y-10 *:p-5">
                 <section id="splash-intro" className="w-full">
                     <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl break-words">
                         Welcome to {(import.meta.env.PROD) ? "Purrcast" : "Purrcast Test Feed"}!
