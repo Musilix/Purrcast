@@ -1,7 +1,7 @@
 export default function faq() {
   return (
     <>
-      <main className="flex flex-col flex-auto flex-wrap justify-center w-1/2 md:w-3/5 max-w-screen-lg space-y-10 *:p-5">
+      <main className="flex flex-col flex-auto place-items-center w-1/2 md:w-3/5 max-w-screen-lg space-y-10 *:p-5">
         <section id="splash-intro" className="w-full *:m-0">
           <h1 className="scroll-m-20 border-b pb-4 text-4xl font-extrabold tracking-tight lg:text-5xl break-words">
             What is this?
