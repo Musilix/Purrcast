@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState, forwardRef, ComponentPropsWithoutRef, ElementRef } from "react";
 
 import { cn } from "@/lib/utils";
 // import { Icons } from "@/components/icons"
@@ -35,6 +35,9 @@ const components: { title: string; href: string; description: string }[] = [
 ]
 
 export function NavMenu() {
+    // TODO: replace with true auth state, using auth context perhaps.
+    const [loggedIn] = useState(false);
+
     return (
         <div>
             <NavigationMenu className="flex flex-row w-full justify-between">
@@ -47,30 +50,40 @@ export function NavMenu() {
                         </Link>
                     </NavigationMenuItem>
 
-                    <NavigationMenuItem className="m-0">
-                        <NavigationMenuTrigger>Profile</NavigationMenuTrigger>
-                        <NavigationMenuContent>
-                            <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
-                                {components.map((component) => (
-                                    <Link key={component.title}
-                                        href={component.href}>
-                                        <ListItem title={component.title}>
-                                            {component.description}
-                                        </ListItem>
-                                    </Link>
-                                ))}
-                            </ul>
-                        </NavigationMenuContent>
-                    </NavigationMenuItem>
+                    {(loggedIn) ?
+                        <NavigationMenuItem className="m-0">
+                            <NavigationMenuTrigger>Profile</NavigationMenuTrigger>
+                            <NavigationMenuContent>
+                                <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
+                                    {components.map((component) => (
+                                        <Link key={component.title}
+                                            href={component.href}>
+                                            <ListItem title={component.title}>
+                                                {component.description}
+                                            </ListItem>
+                                        </Link>
+                                    ))}
+                                </ul>
+                            </NavigationMenuContent>
+                        </NavigationMenuItem>
+                        :
+                        <NavigationMenuItem>
+                            <Link href="/login">
+                                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                    Log In
+                                </NavigationMenuLink>
+                            </Link>
+                        </NavigationMenuItem>
+                    }
                 </NavigationMenuList>
             </NavigationMenu>
         </div>
     )
 }
 
-const ListItem = React.forwardRef<
-    React.ElementRef<"a">,
-    React.ComponentPropsWithoutRef<"a">
+const ListItem = forwardRef<
+    ElementRef<"a">,
+    ComponentPropsWithoutRef<"a">
 >(({ className, title, children, ...props }, ref) => {
     return (
         <li>
