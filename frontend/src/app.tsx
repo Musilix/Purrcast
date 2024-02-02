@@ -1,7 +1,7 @@
-import { Route } from "wouter";
 import Home from "@/components/Home/Home";
-import NewPostForm from "@/components/NewPostForm/NewPostForm";
 import { NavMenu } from "@/components/NavMeun/NavMenu";
+import NewPostForm from "@/components/NewPostForm/NewPostForm";
+import { Route } from "wouter";
 import Post from "./components/Post/Post";
 
 function App() {
@@ -16,7 +16,7 @@ function App() {
     <>
       <header className='sticky top-0 z-50 w-screen border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
         <div className="container flex h-14 max-w-screen-2xl items-center">
-          <NavMenu className='flex flex-1 items-center justify-between space-x-2 md:justify-end' />
+          <NavMenu />
         </div>
       </header>
       <Route path="/" component={Home} />
