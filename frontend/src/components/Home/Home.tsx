@@ -20,10 +20,19 @@ export default function Home() {
                         I took that very personally and so Purrcast was built to act as a centralized place for you to post and look at photos of peoples cats in your area to determine if it's going to rain soon or maybe just drizzle.
                     </p>
 
-                    <div className='w-fit h-fit mt-8 p-[1px] rounded-md bg-blue-500 shadow-md hover:bg-slate-700'>
-                        <Button className="p-6 text-lg bg-blue-500 border-solid border-4 border-blue-200 hover:border-blue-500 hover:bg-blue-200 hover:text-slate-700">
-                            <Link href="/create-post">Post a Cat!</Link>
-                        </Button>
+                    <div id="splash-buttons" className="flex flex-row justify-start w-full mt-8 space-x-4">
+                        {/* TODO: maybe make your buttons into a special class so you can extend the colors to use more than just hte primary and secondary color vars defined in the globals.css */}
+                        <div className='w-fit h-fit mt-8 p-[1px] rounded-md bg-blue-500 shadow-md hover:bg-slate-700'>
+                            <Button className="p-6 text-lg bg-blue-500 border-solid border-4 border-blue-200 hover:border-blue-500 hover:bg-blue-200 hover:text-slate-700">
+                                <Link href="/create-post">Post a Cat!</Link>
+                            </Button>
+                        </div>
+                        <div className='w-fit h-fit mt-8 p-[1px] rounded-md bg-purple-500 shadow-md hover:bg-slate-700'>
+
+                            <Button className="p-6 text-lg bg-purple-500 border-solid border-4 border-purple-200 hover:border-purple-500 hover:bg-purple-200 hover:text-slate-700">
+                                <Link href="/faq">What Are You Talking About?</Link>
+                            </Button>
+                        </div>
                     </div>
                 </section>
 

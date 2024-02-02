@@ -1,20 +1,24 @@
 import { ThumbsUp } from "lucide-react";
-import { Button } from "../ui/button";
 import { useState } from "react";
-import { Separator } from "../ui/separator";
+import { Button } from "../ui/button";
 
 export default function Post() {
-    const [postVotes, setPostVotes] = useState(100);
-    const [upVoteBarLength, setUpVoteBarLength] = useState("w-[100px]");
+    const [postVotes, setPostVotes] = useState<number>(0);
 
     const upVotePost = () => {
-        console.log("Upvoted Post");
-        setPostVotes(postVotes + 1);
+        setPostVotes(prevVotes => prevVotes + 1);
     }
 
     const getUpVoteBarLength = () => {
-        if (postVotes > 0 && postVotes < 100) {
-
+        console.log("getting upvoted shits")
+        if (postVotes >= 0 && postVotes <= 999) {
+            return "w-[100px]";
+        } else if (postVotes > 999 && postVotes <= 9999) {
+            return "w-[125px]";
+        } else if (postVotes > 9999 && postVotes <= 99999) {
+            return "w-[150px]";
+        } else {
+            return "w-[200px]";
         }
     }
 
@@ -35,7 +39,7 @@ export default function Post() {
 
                 {/* TODO: possibly move this out to be it's own component, so Post doesnt have to keep track up PostVote state? */}
                 <section className=" flex flex-row justify-center post-metrics border-slate-400 border-solid border-[1px] rounded-full p-1 hover:border-slate-800 hover:bg-secondary transition-all">
-                    <div className={`${upVoteBarLength} grid grid-cols-2 divide-x text-center`}>
+                    <div className={`${getUpVoteBarLength()} grid grid-cols-2 divide-x text-center`}>
                         <div>
                             <Button onClick={upVotePost} variant="ghost" className="p-2 m-0 rounded-full hover:bg-popover">
                                 <ThumbsUp className="size-5 " />
