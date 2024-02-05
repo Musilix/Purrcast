@@ -1,11 +1,13 @@
+import { AuthContext } from "@/context/AuthContext";
 import axios from "axios";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Redirect } from "wouter";
 
 export default function NewPostForm() {
     const [uploadError, setUploadError] = useState<string>("");
     const [postImage, setPostImage] = useState<File | null>();
     const loggedIn = false;
+    const session = useContext(AuthContext);
 
     const handlePostSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -44,9 +46,7 @@ export default function NewPostForm() {
     }
     return (
         <>
-            {(!loggedIn) ?
-                (<Redirect to="/login" />)
-                :
+            {(session && session.user) ?
                 <div id="new-post-wrap">
                     <h3>Make a New Post</h3>
                     <p >Upload a photo of your cat!</p>
@@ -54,7 +54,9 @@ export default function NewPostForm() {
                         <input type="file" name="postImage" id="postImageFile" accept="image/*" onChange={(e) => handlePostChange(e)} />
                         <button type="submit">Share</button>
                     </form>
-                </div>
+                </div> :
+
+                (<Redirect to="/login" />)
             }
         </>
 

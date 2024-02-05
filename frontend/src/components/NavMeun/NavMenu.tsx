@@ -1,4 +1,4 @@
-import { useState, forwardRef, ComponentPropsWithoutRef, ElementRef } from "react";
+import { ComponentPropsWithoutRef, ElementRef, forwardRef, useContext } from "react";
 
 import { cn } from "@/lib/utils";
 // import { Icons } from "@/components/icons"
@@ -11,6 +11,7 @@ import {
     NavigationMenuTrigger,
     navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import { AuthContext } from "@/context/AuthContext";
 import { Link } from "wouter";
 
 const components: { title: string; href: string; description: string }[] = [
@@ -36,8 +37,7 @@ const components: { title: string; href: string; description: string }[] = [
 
 export function NavMenu() {
     // TODO: replace with true auth state, using auth context perhaps.
-    const [loggedIn] = useState(false);
-
+    const session = useContext(AuthContext);
     return (
         <div>
             <NavigationMenu className="flex flex-row w-full justify-between">
@@ -50,7 +50,7 @@ export function NavMenu() {
                         </Link>
                     </NavigationMenuItem>
 
-                    {(loggedIn) ?
+                    {(session && session.user) ?
                         <NavigationMenuItem className="m-0">
                             <NavigationMenuTrigger>Profile</NavigationMenuTrigger>
                             <NavigationMenuContent>
