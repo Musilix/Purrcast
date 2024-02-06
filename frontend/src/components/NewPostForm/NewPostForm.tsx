@@ -1,12 +1,12 @@
 import { AuthContext } from "@/context/AuthContext";
 import axios from "axios";
+import { Session } from '@supabase/supabase-js';
 import { useContext, useState } from "react";
 import { Redirect } from "wouter";
 
 export default function NewPostForm() {
     const [uploadError, setUploadError] = useState<string>("");
     const [postImage, setPostImage] = useState<File | null>();
-    const loggedIn = false;
     const session = useContext(AuthContext);
 
     const handlePostSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -44,9 +44,15 @@ export default function NewPostForm() {
 
         setPostImage(extractedFile.files[0]);
     }
+
+    console.log(session);
+    console.log(session!.user);
+    console.log((session && session.user) ? "true" : "false")
+
     return (
         <>
             {(session && session.user) ?
+
                 <div id="new-post-wrap">
                     <h3>Make a New Post</h3>
                     <p >Upload a photo of your cat!</p>

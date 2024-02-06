@@ -9,16 +9,17 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   const [session, setSession] = useState<Session>({} as Session)
 
   useEffect(() => {
-    __supabase__.auth.getSession().then(({ data: { session } }) => {
+    __supabase__.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) throw error;
       (session) ? setSession(session) : '';
-      console.log(`Session Data:`);
-      console.log(session);
-    })
+    }).catch((error) => {
+      console.error(`Error fetching session: ${error}`);
+    });
 
     const {
       data: { subscription },
     } = __supabase__.auth.onAuthStateChange((_event, session) => {
-      (session) ? setSession(session) : '';
+      setSession(session ?? {} as Session);
     })
 
     return () => subscription.unsubscribe()
