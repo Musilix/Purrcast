@@ -1,6 +1,5 @@
 import { AuthContext } from "@/context/AuthContext";
 import axios from "axios";
-import { Session } from '@supabase/supabase-js';
 import { useContext, useState } from "react";
 import { Redirect } from "wouter";
 
@@ -45,27 +44,20 @@ export default function NewPostForm() {
         setPostImage(extractedFile.files[0]);
     }
 
-    console.log(session);
-    console.log(session!.user);
-    console.log((session && session.user) ? "true" : "false")
-
-    return (
-        <>
-            {(session && session.user) ?
-
-                <div id="new-post-wrap">
-                    <h3>Make a New Post</h3>
-                    <p >Upload a photo of your cat!</p>
-                    <form id="new-post-form" onSubmit={handlePostSubmit} encType='multipart/form-data'>
-                        <input type="file" name="postImage" id="postImageFile" accept="image/*" onChange={(e) => handlePostChange(e)} />
-                        <button type="submit">Share</button>
-                    </form>
-                </div> :
-
-                (<Redirect to="/login" />)
-            }
-        </>
-
-    )
-
+    if (session && session.user) {
+        return (
+            <div id="new-post-wrap">
+                <h3>Make a New Post</h3>
+                <p >Upload a photo of your cat!</p>
+                <form id="new-post-form" onSubmit={handlePostSubmit} encType='multipart/form-data'>
+                    <input type="file" name="postImage" id="postImageFile" accept="image/*" onChange={(e) => handlePostChange(e)} />
+                    <button type="submit">Share</button>
+                </form>
+            </div>
+        )
+    } else {
+        return (
+            <Redirect to="/login" />
+        )
+    }
 }

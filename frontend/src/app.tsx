@@ -2,7 +2,9 @@ import Home from "@/components/Home/Home";
 import { NavMenu } from "@/components/NavMeun/NavMenu";
 import NewPostForm from "@/components/NewPostForm/NewPostForm";
 import { Route, Switch } from "wouter";
+import Loader from "./components/Loader/Loader";
 import Login from "./components/Login/Login";
+import Logout from "./components/Logout/Logout";
 import Post from "./components/Post/Post";
 import Profile from "./components/Profile/Profile";
 import Test from "./components/Test/Test";
@@ -11,7 +13,6 @@ import { ModeToggle } from "./components/ThemeToggle/ThemeToggle";
 import UserPostsHistory from "./components/UserPostsHistory/UserPostsHistory";
 import faq from "./components/faq/faq";
 import AuthProvider from "./context/AuthContext";
-import Loader from "./components/Loader/Loader";
 
 function App() {
   return (
@@ -32,13 +33,13 @@ function App() {
               <ModeToggle />
             </div>
           </header>
-          <section id="main-content" className="w-full h-full max-w-screen-2xl flex relative flex-grow place-items-center justify-center my-10">
+          <section id="main-content" className="w-full h-full max-w-screen-2xl flex relative flex-grow place-items-center justify-center my-10 p-5">
             <Switch>
               <Route path="/" component={Home} />
               <Route path="/faq" component={faq} />
 
               <Route path="/login" component={Login} />
-              <Route path="/logout" component={Test} />
+              <Route path="/logout" component={Logout} />
 
 
               <Route path="/create-post" component={NewPostForm} />
