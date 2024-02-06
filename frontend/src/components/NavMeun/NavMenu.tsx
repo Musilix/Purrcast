@@ -1,7 +1,5 @@
-import { useState, forwardRef, ComponentPropsWithoutRef, ElementRef } from "react";
+import { ComponentPropsWithoutRef, ElementRef, forwardRef, useContext } from "react";
 
-import { cn } from "@/lib/utils";
-// import { Icons } from "@/components/icons"
 import {
     NavigationMenu,
     NavigationMenuContent,
@@ -11,14 +9,16 @@ import {
     NavigationMenuTrigger,
     navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import { AuthContext } from "@/context/AuthContext";
+import { cn } from "@/lib/utils";
 import { Link } from "wouter";
 
 const components: { title: string; href: string; description: string }[] = [
     {
-        title: "Edit Profile",
+        title: "Profile Info",
         href: "/profile",
         description:
-            "Edit your profile information, including your name, email, and password.",
+            "Look at your profile information and delete your account.",
     },
     {
         title: "View Posts",
@@ -35,8 +35,7 @@ const components: { title: string; href: string; description: string }[] = [
 ]
 
 export function NavMenu() {
-    // TODO: replace with true auth state, using auth context perhaps.
-    const [loggedIn] = useState(false);
+    const session = useContext(AuthContext);
 
     return (
         <div>
@@ -50,7 +49,7 @@ export function NavMenu() {
                         </Link>
                     </NavigationMenuItem>
 
-                    {(loggedIn) ?
+                    {(session && session.user) ?
                         <NavigationMenuItem className="m-0">
                             <NavigationMenuTrigger>Profile</NavigationMenuTrigger>
                             <NavigationMenuContent>

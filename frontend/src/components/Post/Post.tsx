@@ -9,6 +9,7 @@ export default function Post() {
         setPostVotes(prevVotes => prevVotes + 1);
     }
 
+    // I don't like this
     const getUpVoteBarLength = () => {
         console.log("getting upvoted shits")
         if (postVotes >= 0 && postVotes <= 999) {
