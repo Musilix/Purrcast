@@ -4,7 +4,7 @@ import { useContext, useState } from "react";
 import { Redirect } from "wouter";
 
 export default function NewPostForm() {
-    const [uploadError, setUploadError] = useState<string>("");
+    const [, setUploadError] = useState<string>("");
     const [postImage, setPostImage] = useState<File | null>();
     const session = useContext(AuthContext);
 
