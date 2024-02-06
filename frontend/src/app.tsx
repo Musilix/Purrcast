@@ -1,93 +1,60 @@
-import { useState } from 'react';
-// import testPosts from "../src/test.json";
-import './app.css';
-import TestService from './services/TestService';
-// import { Post } from './types/Post';
+import Home from "@/components/Home/Home";
+import { NavMenu } from "@/components/NavMeun/NavMenu";
+import NewPostForm from "@/components/NewPostForm/NewPostForm";
+import { Route, Switch } from "wouter";
+import Loader from "./components/Loader/Loader";
+import Login from "./components/Login/Login";
+import Logout from "./components/Logout/Logout";
+import Post from "./components/Post/Post";
+import Profile from "./components/Profile/Profile";
+import Test from "./components/Test/Test";
+import { ThemeProvider } from "./components/ThemeProvider/ThemeProvider";
+import { ModeToggle } from "./components/ThemeToggle/ThemeToggle";
+import UserPostsHistory from "./components/UserPostsHistory/UserPostsHistory";
+import faq from "./components/faq/faq";
+import AuthProvider from "./context/AuthContext";
 
-//TODO - probably move this somewhere else
-interface User {
-  id: number;
-  username: string;
-  name: string;
-}
 function App() {
-  const [testValue, setTestValue] = useState<string | User[]>("...");
-  const testService = new TestService();
-
-  const [username, setUsername] = useState<string>("")
-  const [name, setName] = useState<string>("")
-
-  // Form Related Junk - put this into a hook probably
-  const handleUserNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    setUsername(e.target.value);
-  }
-
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    setName(e.target.value);
-  }
-
-  const handleUserSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    console.log("Submitting new user: ", username, name);
-
-    testService.addUser(username, name);
-
-    setName("");
-    setUsername("");
-  }
-
-
-  // Question - is it ok to have async functions in the event handler?
-  const handleTestClick = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.preventDefault();
-    const testData: string | User[] = await testService.getTestData();
-    setTestValue(testData);
-  }
-
-
   return (
-    <>
-      <img src="/purrcast.gif" alt="Purrcast Logo" style={{ width: "300px", height: "300px" }} />
-      <h1 style={{ margin: "0px" }}>Purrcast Test Feed</h1>
-      <h3>Today is estimated to be _ in _</h3>
-      <button onClick={(e) => handleTestClick(e)}>Look at Current Users</button>
+    /*
+    TODO:
+      If user is not logged in, give them the generic homepage
+      Else, if they are logged in, give them a more customized homepage
 
-      <div id="data-wrap">
-        {
+      Do so by utilizing props or auth context
+    */
+    <AuthProvider>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        {/* TODO: do something with this? */}
+        <Loader>
+          <header className='w-full sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
+            <div className="w-full flex h-14  items-center p-10 justify-between">
+              <NavMenu />
+              <ModeToggle />
+            </div>
+          </header>
+          <section id="main-content" className="w-full h-full max-w-screen-2xl flex relative flex-grow place-items-center justify-center my-10 p-5">
+            <Switch>
+              <Route path="/" component={Home} />
+              <Route path="/faq" component={faq} />
 
-          (typeof testValue !== "string" && testValue !== null) ?
-            (
-              testValue.map((user: User) => {
-                return (
-                  <div key={user.id} style={{ backgroundColor: "#242424", borderRadius: "5px", padding: "5px", margin: "10px 0px" }}>
-                    <p style={{ "fontSize": "15px" }}>{user.name}</p>
-                    <p>{user.username}</p>
-                  </div>
-                )
-              })) : <p>{testValue}</p>
+              <Route path="/login" component={Login} />
+              <Route path="/logout" component={Logout} />
 
-        }
-      </div >
 
-      <hr style={{
-        backgroundColor: "gray",
-        height: "2px",
-        borderRadius: "5px",
-        border: "0px"
-      }} />
+              <Route path="/create-post" component={NewPostForm} />
+              <Route path="/post/:post_id" component={Post} />
 
-      <h3 style={{ textAlign: "left" }}>Create a New User</h3>
-      <div id="new-user-wrap">
-        <form onSubmit={handleUserSubmit}>
-          <input id="username-input" type="text" name="username" placeholder="Username" value={username} required onChange={handleUserNameChange} />
-          <input id="name-input" type="text" name="name" placeholder="Name (optional)" value={name} onChange={handleNameChange} />
-          <button type="submit">Add New User</button>
-        </form>
-      </div>
-    </>
+              <Route path="/profile" component={Profile} />
+              <Route path="/profile/posts" component={UserPostsHistory} />
+
+              <Route path="/testing" component={Test} />
+              <Route component={() => <h1>404 - Not Found</h1>} />
+            </Switch>
+          </section>
+        </Loader>
+      </ThemeProvider>
+    </AuthProvider>
   )
 }
 

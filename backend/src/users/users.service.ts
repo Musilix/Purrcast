@@ -8,9 +8,12 @@ export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
   create(createUserDto: CreateUserDto) {
-    const res = this.prisma.user.create({ data: createUserDto });
-
-    return res;
+    try {
+      const res = this.prisma.user.create({ data: createUserDto });
+      return res;
+    } catch (e) {
+      return new Error('Error creating a User');
+    }
   }
 
   async findAll() {
