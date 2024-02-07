@@ -1,8 +1,7 @@
 [build]
-  # Run any pending migrations to update the db, then build project out
+  # Build project out
   command = "npm run build"
 
-  # IM SO RIDICULOUS
-  # I FORGOT I HAD THIS SET TO PUBLIC, BUT IT NEEDED TO BE DIST, SO I KEPT GETTING FALSE 404s... smh, fixed now. DONT FORGET THIS
+  # Build artifacts directory
   publish = "dist/"
   
