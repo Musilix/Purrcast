@@ -2,8 +2,8 @@ export default function faq() {
   return (
     <>
       <main className="flex flex-col flex-auto place-items-center w-1/2 md:w-3/5 max-w-screen-lg space-y-10 *:p-5">
-        <section id="splash-intro" className="w-full *:m-0">
-          <h1 className="scroll-m-20 border-b pb-4 text-4xl font-extrabold tracking-tight lg:text-5xl break-words">
+        <section id="intro" className="w-full *:m-0">
+          <h1 className="scroll-m-20 pb-4 text-4xl font-extrabold tracking-tight drop-shadow-custom lg:text-5xl break-words">
             What is this?
           </h1>
           <p className="leading-7 [&:not(:first-child)]:mt-6 break-words">
@@ -22,7 +22,7 @@ export default function faq() {
           </div>
         </section>
 
-        <section id="splash-prev-posts" className="w-full">
+        <section id="what-do-i-post" className="w-full">
           <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
             What do I post here?
           </h2>
@@ -31,26 +31,73 @@ export default function faq() {
           </p>
         </section>
 
-        <section id="splash-prev-posts" className="w-full">
+        <section id="what-kind-of-cat-pics" className="w-full">
+          <div id="pic-details-wrap" className="w-full">
+            <div id="pic-details" className="w-full">
+              <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
+                What kind of cat pictures?
+              </h2>
+              <p className="leading-7 [&:not(:first-child)]:mt-6 break-words">
+                Although all cat pics are good cat pics, on Purrcast that is a different story. We're looking for a specific type of cat pic.
+                That is, pictures of sleeping cats only! If you decide to post a photo on Purrcast to help others devolve back to their monolithic roots, you must make sure your cat is asleep in the photo.
+                Otherwise, it will taint the data!
+              </p>
+              <p className="leading-7 [&:not(:first-child)]:mt-6 break-words">
+                We do have systems in place to try to keep people from posting a photo of a cat if the cat is not asleep in the image, but we are actually legally obligated to tell you that the creator of this site has an IQ less than 96, so we can't put too much trust into that.
+                Although the systems are there, please do your due diligence and make sure your cat is asleep in the photo before posting. Please report any photos that are not of sleeping cats.
+              </p>
+
+              <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mt-6">
+                What do we consider <i>sleeping on it's head</i>?
+              </h3>
+              <p className="leading-7 [&:not(:first-child)]:mt-6 break-words">
+                As already mentioned, the means for us predicting what the weather will be like is solely based on whether a cat is sleeping on it's head or not.
+                You may confused as to what we consider a cat sleeping on it's head, so please refer to the examples below for the 3 types of sleeping cats we consider:
+              </p>
+            </div>
+            <div id="pic-details-example-images" className="w-full flex flex-row *:m-5  ">
+              <div id="bad-examples" className="w-1/2 h-[500px] relative grid grid-cols-3 grid-rows-3 gap-5 mt-5 p-5 bg-accent rounded-lg *:rounded-md">
+                <img src="https://cataas.com/cat" alt="bad example 1" className="w-full h-full row-span-2 col-span-1" />
+                <img src="https://cataas.com/cat" alt="bad example 1" className="w-full h-full row-span-1 col-span-1" />
+                <img src="https://cataas.com/cat" alt="bad example 1" className="w-full h-full row-span-1 col-span-1" />
+                <img src="https://cataas.com/cat" alt="bad example 1" className="w-full h-full row-span-2 col-span-2" />
+                <img src="https://cataas.com/cat" alt="bad example 1" className="w-full h-full row-span-1 col-span-1" />
+
+                <img src="https://cataas.com/cat" alt="bad example 1" className="size-1/6 absolute right-[0px] -top-[50px]" />
+              </div>
+              <div id="good-examples" className="w-1/2 h-[500px] relative grid grid-cols-3 grid-rows-3 gap-5 mt-5 p-5 bg-accent rounded-lg border-solid border-4 border-red *:rounded-md">
+                <img src="https://cataas.com/cat" alt="bad example 1" className="w-full h-full row-span-1 col-span-2" />
+                <img src="https://cataas.com/cat" alt="bad example 1" className="w-full h-full row-span-1 col-span-1" />
+                <img src="https://cataas.com/cat" alt="bad example 1" className="w-full h-full row-span-2 col-span-2" />
+                <img src="https://cataas.com/cat" alt="bad example 1" className="w-full h-full row-span-2 col-span-1" />
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <section id="what-kind-of-cat-pics" className="w-full">
           <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-            What kind of cat pictures?
+            How do we make our predictions?
           </h2>
           <p className="leading-7 [&:not(:first-child)]:mt-6 break-words">
-            Although all cat pics are good cat pics, on Purrcast that is a different story. We're looking for a specific type of cat pic.
-            That is, pictures of sleeping cats only! If you decide to post a photo on Purrcast to help others devolve back to their monolithic roots, you must make sure your cat is asleep in the photo.
-            Otherwise, it will taint the data!
+            The way we make our predictions is absolutely nothing special.
           </p>
           <p className="leading-7 [&:not(:first-child)]:mt-6 break-words">
-            We do have systems in place to try to keep people from posting a photo of a cat if the cat is not asleep in the image, but we are actually legally obligated to tell you that the creator of this site has an IQ less than 96, so we can't put too much trust into that.
-            Although the systems are there, please do your due diligence and make sure your cat is asleep in the photo before posting. Please report any photos that are not of sleeping cats.
+            The way we show a specific user a prediction first starts with grabbing their location. If there are gracious enough to allow us to use their location, we will then make a request to our backend
+            to search for all posts within a certain radius of the user's location.
+          </p>
+          <p className="leading-7 [&:not(:first-child)]:mt-6 break-words">
+            We store each cat post with a special column that gets generated usually a few seconds after the submission of the post. This column is a true or false value that indicates whether the cat in the photo is laying on their head or not.
+            This logic is handled by... you guessed it, ARTIFICIAL INTELLIGENCE.
+          </p>
+          <p className="leading-7 [&:not(:first-child)]:mt-6 break-words">
+            We utilize this special column to then comb through all the posts from within the user's radius, keeping track of how many have the special column set to true. We finally divide that sum of posts where the cat is laying on it's head by the total number of posts within the user's radius to get a percentage.
           </p>
 
           <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mt-6">
-            What do we consider <i>sleeping on it's head</i>?
           </h3>
           <p className="leading-7 [&:not(:first-child)]:mt-6 break-words">
-            As already mentioned, the means for us predicting what the weather will be like is solely based on whether a cat is sleeping on it's head or not.
-            You may confused as to what we consider a cat sleeping on it's head, so please refer to the examples below for the 3 types of sleeping cats we consider:
           </p>
         </section>
       </main>

@@ -33,7 +33,7 @@ function App() {
               <ModeToggle />
             </div>
           </header>
-          <section id="main-content" className="w-full h-full max-w-screen-2xl flex relative flex-grow place-items-center justify-center my-10 p-5">
+          <section id="main-content" className="w-full h-full max-w-screen-2xl flex relative flex-grow place-items-center justify-center my-10 sm:p-5">
             <Switch>
               <Route path="/" component={Home} />
               <Route path="/faq" component={faq} />
