@@ -20,7 +20,7 @@ export default function NonUserHome() {
             I took that very personally and so Purrcast was built to act as a centralized place for you to post and look at photos of peoples cats in your area to determine if it's going to rain soon or maybe just drizzle.
           </p>
 
-          <div id="splash-buttons" className="flex flex-row justify-start w-full mt-8 space-x-4">
+          <div id="splash-buttons" className="flex flex-col md:flex-row lg:flex-row justify-start w-full mt-8 space-x-0 space-y-4 md:space-x-4 md:space-y-0 lg:space-x-4 lg:space-y-0 ">
             {/* TODO: maybe make your buttons into a special class so you can extend the colors to use more than just hte primary and secondary color vars defined in the globals.css */}
 
             <Button className="p-6 text-lg">
