@@ -55,21 +55,60 @@ export default function faq() {
                 You may confused as to what we consider a cat sleeping on it's head, so please refer to the examples below for the 3 types of sleeping cats we consider:
               </p>
             </div>
-            <div id="pic-details-example-images" className="w-full flex flex-row *:m-5  ">
-              <div id="bad-examples" className="w-1/2 h-[500px] relative grid grid-cols-3 grid-rows-3 gap-5 mt-5 p-5 bg-accent rounded-lg *:rounded-md">
-                <img src="https://cataas.com/cat" alt="bad example 1" className="w-full h-full row-span-2 col-span-1" />
-                <img src="https://cataas.com/cat" alt="bad example 1" className="w-full h-full row-span-1 col-span-1" />
-                <img src="https://cataas.com/cat" alt="bad example 1" className="w-full h-full row-span-1 col-span-1" />
-                <img src="https://cataas.com/cat" alt="bad example 1" className="w-full h-full row-span-2 col-span-2" />
-                <img src="https://cataas.com/cat" alt="bad example 1" className="w-full h-full row-span-1 col-span-1" />
+            <div id="pic-details-example-images" className="w-full flex flex-col justify-center place-items-center mt-10 *:m-5 md:flex-row md:justify-between">
+              <div className="sm:w-3/4 md:w-1/2">
+                <div id="bad-examples" className="aspect-square relative grid grid-cols-3 grid-rows-3 gap-5 mt-5 p-5 bg-accent rounded-lg border-dashed border border-accent-foreground">
+                  <img src="https://cdn2.thecatapi.com/images/6d0.jpg" alt="bad example 1" className="w-full h-full row-span-2 col-span-1 rounded-md" />
+                  <img src="https://cdn2.thecatapi.com/images/efs.jpg" alt="bad example 2" className="w-full h-full row-span-1 col-span-1 rounded-md" />
+                  <img src="https://29.media.tumblr.com/tumblr_krvvj0ZbSA1qa9hjso1_1280.jpg" alt="bad example 3" className="w-full h-full row-span-1 col-span-1 rounded-md" />
+                  <img src="https://cdn2.thecatapi.com/images/aag.jpg" alt="bad example 4" className="w-full h-full row-span-2 col-span-2 rounded-md" />
+                  <img src="https://cdn2.thecatapi.com/images/a6u.jpg" alt="bad example 5" className="w-full h-full row-span-1 col-span-1 rounded-md" />
 
-                <img src="https://cataas.com/cat" alt="bad example 1" className="size-1/6 absolute right-[0px] -top-[50px]" />
+                  <div className="size-1/6 absolute -left-[20px] -top-[30px] bg-background border-foreground border-dashed border p-4 rounded-full">
+                    <img src="/incorrect.png" alt="incorrect-indicator-image" className="drop-shadow-red" />
+                  </div>
+                </div>
+
+                <div className="mt-5">
+                  <p className="leading-7 [&:not(:first-child)]:mt-6 break-words">Notice how these cats are...</p>
+                </div>
               </div>
-              <div id="good-examples" className="w-1/2 h-[500px] relative grid grid-cols-3 grid-rows-3 gap-5 mt-5 p-5 bg-accent rounded-lg border-solid border-4 border-red *:rounded-md">
-                <img src="https://cataas.com/cat" alt="bad example 1" className="w-full h-full row-span-1 col-span-2" />
-                <img src="https://cataas.com/cat" alt="bad example 1" className="w-full h-full row-span-1 col-span-1" />
-                <img src="https://cataas.com/cat" alt="bad example 1" className="w-full h-full row-span-2 col-span-2" />
-                <img src="https://cataas.com/cat" alt="bad example 1" className="w-full h-full row-span-2 col-span-1" />
+
+              <div className="sm:w-3/4 md:w-1/2">
+                <div id="good-examples" className="aspect-square relative grid grid-cols-3 grid-rows-3 gap-5 mt-5 p-5 bg-accent rounded-lg border-dashed border border-accent-foreground">
+                  <img src="https://cdn2.thecatapi.com/images/-y_6SBPrw.jpg" alt="good example 4" className="w-full h-full row-span-2 col-span-2 rounded-md" />
+                  <img src="https://cdn2.thecatapi.com/images/MTkyNzQ3NA.gif" alt="good example 1" className="w-full h-full row-span-2 col-span-1 rounded-md" />
+                  <img src="https://cdn2.thecatapi.com/images/bfb.jpg" alt="good example 2" className="w-full h-full row-span-1 col-span-1 rounded-md" />
+                  <img src="https://cdn2.thecatapi.com/images/9hn.jpg" alt="good example 3" className="w-full h-full row-span-1 col-span-1 rounded-md" />
+                  <img src="https://cdn2.thecatapi.com/images/A7Dsj7g1x.png" alt="good example 5" className="w-full h-full row-span-1 col-span-1 rounded-md" />
+
+                  <div className="size-1/6 absolute -left-[20px] -top-[30px] bg-background border-foreground border-dashed border p-4 rounded-full">
+                    <img src="/correct.png" alt="correct-indicator-image" className=" drop-shadow-green" />
+                  </div>
+                </div>
+
+                <div className="mt-5">
+                  <p className="leading-7 [&:not(:first-child)]:mt-6 break-words">In contrast, these cats are...</p>
+                </div>
+              </div>
+            </div>
+
+            <div id="misc-pic-details" className="w-full flex flex-col justify-center mt-10 *:m-5 md:flex-row md:justify-between sm:place-items-center md:place-items-start">
+              <div id="good-examples" className="sm:size-3/4  md:size-1/2 aspect-square relative grid grid-cols-3 grid-rows-3 gap-5 mt-5 p-5 bg-accent rounded-lg border-dashed border border-accent-foreground">
+                <img src="https://cdn2.thecatapi.com/images/-y_6SBPrw.jpg" alt="good example 4" className="w-full h-full row-span-2 col-span-2 rounded-md" />
+                <img src="https://cdn2.thecatapi.com/images/MTkyNzQ3NA.gif" alt="good example 1" className="w-full h-full row-span-2 col-span-1 rounded-md" />
+                <img src="https://cdn2.thecatapi.com/images/bfb.jpg" alt="good example 2" className="w-full h-full row-span-1 col-span-1 rounded-md" />
+                <img src="https://cdn2.thecatapi.com/images/9hn.jpg" alt="good example 3" className="w-full h-full row-span-1 col-span-1 rounded-md" />
+                <img src="https://cdn2.thecatapi.com/images/A7Dsj7g1x.png" alt="good example 5" className="w-full h-full row-span-1 col-span-1 rounded-md" />
+
+                <div className="size-1/6 absolute -left-[20px] -top-[30px] bg-background border-foreground border-dashed border p-4 rounded-full">
+                  <img src="/correct.png" alt="correct-indicator-image" className=" drop-shadow-green" />
+                </div>
+              </div>
+
+              <div className=" sm:w-full mt-5">
+                <p className="leading-7 [&:not(:first-child)]:mt-6 break-words">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas tempor ex quis ipsum sollicitudin, eu fermentum ante maximus.</p>
+                <p className="leading-7 [&:not(:first-child)]:mt-6 break-words">Integer consequat sapien et lobortis elementum. Nam id sapien tempus velit iaculis cursus. Nunc interdum ligula sed neque aliquet ultrices. Praesent metus elit, semper quis iaculis quis, scelerisque tincidunt tortor. Nullam tincidunt finibus lacus, ac tristique dolor volutpat a. Aenean ut rutrum purus. Pellentesque semper hendrerit ipsum, at tempus sem pharetra at. Ut magna erat, ullamcorper in volutpat quis, cursus quis lectus. Morbi viverra pellentesque leo, nec blandit tortor mollis eget.</p>
               </div>
             </div>
           </div>
