@@ -5,7 +5,7 @@ import { Redirect } from "wouter";
 import NewPostFormDropZone from "./NewPostFormDropZone";
 
 export default function NewPostForm() {
-    const [, setUploadError] = useState<string>("");
+    const [uploadError, setUploadError] = useState<string>("");
     const [postImage, setPostImage] = useState<File | null>();
     const { session } = useContext(AuthContext);
 
@@ -34,27 +34,28 @@ export default function NewPostForm() {
         }
     }
 
-    const handlePostChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        e.preventDefault();
-
-        const extractedFile = e.target as HTMLInputElement & {
-
-            files: FileList;
-        }
-
-        setPostImage(extractedFile.files[0]);
+    const handlePostChange = (acceptedFile: File) => {
+        setPostImage(acceptedFile);
     }
 
     if (session && session.user) {
         return (
-            <div id="new-post-wrap" className="w-1/2 max-w-[600px] h-full flex justify-center place-items-center flex-col">
+            <div id="new-post-wrap" className="w-full max-w-[600px] h-full flex justify-center place-items-center flex-col">
                 <h1 className="scroll-m-20 pb-4 text-4xl font-extrabold tracking-tight drop-shadow-custom lg:text-5xl break-words">
                     Post a Cat
                 </h1>
                 <form id="new-post-form" onSubmit={handlePostSubmit} encType='multipart/form-data'>
-                    <NewPostFormDropZone handlePostChange={handlePostChange} />
-                    {(postImage) ? <button type="submit">Share</button> : ""}
+                    {(postImage) ?
+                        // TODO: make a component for the preview and submit button if the post img has been seen
+                        // if not, show the dropzone
+                        <>
+                            <img src={URL.createObjectURL(postImage)} alt="preview" />
+                            <button type="submit">Share</button>
+                        </> :
+                        <NewPostFormDropZone handlePostChange={handlePostChange} />
+                    }
                 </form>
+                {(uploadError) ? <p>{`We had an issue uploading your file. ${uploadError}`}</p> : ""}
             </div>
         )
     } else {

@@ -2,27 +2,48 @@ import { FileImage } from "lucide-react";
 import { useCallback } from "react"
 import { useDropzone } from "react-dropzone"
 
-export default function NewPostFormDropZone({ handlePostChange }: { handlePostChange: React.EventHandler<React.ChangeEvent<HTMLInputElement>> }) {
-    const onDrop = useCallback((acceptedFiles: Array<Object>) => {
+export default function NewPostFormDropZone({ handlePostChange }: { handlePostChange: Function }) {
+    const handleDropAccepted = useCallback((acceptedFiles: File[]) => {
+        console.log(acceptedFiles[0]);
         handlePostChange(acceptedFiles[0]);
     }, []);
 
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+    const handleDropRejection = (fileRejections: any) => {
+        console.error(fileRejections[0].errors[0].message);
+        // set isError to true for form and display error message
+    };
+
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+        accept: {
+            'image/*': ['.jpg', '.jpeg', '.png', '.webp']
+        },
+        maxFiles: 1,
+        maxSize: 100000000, //100MB
+        noDrag: false,
+        onDropAccepted: handleDropAccepted,
+        onDropRejected: handleDropRejection
+        // onDrop
+    });
 
     return (
         <>
-            <div className="flex flex-col justify-center place-items-center text-foreground bg-input rounded-md border-dashed border-muted-foreground border-2 p-8 my-5 cursor-pointer hover:border-foreground *:m-1" {...getRootProps()}>
-                <FileImage size={48} />
-                <input {...getInputProps()} type="file" name="postImage" id="postImageFile" accept="image/*" />
+            <div className="min-w-full sm:min-w-full md:min-w-[500px] flex flex-col justify-center place-items-center text-foreground bg-input rounded-md border-dashed border-muted-foreground border-2 p-8 my-5 cursor-pointer hover:border-foreground *:m-1" {...getRootProps()}>
+
+                <input {...getInputProps()} name="postImage" id="postImageFile" />
                 {
                     isDragActive ?
-                        <p className="leading-7 [&:not(:first-child)]:mt-6 break-words">
-                            Drag File to Upload or Click Here
-                        </p> :
-                        <p className="leading-7 [&:not(:first-child)]:mt-6 break-words">
-                            Click Here to Upload an Image
-                        </p>
-
+                        <>
+                            <FileImage size={48} color="hsl(var(--muted-foreground))" />
+                            <p className="leading-7 [&:not(:first-child)]:mt-6 break-words text-muted-foreground">
+                                Drop File Here to Upload
+                            </p>
+                        </> :
+                        <>
+                            <FileImage size={48} color="hsl(var(--muted-foreground))" />
+                            <p className="leading-7 [&:not(:first-child)]:mt-6 break-words text-muted-foreground">
+                                Drag File to Upload or Click Here
+                            </p>
+                        </>
                 }
             </div>
         </>
