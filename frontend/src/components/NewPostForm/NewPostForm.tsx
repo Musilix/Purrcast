@@ -47,12 +47,13 @@ export default function NewPostForm() {
 
     if (session && session.user) {
         return (
-            <div id="new-post-wrap">
-                <h3>Make a New Post</h3>
-                <p >Upload a photo of your cat!</p>
+            <div id="new-post-wrap" className="w-1/2 max-w-[600px] h-full flex justify-center place-items-center flex-col">
+                <h1 className="scroll-m-20 pb-4 text-4xl font-extrabold tracking-tight drop-shadow-custom lg:text-5xl break-words">
+                    Post a Cat
+                </h1>
                 <form id="new-post-form" onSubmit={handlePostSubmit} encType='multipart/form-data'>
                     <NewPostFormDropZone handlePostChange={handlePostChange} />
-                    <button type="submit">Share</button>
+                    {(postImage) ? <button type="submit">Share</button> : ""}
                 </form>
             </div>
         )
