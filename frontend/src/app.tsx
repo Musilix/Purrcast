@@ -25,7 +25,10 @@ function App() {
     */
     <AuthProvider>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        {/* TODO: do something with this? */}
+        {/* 
+          TODO: It would probably be beneficial to abstract out a Loader into it's own generalized component that takes some children elements and a prop isLoading
+                while leaving the specific of the context for said loading to a more dialed in component like PageLoader or <CardLoader>
+        */}
         <Loader>
           <header className='w-full sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
             <div className="w-full flex h-14  items-center p-10 justify-between">

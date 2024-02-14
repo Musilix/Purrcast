@@ -6,7 +6,7 @@ import { useContext } from "react";
 import { Redirect } from "wouter";
 
 export default function Login() {
-  const session = useContext(AuthContext);
+  const { session } = useContext(AuthContext);
 
   //do some supabase oauth stuff
   return (

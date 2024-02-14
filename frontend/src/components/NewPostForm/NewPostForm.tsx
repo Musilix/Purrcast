@@ -2,11 +2,12 @@ import { AuthContext } from "@/context/AuthContext";
 import axios from "axios";
 import { useContext, useState } from "react";
 import { Redirect } from "wouter";
+import NewPostFormDropZone from "./NewPostFormDropZone";
 
 export default function NewPostForm() {
     const [, setUploadError] = useState<string>("");
     const [postImage, setPostImage] = useState<File | null>();
-    const session = useContext(AuthContext);
+    const { session } = useContext(AuthContext);
 
     const handlePostSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -50,7 +51,7 @@ export default function NewPostForm() {
                 <h3>Make a New Post</h3>
                 <p >Upload a photo of your cat!</p>
                 <form id="new-post-form" onSubmit={handlePostSubmit} encType='multipart/form-data'>
-                    <input type="file" name="postImage" id="postImageFile" accept="image/*" onChange={(e) => handlePostChange(e)} />
+                    <NewPostFormDropZone handlePostChange={handlePostChange} />
                     <button type="submit">Share</button>
                 </form>
             </div>

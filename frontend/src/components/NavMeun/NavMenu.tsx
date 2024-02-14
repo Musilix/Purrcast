@@ -35,7 +35,7 @@ const components: { title: string; href: string; description: string }[] = [
 ]
 
 export function NavMenu() {
-    const session = useContext(AuthContext);
+    const { session } = useContext(AuthContext);
 
     return (
         <div>

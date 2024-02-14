@@ -5,7 +5,7 @@ import NonUserHome from "./NonUserHome";
 import UserHome from "./UserHome";
 
 export default function Home() {
-    const session = useContext(AuthContext);
+    const { session } = useContext(AuthContext);
 
     if (session && session.user) {
         return <UserHome session={session as Session} />
