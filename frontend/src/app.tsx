@@ -16,13 +16,6 @@ import AuthProvider from "./context/AuthContext";
 
 function App() {
   return (
-    /*
-    TODO:
-      If user is not logged in, give them the generic homepage
-      Else, if they are logged in, give them a more customized homepage
-
-      Do so by utilizing props or auth context
-    */
     <AuthProvider>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         {/* 

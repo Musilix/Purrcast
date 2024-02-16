@@ -1,4 +1,4 @@
-import { __prod__, __supabase__ } from "@/constants";
+import { __supabase__ } from "@/constants";
 import { AuthContext } from "@/context/AuthContext";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
@@ -19,7 +19,6 @@ export default function Login() {
           <p className="leading-7 [&:not(:first-child)]:mt-6">
             In order to post, you'll have to make an account. Currently, we only support creating an account with Google.
           </p>
-          <p>We're gonna try to redirect you to {import.meta.env.VITE_REDIRECT_URI}</p>
           <Auth supabaseClient={__supabase__} onlyThirdPartyProviders={true} providers={['google']} appearance={{ theme: ThemeSupa }} />
         </div>
       )}

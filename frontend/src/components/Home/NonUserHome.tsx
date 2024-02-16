@@ -22,15 +22,13 @@ export default function NonUserHome() {
 
           <div id="splash-buttons" className="flex flex-col md:flex-row lg:flex-row justify-start w-full mt-8 space-x-0 space-y-4 md:space-x-4 md:space-y-0 lg:space-x-4 lg:space-y-0 ">
             {/* TODO: maybe make your buttons into a special class so you can extend the colors to use more than just hte primary and secondary color vars defined in the globals.css */}
+            <Link href="/create-post">
+              <Button className="p-6 text-lg">Post a Cat!</Button>
+            </Link>
 
-            <Button className="p-6 text-lg">
-              <Link href="/create-post">Post a Cat!</Link>
-            </Button>
-
-            <Button className="p-6 text-lg" variant={'secondary'}>
-              <Link href="/faq">What Are You Talking About?</Link>
-            </Button>
-
+            <Link href="/faq">
+              <Button className="p-6 text-lg" variant={'secondary'}>What Are You Talking About?</Button>
+            </Link>
           </div>
         </section>
 
