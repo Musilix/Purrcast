@@ -2,6 +2,7 @@ import { AuthContext } from "@/context/AuthContext";
 import axios from "axios";
 import { useContext, useState } from "react";
 import { Redirect } from "wouter";
+import { Button } from "../ui/button";
 import NewPostFormDropZone from "./NewPostFormDropZone";
 
 export default function NewPostForm() {
@@ -49,8 +50,11 @@ export default function NewPostForm() {
                         // TODO: make a component for the preview and submit button if the post img has been seen
                         // if not, show the dropzone
                         <>
-                            <img src={URL.createObjectURL(postImage)} alt="preview" />
-                            <button type="submit">Share</button>
+                            <div className="rounded-md min-w-[300px] max-w-1/2 m-5 p-5 aspect-square shadow-md">
+                                <img className="rounded-md" src={URL.createObjectURL(postImage)} alt="preview" />
+                            </div>
+                            <Button type="submit">Share</Button>
+                            <Button onClick={() => setPostImage(null)}>Cancel</Button>
                         </> :
                         <NewPostFormDropZone handlePostChange={handlePostChange} />
                     }

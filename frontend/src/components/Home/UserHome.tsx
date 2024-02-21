@@ -7,7 +7,7 @@ import { Button } from '../ui/button';
 export default function UserHome({ session }: { session: Session }) {
   return (
     <>
-      <main className="flex flex-col flex-auto justify-center align-center place-items-center w-1/4 md:w-3/5 max-w-screen-md space-y-10 *:p-5">
+      <main className="flex flex-col flex-auto justify-center align-center place-items-center w-1/4 md:w-3/5 max-w-screen-md *:p-5">
         <section id="splash-intro" className="flex flex-col w-full place-items-center place-content-center *:my-5">
           <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl break-words text-center">
             {
@@ -37,7 +37,7 @@ export default function UserHome({ session }: { session: Session }) {
         <section id="cta-wrap" className="flex flex-row w-full align-center place-items-center place-content-center my-0 mt-0 *:m-5">
           <div>
             <Link href="/posts">
-              <Button className="p-6 text-lg">See Posts Near You</Button>
+              <Button className="p-6 text-lg" size={'sm'}>See Posts Near You</Button>
             </Link>
           </div>
           <div>
