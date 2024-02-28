@@ -1,5 +1,5 @@
 import Home from "@/components/Home/Home";
-import { NavMenu } from "@/components/NavMeun/NavMenu";
+import { NavMenu } from "@/components/NavMenu/NavMenu";
 import NewPostForm from "@/components/NewPostForm/NewPostForm";
 import { Route, Switch } from "wouter";
 import Loader from "./components/Loader/Loader";
@@ -30,7 +30,7 @@ function App() {
                 <ModeToggle />
               </div>
             </header>
-            <section id="main-content" className="w-full max-w-screen-2xl flex flex-col flex-1 place-items-center justify-center">
+            <section id="main-content" className="w-full max-w-screen-2xl flex flex-col flex-1 place-items-center justify-center p-5 my-5">
               <Switch>
                 <Route path="/" component={Home} />
                 <Route path="/faq" component={faq} />

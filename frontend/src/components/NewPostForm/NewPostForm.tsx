@@ -10,7 +10,7 @@ export default function NewPostForm() {
     const [postImage, setPostImage] = useState<File | null>();
     const { session } = useContext(AuthContext);
 
-    const handlePostSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handlePostSubmit = async (e: React.FormEvent<HTMLInputElement>) => {
         e.preventDefault();
         console.log("Submitting new post: ", postImage);
 
@@ -56,7 +56,7 @@ export default function NewPostForm() {
                             <Button type="submit">Share</Button>
                             <Button onClick={() => setPostImage(null)}>Cancel</Button>
                         </> :
-                        <NewPostFormDropZone handlePostChange={handlePostChange} />
+                        <NewPostFormDropZone handlePostChange={handlePostChange} handleErrorChange={setUploadError} />
                     }
                 </form>
                 {(uploadError) ? <p>{`We had an issue uploading your file. ${uploadError}`}</p> : ""}
