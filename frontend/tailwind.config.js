@@ -19,11 +19,6 @@ module.exports = {
       },
     },
     extend: {
-      dropShadow: {
-        custom: '0 0 .3rem hsl(var(--foreground) / 60%)',
-        green: '0 0 .3rem hsl(var(--primary) / 80%)',
-        red: '0 0 .3rem hsl(var(--destructive) / 80%)',
-      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
