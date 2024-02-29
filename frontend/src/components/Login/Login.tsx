@@ -6,13 +6,13 @@ import { useContext } from "react";
 import { Redirect } from "wouter";
 
 export default function Login() {
-  const session = useContext(AuthContext);
+  const { session } = useContext(AuthContext);
 
   //do some supabase oauth stuff
   return (
     <>
       {(session && session.user) ? <Redirect to="/" /> : (
-        <div className="w-2/6 max-w-1/2">
+        <div className="sm:w-4/5 md:w-1/2 lg:w-2/5 max-w-4/5">
           <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
             Login to Purrcast
           </h1>

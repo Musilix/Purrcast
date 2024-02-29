@@ -27,6 +27,12 @@ const components: { title: string; href: string; description: string }[] = [
             "View all of your posts and manage them from one place.",
     },
     {
+        title: "Create a Post",
+        href: "/create-post",
+        description:
+            "Create a new post to contribute to the community's weather forecast",
+    },
+    {
         title: "Sign Out",
         href: "/logout",
         description:
@@ -35,7 +41,7 @@ const components: { title: string; href: string; description: string }[] = [
 ]
 
 export function NavMenu() {
-    const session = useContext(AuthContext);
+    const { session } = useContext(AuthContext);
 
     return (
         <div>
