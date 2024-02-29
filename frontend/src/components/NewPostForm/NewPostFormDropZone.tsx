@@ -24,6 +24,8 @@ export default function NewPostFormDropZone({ handlePostChange, handleErrorChang
         // onDrop
     });
 
+    // TODO: Switch up the upload method to only allow people to upload a file by actively using their phone's camera
+    // They cannot upload a file from their phone or computers file system
     return (
         <>
             <div className="min-w-full sm:min-w-full md:min-w-[500px] flex flex-col justify-center place-items-center text-foreground bg-input rounded-md border-dashed border-muted-foreground border-2 p-8 my-5 cursor-pointer hover:border-foreground *:m-1" {...getRootProps()}>

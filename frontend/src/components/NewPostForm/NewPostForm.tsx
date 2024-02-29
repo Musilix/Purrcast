@@ -10,7 +10,7 @@ export default function NewPostForm() {
     const [postImage, setPostImage] = useState<File | null>();
     const { session } = useContext(AuthContext);
 
-    const handlePostSubmit = async (e: React.FormEvent<HTMLInputElement>) => {
+    const handlePostSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log("Submitting new post: ", postImage);
 
@@ -45,6 +45,7 @@ export default function NewPostForm() {
                 <h1 className="scroll-m-20 pb-4 text-4xl font-extrabold tracking-tight drop-shadow-custom lg:text-5xl break-words">
                     Post a Cat
                 </h1>
+
                 <form id="new-post-form" onSubmit={handlePostSubmit} encType='multipart/form-data'>
                     {(postImage) ?
                         // TODO: make a component for the preview and submit button if the post img has been seen
@@ -59,6 +60,7 @@ export default function NewPostForm() {
                         <NewPostFormDropZone handlePostChange={handlePostChange} handleErrorChange={setUploadError} />
                     }
                 </form>
+
                 {(uploadError) ? <p>{`We had an issue uploading your file. ${uploadError}`}</p> : ""}
             </div>
         )
