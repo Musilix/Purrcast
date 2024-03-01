@@ -2,7 +2,16 @@ import { Injectable } from '@nestjs/common';
 import sharp from 'sharp';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { TestData } from 'src/temp-entities/TestData.entity';
+
+// TODO - find a better way to send back packets of data and errors... lots of repetition here
+export interface PostResponse {
+  payload: {
+    message: string;
+    content: string | null;
+    error: string | null;
+    statusCode: number;
+  };
+}
 @Injectable()
 export class PostService {
   constructor(
@@ -10,7 +19,7 @@ export class PostService {
     private readonly cloudinary: CloudinaryService,
   ) {}
 
-  async upload(image: any): Promise<TestData> {
+  async upload(image: any): Promise<PostResponse> {
     try {
       //TODO: Move this to a sharp helper pipe
       // resize image before sending it to cloudinary
@@ -57,11 +66,12 @@ export class PostService {
         });
 
         return {
-          data: {
+          payload: {
             message: 'File uploaded successfully.',
-            payload: res,
+            content: res,
+            error: null,
+            statusCode: 200,
           },
-          statusCode: 200,
         };
       } else {
         throw new Error('Unable to upload file.');
@@ -70,10 +80,12 @@ export class PostService {
       console.error(`${e}`);
 
       return {
-        data: {
-          message: `Unable to upload file`,
+        payload: {
+          message: null,
+          content: null,
+          error: 'Unable to upload your file. Please try again later.',
+          statusCode: 501,
         },
-        statusCode: 500,
       };
     }
   }
@@ -81,27 +93,91 @@ export class PostService {
   async getImage(postId: string) {
     try {
       const res = await this.cloudinary.getUpload(postId);
-      return res;
+      return {
+        payload: {
+          message: 'Image retrieve succesfully.',
+          content: res,
+          error: null,
+          statusCode: 200,
+        },
+      };
     } catch (e) {
-      return new Error('Unable to get image');
+      return {
+        payload: {
+          message: null,
+          content: null,
+          error: 'Unable to retrieve image. Please try again later. Sorry!',
+          statusCode: 501,
+        },
+      };
     }
   }
 
   async findAll() {
-    const res = await this.prisma.post.findMany({
-      where: {
-        published: true,
-      },
-      include: {
-        author: true,
-      },
-    });
-    return res;
+    try {
+      const res = await this.prisma.post.findMany({
+        where: {
+          published: true,
+        },
+        include: {
+          author: true,
+        },
+      });
+
+      return {
+        payload: {
+          message: 'Posts retrieved succesfully.',
+          content: res,
+          error: null,
+          statusCode: 200,
+        },
+      };
+    } catch (e) {
+      console.error(`An error occured while trying to retrieva all posts ${e}`);
+
+      return {
+        payload: {
+          message: null,
+          content: null,
+          error: 'An error occured while trying to retrieva all posts ',
+          statusCode: 501,
+        },
+      };
+    }
   }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} post`;
-  // }
+  async findOne(id: number) {
+    try {
+      const res = await this.prisma.post.findUnique({
+        where: {
+          id: id,
+        },
+        include: {
+          author: true,
+        },
+      });
+
+      return {
+        payload: {
+          message: `Post ${id} retrieved succesfully.`,
+          content: res,
+          error: null,
+          statusCode: 200,
+        },
+      };
+    } catch (e) {
+      console.error(`An error occured while trying to retrieva all posts ${e}`);
+
+      return {
+        payload: {
+          message: null,
+          content: null,
+          error: `An error occurred while fetching post ${id}. Please try again later.`,
+          statusCode: 501,
+        },
+      };
+    }
+  }
 
   // update(id: number, updatePostDto: UpdatePostDto) {
   //   return `This action updates a #${id} post`;

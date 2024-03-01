@@ -1,6 +1,4 @@
 export default interface Response<T> {
-  data?: {
-    payload: T;
-  };
+  payload?: T;
   error?: string;
 }
