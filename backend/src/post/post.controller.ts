@@ -1,18 +1,14 @@
 import {
-  // Body,
   Controller,
   Get,
-  // Delete,
-  // Get,
-  // Param,
-  // Patch,
+  Param,
   Post,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-// import { CreatePostDto } from './dto/create-post.dto';
-// import { UpdatePostDto } from './dto/update-post.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Post as PostType } from '@prisma/client';
+import Response from 'src/types/Response';
 import { PostService } from './post.service';
 
 @Controller('post')
@@ -46,10 +42,10 @@ export class PostController {
     return this.postService.findAll();
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.postService.findOne(+id);
-  // }
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.postService.findOne(+id);
+  }
 
   // @Patch(':id')
   // update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
