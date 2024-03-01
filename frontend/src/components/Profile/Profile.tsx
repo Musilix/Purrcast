@@ -1,9 +1,9 @@
 import { AuthContext } from "@/context/AuthContext";
 import { User } from "@supabase/supabase-js";
 import { useContext } from "react";
-import { Button } from "../ui/button";
-import PostsPreview from "../PostsPreview/PostsPreview";
 import { Redirect } from "wouter";
+import PostsPreview from "../PostsPreview/PostsPreview";
+import { Button } from "../ui/button";
 
 export default function Profile() {
   const { session } = useContext(AuthContext);
@@ -35,6 +35,8 @@ export default function Profile() {
                   </p>
                 </div>
               </div>
+
+              {/* TODO - we need to make it so we can specify filtering properties when displaying a post preview bundle */}
               <PostsPreview className="p-0" />
               <div id="button-wrap">
                 <Button variant="destructive">Delete Account</Button>
