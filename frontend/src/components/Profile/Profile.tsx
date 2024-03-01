@@ -10,7 +10,7 @@ export default function Profile() {
 
   return (
     <>
-      <div id="profile-wrap" className="w-1/2 p-5 *:my-10">
+      <section id="profile-wrap" className="w-5/6 sm:w-5/6 md:w-4/5 max-w-screen-md *:my-10">
         <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Your Profile</h1>
         {
           (session && session.user) ?
@@ -45,7 +45,7 @@ export default function Profile() {
             :
             <Redirect to="/login" />
         }
-      </div>
+      </section>
     </>
   )
 }
