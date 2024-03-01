@@ -1,5 +1,5 @@
 export interface User {
   name: string;
-  location: string;
+  location?: string;
   age?: string;
 }

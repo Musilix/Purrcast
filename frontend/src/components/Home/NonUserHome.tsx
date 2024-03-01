@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
-import { Card } from '../ui/card';
 
 export default function NonUserHome() {
   return (
