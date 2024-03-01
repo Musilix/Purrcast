@@ -7,8 +7,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Post as PostType } from '@prisma/client';
-import Response from 'src/types/Response';
 import { PostService } from './post.service';
 
 @Controller('post')
