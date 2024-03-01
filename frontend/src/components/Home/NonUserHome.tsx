@@ -5,7 +5,7 @@ import { Card } from '../ui/card';
 export default function NonUserHome() {
   return (
     <>
-      <section id="splash-intro" className="w-full h-full text-center flex flex-col flex-grow justify-center place-items-center *:m-2.5">
+      <section id="splash-intro" className="w-full  text-center flex flex-col flex-grow justify-center place-items-center *:m-2.5">
         <h1 className="text-center font-bold leading-tight tracking-tighter text-5xl md:text-6xl lg:leading-[1.1] md:block">
           {(import.meta.env.PROD) ? "Purrcast" : "Purrcast Test Feed"}
         </h1>
@@ -38,11 +38,11 @@ export default function NonUserHome() {
 
         <div id="splash-buttons" className="flex flex-col md:flex-row lg:flex-row justify-center align-middle w-5/6 sm:w-3/4 md:w-full  mt-8 space-x-0 space-y-4 md:space-x-4 md:space-y-0 lg:space-x-4 lg:space-y-0 ">
           <Link href="/create-post">
-            <Button className="p-6 text-lg">Post a Cat!</Button>
+            <Button className="p-6 text-lg" variant={'supabasianPrimary'}>Post a Cat</Button>
           </Link>
 
           <Link href="/faq">
-            <Button className="p-6 text-lg" variant={'secondary'}>What Are You Talking About?</Button>
+            <Button className="p-6 text-lg" variant={'supabasianSecondary'}>I'm Confused</Button>
           </Link>
         </div>
       </section>

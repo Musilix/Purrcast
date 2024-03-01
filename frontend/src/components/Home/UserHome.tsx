@@ -8,7 +8,7 @@ export default function UserHome({ session }: { session: Session }) {
   return (
     <>
       <main className="flex flex-col flex-auto justify-center align-center place-items-center sm:w-3/4 md:w-3/5 max-w-screen-md *:p-5">
-        <section id="splash-intro" className="flex flex-col w-full place-items-center place-content-center *:my-5">
+        <section id="splash-intro" className="flex flex-col w-full place-items-center place-content-center *:my-2">
           <h1 className="scroll-m-20 font-extrabold tracking-tight text-4xl sm:text-4xl lg:text-5xl break-words text-center">
             {
               (new Date().getHours() >= 5 && new Date().getHours() < 12) ? "Good morning" :
@@ -32,12 +32,12 @@ export default function UserHome({ session }: { session: Session }) {
           <section id="cta-wrap" className="flex flex-row w-full align-center place-items-center place-content-center !my-0 !mt-0 *:m-5">
             <div>
               <Link href="/create-post">
-                <Button className="p-6 text-lg">Post a Cat!</Button>
+                <Button className="p-6 text-lg" variant="supabasianPrimary">Post a Cat!</Button>
               </Link>
             </div>
             <div>
               <Link href="/posts">
-                <Button className="p-6 text-lg" variant="secondary">See Posts Near You</Button>
+                <Button className="p-6 text-lg" variant="supabasianSecondary">See Posts Near You</Button>
               </Link>
             </div>
 

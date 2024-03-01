@@ -4,6 +4,7 @@ import { ThumbsUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "wouter";
 import { Button } from "../ui/button";
+import { getUpVoteBarLength } from "@/utils/GetUpvoteBarLength";
 
 export default function PostPage() {
   const params = useParams();
@@ -33,20 +34,6 @@ export default function PostPage() {
     setPostVotes(prevVotes => prevVotes + 1);
   }
 
-  // I don't like this
-  const getUpVoteBarLength = () => {
-    console.log("getting upvoted shits")
-    if (postVotes >= 0 && postVotes <= 999) {
-      return "w-[100px]";
-    } else if (postVotes > 999 && postVotes <= 9999) {
-      return "w-[125px]";
-    } else if (postVotes > 9999 && postVotes <= 99999) {
-      return "w-[150px]";
-    } else {
-      return "w-[200px]";
-    }
-  }
-
   // TODO - I need to figure out a way to encapsulate the PostPreview card logic in order to reuse it for the loading state of this page
   return (
     <div className="flex flex-col w-full h-full place-content-center place-items-center">
@@ -66,7 +53,7 @@ export default function PostPage() {
 
         {/* TODO: possibly move this out to be it's own component, so Post doesnt have to keep track up PostVote state? */}
         <section className=" flex flex-row justify-center post-metrics border-slate-400 border-solid border-[1px] rounded-full p-1 hover:border-slate-800 hover:bg-secondary transition-all">
-          <div className={`${getUpVoteBarLength()} grid grid-cols-2 divide-x text-center`}>
+          <div className={`${getUpVoteBarLength(postVotes)} grid grid-cols-2 divide-x text-center`}>
             <div>
               <Button onClick={upVotePost} variant="ghost" className="p-2 m-0 rounded-full hover:bg-popover">
                 <ThumbsUp className="size-5 " />

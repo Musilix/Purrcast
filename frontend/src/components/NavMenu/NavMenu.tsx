@@ -47,8 +47,8 @@ export function NavMenu() {
         <div>
             <NavigationMenu className="flex flex-row w-full justify-between">
                 <NavigationMenuList>
-                    <NavigationMenuItem>
-                        <Link href="/">
+                    <NavigationMenuItem >
+                        <Link href="/" >
                             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                 Home
                             </NavigationMenuLink>
