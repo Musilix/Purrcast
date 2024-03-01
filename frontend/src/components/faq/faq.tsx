@@ -1,7 +1,7 @@
 export default function faq() {
   return (
     <>
-      <main className="flex flex-col flex-auto place-items-center w-1/2 md:w-3/5 max-w-screen-lg space-y-10 *:p-5">
+      <section className="flex flex-col flex-auto place-items-center w-5/6 sm:w-5/6 md:w-4/5 max-w-screen-md space-y-10 my-5 py-5 *:p-5">
         <section id="intro" className="w-full *:m-0">
           <h1 className="scroll-m-20 pb-4 text-4xl font-extrabold tracking-tight drop-shadow-custom lg:text-5xl break-words">
             What is this?
@@ -139,7 +139,7 @@ export default function faq() {
           <p className="leading-7 [&:not(:first-child)]:mt-6 break-words">
           </p>
         </section>
-      </main>
+      </section>
     </>
   );
 }

@@ -10,7 +10,7 @@ module.exports = {
     './index.html',
   ],
   prefix: '',
-  theme: {
+  theme: { 
     container: {
       center: true,
       padding: '2rem',
@@ -20,12 +20,15 @@ module.exports = {
     },
     extend: {
       dropShadow: {
-        custom: '0 0 .3rem hsl(var(--foreground) / 60%)',
+        custom: '0 0 .15rem hsl(var(--foreground) / 60%)',
         green: '0 0 .3rem hsl(var(--primary) / 80%)',
         red: '0 0 .3rem hsl(var(--destructive) / 80%)',
       },
       colors: {
-        border: 'hsl(var(--border))',
+        border: {
+         DEFAULT: 'hsl(var(--border))',
+         hover: 'hsl(var(--border-hover))', 
+        },
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
         background: 'hsl(var(--background))',
@@ -33,6 +36,8 @@ module.exports = {
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
+          glow: 'hsl(var(--primary-glow))',
+          dim: 'hsl(var(--primary-dim))',
         },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
@@ -57,6 +62,7 @@ module.exports = {
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
+          dim: 'hsl(var(--card-dim))',
         },
       },
       borderRadius: {
