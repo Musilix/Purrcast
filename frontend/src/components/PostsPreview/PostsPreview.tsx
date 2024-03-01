@@ -26,6 +26,7 @@ export default function PostsPreview({ className = "" }) {
         setPosts(posts.data)
       } catch (err) {
         setError((err as Error).message);
+        console.error(error);
       }
     }
 
