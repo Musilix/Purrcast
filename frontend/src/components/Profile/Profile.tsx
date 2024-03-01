@@ -6,7 +6,7 @@ import PostsPreview from "../PostsPreview/PostsPreview";
 import { Redirect } from "wouter";
 
 export default function Profile() {
-  const session = useContext(AuthContext);
+  const { session } = useContext(AuthContext);
 
   return (
     <>

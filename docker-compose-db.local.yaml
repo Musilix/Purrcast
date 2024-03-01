@@ -1,3 +1,4 @@
+# docker compose file for only a dev deb instance to easily get up and running
 services:
   postgres:
     image: postgres:16.0
@@ -5,6 +6,7 @@ services:
     env_file:
       - .env
     environment:
+      # Make sure you have these environment variables set in your .env file on the SAME LEVEL as your docker-compose.yml file
       POSTGRES_DB: "${POSTGRES_DB:-Purrcast_Dev}"
       POSTGRES_USER: "${POSTGRES_USER:-purrcaster}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
