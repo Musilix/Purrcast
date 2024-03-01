@@ -1,14 +1,19 @@
 import { FileImage } from "lucide-react";
 import { useCallback } from "react";
-import { useDropzone } from "react-dropzone";
+import { FileRejection, useDropzone } from "react-dropzone";
 
-export default function NewPostFormDropZone({ handlePostChange, handleErrorChange }) {
+interface NewPostFormDropZoneProps {
+    handlePostChange: (acceptedFile: File) => void;
+    handleErrorChange: (error: string) => void;
+}
+
+export default function NewPostFormDropZone({ handlePostChange, handleErrorChange }: NewPostFormDropZoneProps) {
     const handleDropAccepted = useCallback((acceptedFiles: File[]) => {
         console.log(acceptedFiles[0]);
         handlePostChange(acceptedFiles[0]);
     }, []);
 
-    const handleDropRejection = useCallback((fileRejections) => {
+    const handleDropRejection = useCallback((fileRejections: FileRejection[]) => {
         handleErrorChange(fileRejections[0].errors[0].message);
     }, []);
 
