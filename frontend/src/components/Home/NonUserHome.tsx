@@ -27,7 +27,7 @@ export default function NonUserHome() {
               An old soothsayer once said
             </p>
             <p className='text-sm text-muted-foreground'>
-              If your cat lays on it's head, there is rain up ahead.
+              When your cats head is low, the clouds are soon to grow.
             </p>
             <p className="leading-7 [&:not(:first-child)]:mt-6 break-keep">
               I took that very personally and so Purrcast was built to act as a centralized place for you to post and look at photos of peoples cats in your area to determine if it's going to rain soon or maybe just drizzle.
