@@ -26,6 +26,7 @@ export class PostService {
       const resizedImageBuffer = await sharp(image.buffer)
         .resize(350)
         .toBuffer();
+
       const resizedImageMimeType = image.mimetype;
 
       const resizedImage = {
@@ -59,7 +60,7 @@ export class PostService {
 
         await this.prisma.post.create({
           data: {
-            contentId: `v${res.version}/${res.public_id}.png`,
+            contentId: res.secure_url,
             authorId: user.id,
             published: true,
           },
@@ -68,7 +69,7 @@ export class PostService {
         return {
           payload: {
             message: 'File uploaded successfully.',
-            content: res,
+            content: null,
             error: null,
             statusCode: 200,
           },

@@ -22,10 +22,12 @@ function RealCard({ author, postedAt, content }: PostProps) {
   return (
     <>
       <CardContent className="p-5">
-        <div className="w-full max-w-1/2 min-w-1/2 aspect-square object-cover overflow-hidden rounded-md flex justify-center align-middle text-xs sm:text-lg break-all bg-secondary p-2">{content}</div>
+        <div className="w-full max-w-1/2 min-w-1/2 aspect-square object-cover overflow-hidden rounded-md flex justify-center align-middle text-center text-xs sm:text-lg break-all bg-secondary p-2">
+          {(content.includes("png") ? <img src={content} alt="Post Image" className="w-full h-full object-cover rounded-md" /> : content)}
+        </div>
       </CardContent>
       <CardFooter className="flex flex-col flex-auto  pb-5">
-        <CardTitle>Posted by {author.name}</CardTitle>
+        <CardTitle>Posted by {author.username}</CardTitle>
         <CardDescription>{author.location}</CardDescription>
         <CardDescription>{(postedAt) ? `${new Date(postedAt).toLocaleString('en-US', { month: 'long', day: 'numeric' })}, ${formatAMPM(new Date(postedAt))}` : "Aug 12th, 12:56pm"}</CardDescription>
       </CardFooter>

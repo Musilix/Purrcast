@@ -20,7 +20,7 @@ export default function UserHome({ session }: { session: Session }) {
 
           <div className="flex sm:flex-row md:flex-row w-3/4 place-items-center place-content-center *:p-2">
             <h1 className="scroll-m-20 font-extrabold tracking-tight text-emerald-400 text-9xl sm:text-9xl md:text-9xl break-words">
-              65%
+              {Math.floor(Math.random() * 100 + 1)}%
             </h1>
             <h4 className="w-3/4 sm:w-3/4 md:w-1/4 scroll-m-20 text-pretty text-lg text-muted-foreground font-semibold tracking-tight">
               Chance of rain today in Corvallis, OR.
