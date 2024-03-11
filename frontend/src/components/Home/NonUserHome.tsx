@@ -5,7 +5,7 @@ import { Card } from '../ui/card';
 export default function NonUserHome() {
   return (
     <>
-      <section id="splash-intro" className="w-full  text-center flex flex-col flex-grow justify-center place-items-center *:m-2.5">
+      <section id="splash-intro" className="w-full  text-center flex flex-col flex-grow justify-center place-items-center py-10 *:m-2.5">
         <h1 className="text-center font-bold leading-tight tracking-tighter text-5xl md:text-6xl lg:leading-[1.1] md:block">
           {(import.meta.env.PROD) ? "Purrcast" : "Purrcast Test Feed"}
         </h1>
@@ -14,7 +14,7 @@ export default function NonUserHome() {
           The weather app made by cats.
         </p>
 
-        <div className='!my-5 p-5'>
+        <div className='!my-5 p-5 overflow-hidden'>
           <div className='w-full flex justify-center align-middle animate-spin p-2.5'>
             <img src='/purrcaster-home.png' className=' top-50 w-3/4 min-w-[100px] max-w-[250px]' />
           </div>

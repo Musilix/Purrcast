@@ -24,13 +24,13 @@ function App() {
         */}
         <Loader>
           <main className="flex flex-col flex-auto place-items-center w-full">
-            <header className='w-full sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
+            <header className='w-full sticky z-50 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
               <div className="w-full flex h-14  items-center p-10 justify-between">
                 <NavMenu />
                 <ModeToggle />
               </div>
             </header>
-            <section id="main-content" className="w-full max-w-screen-2xl flex flex-col flex-1 place-items-center justify-center px-5 mx-5">
+            <section id="main-content" className="w-full h-auto max-w-screen-2xl flex flex-col flex-1 place-items-center justify-center my-7.5 px-10">
               <Switch>
                 <Route path="/" component={Home} />
                 <Route path="/faq" component={faq} />
