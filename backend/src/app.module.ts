@@ -5,6 +5,7 @@ import { PostModule } from './post/post.module';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { SupabaseModule } from './supabase/supabase.module';
+import { TestAuthModule } from './testAuth/testAuth.module';
 
 @Module({
   imports: [
@@ -12,14 +13,9 @@ import { SupabaseModule } from './supabase/supabase.module';
     PostModule,
     ConfigModule.forRoot({ isGlobal: true }),
     SupabaseModule,
+    TestAuthModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    {
-      provide: 'APP_GUARD',
-      useValue: 'SupabaseGuard',
-    },
-  ],
+  providers: [AppService],
 })
 export class AppModule {}

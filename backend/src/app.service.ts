@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { TestData } from './temp-entities/TestData.entity';
 
 @Injectable()
 export class AppService {
-  getHello(): TestData {
+  getHello(): object {
     return {
       data: { message: 'Hello Sqworld!' },
       statusCode: 200,

@@ -45,6 +45,13 @@ export class PostController {
     return this.postService.findOne(+id);
   }
 
+  // @Get('/RBAC/kareem')
+  // @UseGuards(TestAuthGuardWithRBAC)
+  // @WhoAmIFor('Kareem')
+  // kareemsRoute() {
+  //   return 'This content is only for Kareem';
+  // }
+
   // @Patch(':id')
   // update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
   //   return this.postService.update(+id, updatePostDto);

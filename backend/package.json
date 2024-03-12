@@ -39,6 +39,7 @@
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/platform-fastify": "^10.2.4",
     "@prisma/client": "^5.7.1",
+    "@supabase/supabase-js": "^2.39.8",
     "cloudinary": "^1.41.1",
     "fastify-multer": "^2.0.3",
     "fastify-multipart": "^5.4.0",
