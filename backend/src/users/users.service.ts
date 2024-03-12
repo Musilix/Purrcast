@@ -25,7 +25,7 @@ export class UsersService {
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates the user with a name of ${updateUserDto.name}`;
+    return `This action updates the user with a name of ${updateUserDto.name} to have an id of ${id}`;
   }
 
   remove(id: number) {
