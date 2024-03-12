@@ -35,8 +35,8 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
           throw new Error("No session found.");
         }
       })
-      .catch((error) => {
-        console.error(`Error fetching session: ${error}`);
+      .catch(() => {
+        console.error(`Error fetching session`);
         setIsAuthError(true);
         setIsAuthLoading(false);
       });

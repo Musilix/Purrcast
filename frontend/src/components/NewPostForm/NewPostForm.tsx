@@ -12,7 +12,6 @@ export default function NewPostForm() {
 
     const handlePostSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log("Submitting new post: ", postImage);
 
         // TODO - add proper validation and move implementation to service
         if (postImage) {
@@ -23,10 +22,12 @@ export default function NewPostForm() {
             try {
                 const res = await axios.post(`${import.meta.env.VITE_API_HOST}/post/upload`, formData, {
                     headers: {
-                        'Content-Type': 'multipart/form-data'
+                        'Content-Type': 'multipart/form-data',
+                        'Authorization': `Bearer ${localStorage.getItem("userSession")}`
                     }
                 });
-                console.log(res);
+
+                // console.log(res);
             } catch (err) {
                 setUploadError((err as Error).message);
             }
