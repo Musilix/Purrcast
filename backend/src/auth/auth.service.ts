@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 export class AuthService {
   constructor() {}
 
+  // TODO - maybe move some business logic from guards to here?
   async validateUser(username: string, password: string): Promise<any> {
     return null;
   }
