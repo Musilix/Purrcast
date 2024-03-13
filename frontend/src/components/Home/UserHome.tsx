@@ -2,14 +2,10 @@
 import { Session } from '@supabase/supabase-js';
 import { Link } from 'wouter';
 import { Button } from '../ui/button';
-import handleTestClick from '@/utils/handleTestClick';
-
 
 export default function UserHome({ session }: { session: Session }) {
   return (
     <>
-      <Button onClick={handleTestClick} variant="supabasianPrimary">Call our test endpoint</Button>
-
       <section id="splash-intro" className="flex flex-col w-full place-items-center place-content-center *:my-2.5">
         <h1 className="scroll-m-20 font-extrabold tracking-tight text-5xl sm:text-4xl lg:text-5xl break-words text-center sm:text-center">
           {
