@@ -5,7 +5,7 @@ import { PostModule } from './post/post.module';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { SupabaseModule } from './supabase/supabase.module';
-import { TestAuthModule } from './testAuth/testAuth.module';
+import { TestAuthModule } from './guards/testAuth/testAuth.module';
 
 @Module({
   imports: [
