@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import sharp from 'sharp';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -12,6 +16,7 @@ export interface PostResponse {
     statusCode: number;
   };
 }
+
 @Injectable()
 export class PostService {
   constructor(
@@ -19,7 +24,7 @@ export class PostService {
     private readonly cloudinary: CloudinaryService,
   ) {}
 
-  async upload(image: any): Promise<PostResponse> {
+  async upload(image: any): Promise<boolean> {
     try {
       //TODO: Move this to a sharp helper pipe
       // resize image before sending it to cloudinary
@@ -55,7 +60,7 @@ export class PostService {
       // get user data placeholder
       if (res.version !== undefined && res.public_id !== undefined) {
         // TODO: change to true implementation where we utilize users creds sent with req body to /upload
-        //NOTE: if this user search fails, the post creation will fail due to a 500 server error...
+        // NOTE: if this user search fails, the post creation will fail due to a 500 server error...
         const user = await this.prisma.user.findUnique({ where: { id: 1 } });
 
         await this.prisma.post.create({
@@ -66,51 +71,28 @@ export class PostService {
           },
         });
 
-        return {
-          payload: {
-            message: 'File uploaded successfully.',
-            content: null,
-            error: null,
-            statusCode: 200,
-          },
-        };
+        return true;
       } else {
-        throw new Error('Unable to upload file.');
+        throw new InternalServerErrorException(
+          'Unable to upload your file because of issues with your account. Please try again later.',
+        );
       }
     } catch (e) {
       console.error(`${e}`);
-
-      return {
-        payload: {
-          message: null,
-          content: null,
-          error: 'Unable to upload your file. Please try again later.',
-          statusCode: 501,
-        },
-      };
+      throw new InternalServerErrorException(
+        'Unable to upload your file. Please try again later.',
+      );
     }
   }
 
   async getImage(postId: string) {
     try {
       const res = await this.cloudinary.getUpload(postId);
-      return {
-        payload: {
-          message: 'Image retrieve succesfully.',
-          content: res,
-          error: null,
-          statusCode: 200,
-        },
-      };
+      return res;
     } catch (e) {
-      return {
-        payload: {
-          message: null,
-          content: null,
-          error: 'Unable to retrieve image. Please try again later. Sorry!',
-          statusCode: 501,
-        },
-      };
+      throw new NotFoundException(
+        `Unable to retrieve the image with an ID of ${postId}`,
+      );
     }
   }
 

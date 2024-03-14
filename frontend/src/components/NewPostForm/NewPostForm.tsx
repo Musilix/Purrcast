@@ -5,9 +5,20 @@ import { Redirect } from "wouter";
 import { Button } from "../ui/button";
 import NewPostFormDropZone from "./NewPostFormDropZone";
 
+interface UserSession {
+    user: {
+        id: string;
+    }
+
+}
+
 export default function NewPostForm() {
     const [uploadError, setUploadError] = useState<string>("");
     const [postImage, setPostImage] = useState<File | null>();
+
+    // TODO - define hook to grab local storage items
+    const userSession = (localStorage.getItem("userSession") ?? {}) as UserSession;
+
     const { session } = useContext(AuthContext);
 
     const handlePostSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -16,18 +27,20 @@ export default function NewPostForm() {
         // TODO - add proper validation and move implementation to service
         if (postImage) {
             const formData = new FormData();
-            formData.append("file", postImage);
+            formData.append("contentId", postImage);
+            formData.append('authorId', userSession.user.id);
+            formData.append('published', 'true');
 
-            // TODO - utilize service class for implementation details?
+            console.log(formData)
+
+            // TODO - utilize service class for implementation details? idk
             try {
-                const res = await axios.post(`${import.meta.env.VITE_API_HOST}/post/upload`, formData, {
+                await axios.post(`${import.meta.env.VITE_API_HOST}/post/upload`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                         'Authorization': `Bearer ${localStorage.getItem("userSession")}`
                     }
                 });
-
-                // console.log(res);
             } catch (err) {
                 setUploadError((err as Error).message);
             }
