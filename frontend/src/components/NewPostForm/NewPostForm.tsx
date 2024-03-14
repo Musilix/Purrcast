@@ -17,8 +17,8 @@ export default function NewPostForm() {
     const [postImage, setPostImage] = useState<File | null>();
 
     // TODO - define hook to grab local storage items
-    const userSession = (localStorage.getItem("userSession") ?? {}) as UserSession;
-
+    const userSession = (JSON.parse(localStorage.getItem("userSession") ?? "")) as UserSession;
+    console.log(userSession)
     const { session } = useContext(AuthContext);
 
     const handlePostSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

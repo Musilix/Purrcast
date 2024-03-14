@@ -1,6 +1,8 @@
 import {
+  Body,
   Controller,
   Get,
+  Logger,
   Param,
   Post,
   UploadedFile,
@@ -10,12 +12,10 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { PostService } from './post.service';
-// import {
-//   createPostSchema,
-//   CreatePostDto,
-// } from '../../../lib/schemas/PostSchema';
-// import { ZodValidationPipe } from 'src/pipes/ZodValidationPipe';
 import { TestAuthGuard } from 'src/guards/testAuth/testAuth.guard';
+import { TestDataPipe } from 'src/pipes/MyCustomPipe2';
+
+const logger: Logger = new Logger('PostController');
 
 @Controller('post')
 export class PostController {
@@ -35,6 +35,16 @@ export class PostController {
     } else {
       return this.postService.upload(file);
     }
+  }
+
+  // @UsePipes(new ZodValidationPipe(TestDataSchema))
+  @UsePipes(TestDataPipe)
+  @Post('/test-validation')
+  createTest(@Body() data) {
+    logger.log('pipe working!');
+    return (
+      'We were able to validate the data! you gave us: ' + JSON.stringify(data)
+    );
   }
 
   @Get()
