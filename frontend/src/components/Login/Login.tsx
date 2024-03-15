@@ -9,7 +9,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui
 export default function Login() {
   const { session } = useContext(AuthContext);
 
-  //do some supabase oauth stuff
   return (
     <>
       {(session && session.user) ? <Redirect to="/" /> : (
