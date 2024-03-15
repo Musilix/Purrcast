@@ -19,7 +19,7 @@ model Post {
 
 model User {
   id       Int     @id @default(autoincrement())
-  uuid     String  @db.Uuid
+  uuid     String  @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name     String?
   bio      String?
   username String  @unique
