@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const createPostSchema = z.object({
   contentId: z.string(),
-  authorId: z.number(),
+  authorId: z.string(),
   published: z.boolean(),
 });
 
