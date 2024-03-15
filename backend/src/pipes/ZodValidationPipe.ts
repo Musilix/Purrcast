@@ -14,8 +14,12 @@ export class ZodValidationPipe implements PipeTransform {
       return parsedValue;
     } catch (error) {
       console.error(error.message);
+      const problemFields = error.issues.map(
+        (issue) => ` ${issue.path[0]} (${issue.expected}, ${issue.message})`,
+      );
+
       throw new BadRequestException(
-        `Improper data sent. Please make sure that ${error.message}`,
+        `Improper data sent. Please make sure that the following fields are the proper format: ${problemFields}`,
       );
     }
   }

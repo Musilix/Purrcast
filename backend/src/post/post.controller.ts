@@ -5,6 +5,7 @@ import {
   Logger,
   Param,
   Post,
+  Req,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -14,7 +15,9 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { PostService } from './post.service';
 import { TestAuthGuard } from 'src/guards/testAuth/testAuth.guard';
 import { TestDataPipe } from 'src/pipes/MyCustomPipe2';
-
+import { ZodValidationPipe } from 'src/pipes/ZodValidationPipe';
+import { createPostSchema } from '../../../lib/schemas/PostSchema';
+import { Request } from 'express';
 const logger: Logger = new Logger('PostController');
 
 @Controller('post')
@@ -29,11 +32,12 @@ export class PostController {
   @UseGuards(TestAuthGuard)
   // Remove this and use our zod pipe to validate the req payload has a file, THEN extract that file...
   @UseInterceptors(FileInterceptor('file'))
-  uploadFile(@UploadedFile() file: Express.Multer.File) {
+  uploadFile(@UploadedFile() file: Express.Multer.File, @Req() req) {
     if (file === undefined || file === null) {
       return `No file was uploaded. ${file}`;
     } else {
-      return this.postService.upload(file);
+      // return this.postService.upload(file, req.authorId);
+      return this.postService.upload(file, req.user.sub);
     }
   }
 

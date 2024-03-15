@@ -7,16 +7,6 @@ import sharp from 'sharp';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 
-// TODO - find a better way to send back packets of data and errors... lots of repetition here
-export interface PostResponse {
-  payload: {
-    message: string;
-    content: string | null;
-    error: string | null;
-    statusCode: number;
-  };
-}
-
 @Injectable()
 export class PostService {
   constructor(
@@ -24,16 +14,14 @@ export class PostService {
     private readonly cloudinary: CloudinaryService,
   ) {}
 
-  async upload(image: any): Promise<boolean> {
+  async upload(image: any, userId: string): Promise<object> {
     try {
       //TODO: Move this to a sharp helper pipe
       // resize image before sending it to cloudinary
       const resizedImageBuffer = await sharp(image.buffer)
-        .resize(350)
+        .resize(500)
         .toBuffer();
-
       const resizedImageMimeType = image.mimetype;
-
       const resizedImage = {
         buffer: resizedImageBuffer,
         mimetype: resizedImageMimeType,
@@ -41,7 +29,7 @@ export class PostService {
 
       /* 
         The options sent to our cloudinary service's upload method here are using an upload type of just 'upload'.
-          If we wanted to strengthen our security, we could use the 'authenticated' upload type or even private
+        If we wanted to strengthen our security, we could use the 'authenticated' upload type or even private
       */
       const res = await this.cloudinary.upload(resizedImage, {
         resource_type: 'image',
@@ -57,28 +45,34 @@ export class PostService {
         // },
       });
 
-      // get user data placeholder
       if (res.version !== undefined && res.public_id !== undefined) {
-        // TODO: change to true implementation where we utilize users creds sent with req body to /upload
         // NOTE: if this user search fails, the post creation will fail due to a 500 server error...
-        const user = await this.prisma.user.findUnique({ where: { id: 1 } });
 
-        await this.prisma.post.create({
-          data: {
-            contentId: res.secure_url,
-            authorId: user.id,
-            published: true,
-          },
-        });
+        return {
+          contentId: res.secure_url,
+          authorId: userId,
+          published: true,
+        };
 
-        return true;
+        // const user = await this.prisma.user.findFirstOrThrow({
+        //   where: { uuid: userId },
+        // });
+
+        // await this.prisma.post.create({
+        //   data: {
+        //     contentId: res.secure_url,
+        //     authorId: user.id,
+        //     published: true,
+        //   },
+        // });
+
+        // return true;
       } else {
         throw new InternalServerErrorException(
           'Unable to upload your file because of issues with your account. Please try again later.',
         );
       }
     } catch (e) {
-      console.error(`${e}`);
       throw new InternalServerErrorException(
         'Unable to upload your file. Please try again later.',
       );
@@ -161,12 +155,4 @@ export class PostService {
       };
     }
   }
-
-  // update(id: number, updatePostDto: UpdatePostDto) {
-  //   return `This action updates a #${id} post`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} post`;
-  // }
 }
