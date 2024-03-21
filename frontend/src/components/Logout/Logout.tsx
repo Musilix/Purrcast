@@ -8,12 +8,15 @@ export default function Logout() {
 
   useEffect(() => {
     const logout = async () => {
-      await __supabase__.auth.signOut({ "scope": "local" }).then().catch((error) => {
-        console.error('Error signing out:', error, '. Try again.');
-      });
+      await __supabase__.auth
+        .signOut({ scope: 'local' })
+        .then()
+        .catch((error) => {
+          console.error('Error signing out:', error, '. Try again.');
+        });
 
-      setLocation("/");
-    }
+      setLocation('/');
+    };
 
     logout();
   }, []);
@@ -22,5 +25,5 @@ export default function Logout() {
     <div>
       <h1>Logging out...</h1>
     </div>
-  )
+  );
 }
