@@ -1,9 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
-<<<<<<< Updated upstream
-async function main() {}
-=======
 async function main() {
   await prisma.user.upsert({
     where: { id: 1 },
@@ -104,7 +101,6 @@ async function main() {
     },
   });
 }
->>>>>>> Stashed changes
 
 main()
   .then(async () => {
