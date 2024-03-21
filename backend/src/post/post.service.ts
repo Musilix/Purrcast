@@ -3,9 +3,9 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import sharp from 'sharp';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { SharpHelper } from 'src/sharp/sharp.service';
 
 @Injectable()
 export class PostService {
@@ -14,24 +14,18 @@ export class PostService {
     private readonly cloudinary: CloudinaryService,
   ) {}
 
-  async upload(image: any, userId: string): Promise<object> {
+  async upload(image: any, userId: string) {
     try {
-      //TODO: Move this to a sharp helper pipe
-      // resize image before sending it to cloudinary
-      const resizedImageBuffer = await sharp(image.buffer)
-        .resize(500)
-        .toBuffer();
-      const resizedImageMimeType = image.mimetype;
-      const resizedImage = {
-        buffer: resizedImageBuffer,
-        mimetype: resizedImageMimeType,
-      };
+      // TODO - inject this into the service with manual instantion options
+      let reformattedImg = new SharpHelper(image.mimetype, image.buffer);
+      reformattedImg = await reformattedImg.resizeImage(500);
+      const reformattedImgDetails = reformattedImg.getImgDetails();
 
       /* 
         The options sent to our cloudinary service's upload method here are using an upload type of just 'upload'.
         If we wanted to strengthen our security, we could use the 'authenticated' upload type or even private
       */
-      const res = await this.cloudinary.upload(resizedImage, {
+      const res = await this.cloudinary.upload(reformattedImgDetails, {
         resource_type: 'image',
         unique_filename: true,
         overwrite: false,
@@ -45,36 +39,32 @@ export class PostService {
         // },
       });
 
-      if (res.version !== undefined && res.public_id !== undefined) {
+      if (res && res.secure_url !== undefined) {
         // NOTE: if this user search fails, the post creation will fail due to a 500 server error...
+        // The user search WILL fail if we didn't properly include the UUID provided by supabase auth upon authenticating with Google OAuth...
+        // TODO - we need to find a way to consistently identify our native users w/ the metadata provided by google/supabase auth
+        const user = await this.prisma.user.findFirst({
+          where: { uuid: userId },
+        });
 
-        return {
-          contentId: res.secure_url,
-          authorId: userId,
-          published: true,
-        };
+        await this.prisma.post.create({
+          data: {
+            contentId: res.secure_url,
+            authorId: user?.id ?? 1,
+            published: true,
+          },
+        });
 
-        // const user = await this.prisma.user.findFirstOrThrow({
-        //   where: { uuid: userId },
-        // });
-
-        // await this.prisma.post.create({
-        //   data: {
-        //     contentId: res.secure_url,
-        //     authorId: user.id,
-        //     published: true,
-        //   },
-        // });
-
-        // return true;
+        // TODO - idk what to return...
+        return { resource: res.secure_url };
       } else {
         throw new InternalServerErrorException(
-          'Unable to upload your file because of issues with your account. Please try again later.',
+          'Unable to upload your file due to a communication error with our image hosting provider. Please try again later.',
         );
       }
     } catch (e) {
       throw new InternalServerErrorException(
-        'Unable to upload your file. Please try again later.',
+        'Unable to upload your file due to an account issue. Please try again later.',
       );
     }
   }

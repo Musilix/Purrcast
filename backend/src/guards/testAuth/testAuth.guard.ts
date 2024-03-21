@@ -2,13 +2,12 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
-  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Request } from 'express';
-import { JwtService } from '@nestjs/jwt';
 import { Reflector } from '@nestjs/core';
+import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
 import { WhoAmIFor } from './whoAmIFor.decorator';
 
 @Injectable()
@@ -28,9 +27,15 @@ export class TestAuthGuard implements CanActivate {
       );
     }
 
-    const user = (await this.verifyToken(token)) ?? null;
-    req.user = user;
+    // FIXME - I don't like this
+    const user = await this.verifyToken(token);
+    if (!user) {
+      throw new UnauthorizedException(
+        "You aren't authorized to access this resource.",
+      );
+    }
 
+    req.user = user;
     return true;
   }
 
@@ -48,7 +53,7 @@ export class TestAuthGuard implements CanActivate {
       return payload;
     } catch {
       throw new UnauthorizedException(
-        'You need to log in to access this resource',
+        'For some reason, we had a problem while trying to verify your account. Please try logging in again later.',
       );
     }
   }
