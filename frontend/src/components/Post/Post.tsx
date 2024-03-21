@@ -14,8 +14,6 @@ export default function PostPage() {
 
   const postId = params.post_id;
 
-  console.log('Post ID: ', postId);
-
   useEffect(() => {
     const fetchPost = async () => {
       try {
@@ -23,7 +21,7 @@ export default function PostPage() {
           `${import.meta.env.VITE_API_HOST}/post/${postId}`,
           {},
         );
-        console.log(res);
+
         setPost(res.data.payload.content);
       } catch (e) {
         console.error(
@@ -95,7 +93,9 @@ function PostVotes({
     <>
       <section className=" flex flex-row justify-center post-metrics border-slate-400 border-solid border-[1px] rounded-full p-1 hover:border-slate-800 hover:bg-secondary transition-all">
         <div
-          className={`${getUpVoteBarLength(postVotes)} grid grid-cols-2 divide-x text-center`}
+          className={`${getUpVoteBarLength(
+            postVotes,
+          )} grid grid-cols-2 divide-x text-center`}
         >
           <div>
             <Button
