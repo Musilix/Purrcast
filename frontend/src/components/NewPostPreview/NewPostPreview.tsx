@@ -10,7 +10,7 @@ export default function NewPostPreview({
 }) {
   return (
     <>
-      <div className="rounded-md min-w-[300px] max-w-1/2 m-5 p-5 aspect-square shadow-md">
+      <div className="rounded-md min-w-[200px] max-w-[400px] m-5 p-5 shadow-md flex flex-col justify-center items-center border border-foreground">
         <img
           className="rounded-md"
           src={URL.createObjectURL(postImage)}

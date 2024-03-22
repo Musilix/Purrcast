@@ -13,6 +13,9 @@ import { ModeToggle } from './components/ThemeToggle/ThemeToggle';
 import UserPostsHistory from './components/UserPostsHistory/UserPostsHistory';
 import faq from './components/faq/faq';
 import AuthProvider from './context/AuthContext';
+import { ErrorBoundary } from "react-error-boundary";
+import RequestResponse from './components/RequestResponse/RequestResponse';
+import FormWithMessage from './components/FormWithMessage/FormWithMessage';
 
 function App() {
   return (
@@ -30,9 +33,11 @@ function App() {
                 <ModeToggle />
               </div>
             </header>
+
+            {/* <ErrorBoundary FallbackComponent={RequestResponse} onReset={() => console.log('reset')}> */}
             <section
               id="main-content"
-              className="w-full h-auto max-w-screen-2xl flex flex-col flex-1 place-items-center justify-center my-7.5 px-10"
+              className="w-full h-auto max-w-screen-2xl flex flex-col flex-1 place-items-center justify-center my-8 px-10"
             >
               <Switch>
                 <Route path="/" component={Home} />
@@ -41,7 +46,9 @@ function App() {
                 <Route path="/login" component={Login} />
                 <Route path="/logout" component={Logout} />
 
-                <Route path="/create-post" component={NewPostForm} />
+                <Route path="/create-post">
+                  {<FormWithMessage <FormData> FormComponent={NewPostForm} />}
+                </Route>
                 <Route path="/post/:post_id" component={Post} />
 
                 <Route path="/profile" component={Profile} />
@@ -51,10 +58,11 @@ function App() {
                 <Route component={() => <h1>404 - Not Found</h1>} />
               </Switch>
             </section>
+            {/* </ErrorBoundary> */}
           </main>
         </Loader>
       </ThemeProvider>
-    </AuthProvider>
+    </AuthProvider >
   );
 }
 

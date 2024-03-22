@@ -3,21 +3,19 @@ import { useCallback } from 'react';
 import { FileRejection, useDropzone } from 'react-dropzone';
 
 interface NewPostFormDropZoneProps {
-  handlePostChange: (acceptedFile: File) => void;
-  handleErrorChange: (error: string) => void;
+  handlePostChange: (acceptedFile: File) => void
 }
 
 export default function NewPostFormDropZone({
-  handlePostChange,
-  handleErrorChange,
+  handlePostChange
 }: NewPostFormDropZoneProps) {
+
   const handleDropAccepted = useCallback((acceptedFiles: File[]) => {
-    console.log(acceptedFiles[0]);
     handlePostChange(acceptedFiles[0]);
   }, []);
 
   const handleDropRejection = useCallback((fileRejections: FileRejection[]) => {
-    handleErrorChange(fileRejections[0].errors[0].message);
+    throw new Error(fileRejections[0].errors[0].message);
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -37,7 +35,7 @@ export default function NewPostFormDropZone({
   return (
     <>
       <div
-        className="min-w-full sm:min-w-full md:min-w-[500px] flex flex-col justify-center place-items-center text-foreground bg-input rounded-md border-dashed border-muted-foreground border-2 p-8 my-5 cursor-pointer hover:border-foreground *:m-1"
+        className="min-w-[350px] sm:min-w-[350px] md:min-w-[500px] flex flex-col justify-center place-items-center text-foreground bg-input rounded-md border-dashed border-muted-foreground border-2 p-8 my-5 cursor-pointer hover:border-foreground *:m-1"
         {...getRootProps()}
       >
         <input {...getInputProps()} name="postImage" id="postImageFile" />

@@ -67,7 +67,6 @@ function PostContent({ post }: { post: Post }) {
         ) : (
           post.contentId
         )}
-        <p className="text-xs">{post ? post?.contentId : ''}</p>
       </section>
       <section className="post-details text-center p-4">
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight place-item-end">

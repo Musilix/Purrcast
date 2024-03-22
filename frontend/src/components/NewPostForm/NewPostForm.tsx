@@ -1,22 +1,24 @@
 import { AuthContext } from '@/context/AuthContext';
-import axios from 'axios';
 import { useContext, useState } from 'react';
 import { Redirect } from 'wouter';
 import NewPostPreview from '../NewPostPreview/NewPostPreview';
 import NewPostFormDropZone from './NewPostFormDropZone';
 
-interface UserSession {
-  access_token: string;
+// TODO - move this to a shared file
+interface ResponseMessageType {
+  type: 'default' | 'success' | 'destructive';
+  title: string;
+  content: string;
 }
 
-export default function NewPostForm() {
-  const [uploadError, setUploadError] = useState<string>('');
+export default function NewPostForm({
+  handleSubmit,
+  setMessage,
+}: {
+  handleSubmit: (data: FormData, endpoint: string) => void;
+  setMessage: (message: ResponseMessageType | null) => void;
+}) {
   const [postImage, setPostImage] = useState<File | null>();
-
-  // TODO - define hook to grab local storage items
-  const userSession = JSON.parse(
-    localStorage.getItem('userSession') ?? '',
-  ) as UserSession;
   const { session } = useContext(AuthContext);
 
   const handlePostSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -27,22 +29,14 @@ export default function NewPostForm() {
       const formData = new FormData();
       formData.append('userUploadedFile', postImage);
 
-      await axios
-        .post(`${import.meta.env.VITE_API_HOST}/post/upload`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${userSession.access_token}`,
-          },
-        })
-        .catch((err) => {
-          setUploadError(err.message);
-        });
-
+      // TODO - this is valid, but we need to define the type of the handleSubmit prop in the func def
+      await handleSubmit(formData, '/post/upload');
       setPostImage(null);
     }
   };
 
   const handlePostChange = (acceptedFile: File) => {
+    setMessage(null);
     setPostImage(acceptedFile);
   };
 
@@ -50,9 +44,9 @@ export default function NewPostForm() {
     return (
       <div
         id="new-post-wrap"
-        className="w-full max-w-[600px] h-full flex justify-center place-items-center flex-col"
+        className="w-full max-w-[600px] h-full flex justify-center place-items-center flex-col mt-5"
       >
-        <h1 className="scroll-m-20 pb-4 text-4xl font-extrabold tracking-tight drop-shadow-custom lg:text-5xl break-words">
+        <h1 className="scroll-m-20 pb-4 text-4xl font-extrabold tracking-tight lg:text-5xl break-words">
           Post a Cat
         </h1>
 
@@ -64,18 +58,9 @@ export default function NewPostForm() {
           {postImage ? (
             <NewPostPreview postImage={postImage} setPostImage={setPostImage} />
           ) : (
-            <NewPostFormDropZone
-              handlePostChange={handlePostChange}
-              handleErrorChange={setUploadError}
-            />
+            <NewPostFormDropZone handlePostChange={handlePostChange} />
           )}
         </form>
-
-        {uploadError ? (
-          <p>{`We had an issue uploading your file. ${uploadError}`}</p>
-        ) : (
-          ''
-        )}
       </div>
     );
   } else {
