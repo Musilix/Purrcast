@@ -47,7 +47,7 @@ export class PostService {
           where: { uuid: userId },
         });
 
-        await this.prisma.post.create({
+        const newPost = await this.prisma.post.create({
           data: {
             contentId: res.secure_url,
             authorId: user?.id ?? 1,
@@ -55,8 +55,8 @@ export class PostService {
           },
         });
 
-        // TODO - idk what to return...
-        return { resource: res.secure_url };
+        // TODO - idk what to return... I know I should probably use a hash for the post identifier...
+        return { resource: res.secure_url, postId: newPost.id };
       } else {
         throw new InternalServerErrorException(
           'Unable to upload your file due to a communication error with our image hosting provider. Please try again later.',
