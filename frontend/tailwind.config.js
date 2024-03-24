@@ -10,7 +10,7 @@ module.exports = {
     './index.html',
   ],
   prefix: '',
-  theme: { 
+  theme: {
     container: {
       center: true,
       padding: '2rem',
@@ -26,8 +26,8 @@ module.exports = {
       },
       colors: {
         border: {
-         DEFAULT: 'hsl(var(--border))',
-         hover: 'hsl(var(--border-hover))', 
+          DEFAULT: 'hsl(var(--border))',
+          hover: 'hsl(var(--border-hover))',
         },
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',

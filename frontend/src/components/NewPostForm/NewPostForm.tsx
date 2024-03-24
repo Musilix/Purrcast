@@ -1,72 +1,68 @@
-import { AuthContext } from "@/context/AuthContext";
-import axios from "axios";
-import { useContext, useState } from "react";
-import { Redirect } from "wouter";
-import { Button } from "../ui/button";
-import NewPostFormDropZone from "./NewPostFormDropZone";
+import { useState } from 'react';
+import NewPostPreview from '../NewPostPreview/NewPostPreview';
+import NewPostFormDropZone from './NewPostFormDropZone';
 
-export default function NewPostForm() {
-    const [uploadError, setUploadError] = useState<string>("");
-    const [postImage, setPostImage] = useState<File | null>();
-    const { session } = useContext(AuthContext);
+// TODO - move this to a shared file
+interface ResponseMessageType {
+  type: 'default' | 'success' | 'destructive';
+  title: string;
+  content: string;
+}
 
-    const handlePostSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        console.log("Submitting new post: ", postImage);
+export default function NewPostForm({
+  handleSubmit,
+  setMessage,
+  isSubmitting,
+}: {
+  handleSubmit: (data: FormData, endpoint: string) => void;
+  setMessage: (message: ResponseMessageType | null) => void;
+  isSubmitting: boolean;
+}) {
+  const [postImage, setPostImage] = useState<File | null>();
 
-        // TODO - add proper validation and move implementation to service
-        if (postImage) {
-            const formData = new FormData();
-            formData.append("file", postImage);
+  const handlePostSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-            // TODO - utilize service class for implementation details?
-            try {
-                const res = await axios.post(`${import.meta.env.VITE_API_HOST}/post/upload`, formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                });
-                console.log(res);
-            } catch (err) {
-                setUploadError((err as Error).message);
-            }
+    // TODO - add proper validation and move implementation to service
+    if (postImage) {
+      const formData = new FormData();
+      formData.append('userUploadedFile', postImage);
 
-            setPostImage(null);
-        }
+      // TODO - this is valid, but we need to define the type of the handleSubmit prop in the func def
+      await handleSubmit(formData, '/post/upload');
+      setPostImage(null);
     }
+  };
 
-    const handlePostChange = (acceptedFile: File) => {
-        setPostImage(acceptedFile);
-    }
+  const handlePostChange = (acceptedFile: File) => {
+    setMessage(null);
+    setPostImage(acceptedFile);
+  };
 
-    if (session && session.user) {
-        return (
-            <div id="new-post-wrap" className="w-full max-w-[600px] h-full flex justify-center place-items-center flex-col">
-                <h1 className="scroll-m-20 pb-4 text-4xl font-extrabold tracking-tight drop-shadow-custom lg:text-5xl break-words">
-                    Post a Cat
-                </h1>
+  return (
+    <div
+      id="new-post-wrap"
+      className="w-full max-w-[600px] h-full flex justify-center place-items-center flex-col mt-5"
+    >
+      <h1 className="scroll-m-20 pb-4 text-4xl font-extrabold tracking-tight lg:text-5xl break-words">
+        Post a Cat
+      </h1>
 
-                <form id="new-post-form" onSubmit={handlePostSubmit} encType='multipart/form-data'>
-                    {(postImage) ?
-                        // TODO: make a component for the preview and submit button if the post img has been seen
-                        // if not, show the dropzone
-                        <>
-                            <div className="rounded-md min-w-[300px] max-w-1/2 m-5 p-5 aspect-square shadow-md">
-                                <img className="rounded-md" src={URL.createObjectURL(postImage)} alt="preview" />
-                            </div>
-                            <Button type="submit">Share</Button>
-                            <Button onClick={() => setPostImage(null)}>Cancel</Button>
-                        </> :
-                        <NewPostFormDropZone handlePostChange={handlePostChange} handleErrorChange={setUploadError} />
-                    }
-                </form>
-
-                {(uploadError) ? <p>{`We had an issue uploading your file. ${uploadError}`}</p> : ""}
-            </div>
-        )
-    } else {
-        return (
-            <Redirect to="/login" />
-        )
-    }
+      <form
+        id="new-post-form"
+        onSubmit={handlePostSubmit}
+        encType="multipart/form-data"
+      >
+        {postImage ? (
+          <NewPostPreview
+            postImage={postImage}
+            setPostImage={setPostImage}
+            isSubmitting={isSubmitting}
+          />
+        ) : (
+          <NewPostFormDropZone handlePostChange={handlePostChange} />
+        )}
+      </form>
+    </div>
+  );
 }

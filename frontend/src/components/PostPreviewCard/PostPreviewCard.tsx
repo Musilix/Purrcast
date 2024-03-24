@@ -1,9 +1,15 @@
-import { Card, CardContent, CardDescription, CardFooter, CardTitle } from "@/components/ui/card";
-import { Post } from "@/types/Post";
-import { User } from "@/types/User";
-import { formatAMPM } from "@/utils/ConvertDateToTime";
-import { Link } from "wouter";
-import { Skeleton } from "../ui/skeleton";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardTitle,
+} from '@/components/ui/card';
+import { Post } from '@/types/Post';
+import { User } from '@/types/User';
+import { formatAMPM } from '@/utils/ConvertDateToTime';
+import { Link } from 'wouter';
+import { Skeleton } from '../ui/skeleton';
 
 // TODO - super bloated in here at the moment. Shift this around to be more modular
 interface PostPreviewCardProps {
@@ -22,15 +28,32 @@ function RealCard({ author, postedAt, content }: PostProps) {
   return (
     <>
       <CardContent className="p-5">
-        <div className="w-full max-w-1/2 min-w-1/2 aspect-square object-cover overflow-hidden rounded-md flex justify-center align-middle text-xs sm:text-lg break-all bg-secondary p-2">{content}</div>
+        <div className="w-full max-w-1/2 min-w-1/2 aspect-square object-cover overflow-hidden rounded-md flex justify-center align-middle items-center text-center text-xs sm:text-lg break-all bg-secondary">
+          {content.includes('png') ? (
+            <img
+              src={content}
+              alt="Post Image"
+              className="size-full p-2 object-cover rounded-lg"
+            />
+          ) : (
+            content
+          )}
+        </div>
       </CardContent>
       <CardFooter className="flex flex-col flex-auto  pb-5">
-        <CardTitle>Posted by {author.name}</CardTitle>
+        <CardTitle>Posted by {author.username}</CardTitle>
         <CardDescription>{author.location}</CardDescription>
-        <CardDescription>{(postedAt) ? `${new Date(postedAt).toLocaleString('en-US', { month: 'long', day: 'numeric' })}, ${formatAMPM(new Date(postedAt))}` : "Aug 12th, 12:56pm"}</CardDescription>
+        <CardDescription>
+          {postedAt
+            ? `${new Date(postedAt).toLocaleString('en-US', {
+                month: 'long',
+                day: 'numeric',
+              })}, ${formatAMPM(new Date(postedAt))}`
+            : 'Aug 12th, 12:56pm'}
+        </CardDescription>
       </CardFooter>
     </>
-  )
+  );
 }
 
 function SkeletonPreviewCard() {
@@ -42,21 +65,27 @@ function SkeletonPreviewCard() {
         <Skeleton className="h-4 w-1/2" />
       </div>
     </div>
-  )
+  );
 }
 
-export default function PostPreviewCard({ author = {} as User, post = {} as Post, skeleton = false }: PostPreviewCardProps) {
+export default function PostPreviewCard({
+  author = {} as User,
+  post = {} as Post,
+  skeleton = false,
+}: PostPreviewCardProps) {
   return (
     <Link href={`/post/${post.id}`} className="w-full h-full">
       <a className="w-full h-full flex justify-center align-middle">
         <Card className="hover:bg-muted cursor-pointer transition-colors w-full h-full text-center place-items-center place-content-center">
-          {
-            (!skeleton) ? (
-              <RealCard author={author} postedAt={post.createdAt} content={post.contentId} />
-            ) : (
-              <SkeletonPreviewCard />
-            )
-          }
+          {!skeleton ? (
+            <RealCard
+              author={author}
+              postedAt={post.createdAt}
+              content={post.contentId}
+            />
+          ) : (
+            <SkeletonPreviewCard />
+          )}
         </Card>
       </a>
     </Link>
