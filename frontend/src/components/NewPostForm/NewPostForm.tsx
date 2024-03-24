@@ -1,6 +1,4 @@
-import { AuthContext } from '@/context/AuthContext';
-import { useContext, useState } from 'react';
-import { Redirect } from 'wouter';
+import { useState } from 'react';
 import NewPostPreview from '../NewPostPreview/NewPostPreview';
 import NewPostFormDropZone from './NewPostFormDropZone';
 
@@ -14,12 +12,13 @@ interface ResponseMessageType {
 export default function NewPostForm({
   handleSubmit,
   setMessage,
+  isSubmitting,
 }: {
   handleSubmit: (data: FormData, endpoint: string) => void;
   setMessage: (message: ResponseMessageType | null) => void;
+  isSubmitting: boolean;
 }) {
   const [postImage, setPostImage] = useState<File | null>();
-  const { session } = useContext(AuthContext);
 
   const handlePostSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -40,30 +39,30 @@ export default function NewPostForm({
     setPostImage(acceptedFile);
   };
 
-  if (session && session.user) {
-    return (
-      <div
-        id="new-post-wrap"
-        className="w-full max-w-[600px] h-full flex justify-center place-items-center flex-col mt-5"
-      >
-        <h1 className="scroll-m-20 pb-4 text-4xl font-extrabold tracking-tight lg:text-5xl break-words">
-          Post a Cat
-        </h1>
+  return (
+    <div
+      id="new-post-wrap"
+      className="w-full max-w-[600px] h-full flex justify-center place-items-center flex-col mt-5"
+    >
+      <h1 className="scroll-m-20 pb-4 text-4xl font-extrabold tracking-tight lg:text-5xl break-words">
+        Post a Cat
+      </h1>
 
-        <form
-          id="new-post-form"
-          onSubmit={handlePostSubmit}
-          encType="multipart/form-data"
-        >
-          {postImage ? (
-            <NewPostPreview postImage={postImage} setPostImage={setPostImage} />
-          ) : (
-            <NewPostFormDropZone handlePostChange={handlePostChange} />
-          )}
-        </form>
-      </div>
-    );
-  } else {
-    return <Redirect to="/login" />;
-  }
+      <form
+        id="new-post-form"
+        onSubmit={handlePostSubmit}
+        encType="multipart/form-data"
+      >
+        {postImage ? (
+          <NewPostPreview
+            postImage={postImage}
+            setPostImage={setPostImage}
+            isSubmitting={isSubmitting}
+          />
+        ) : (
+          <NewPostFormDropZone handlePostChange={handlePostChange} />
+        )}
+      </form>
+    </div>
+  );
 }

@@ -1,6 +1,8 @@
+import { AuthContext } from '@/context/AuthContext';
 import axios, { AxiosError } from 'axios';
-import { BadgeAlert, BadgeCheck, Loader2 } from 'lucide-react';
-import { useState } from 'react';
+import { BadgeAlert, BadgeCheck } from 'lucide-react';
+import { useContext, useState } from 'react';
+import { Redirect } from 'wouter';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 
 // TODO - move this to a shared file
@@ -13,6 +15,7 @@ interface ResponseMessageType {
 interface FormComponentType<FormDataType> {
   handleSubmit: (data: FormDataType, endpoint: string) => void;
   setMessage: (message: ResponseMessageType | null) => void;
+  isSubmitting: boolean;
 }
 
 interface UserSession {
@@ -26,9 +29,11 @@ export default function FormWithMessage<FormDataType>({
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<ResponseMessageType | null>();
-  // TODO - define hook to grab local storage items
+  const { session } = useContext(AuthContext);
+
+  // TODO - define hook to grab local storage items, make this prettier
   const userSession = JSON.parse(
-    localStorage.getItem('userSession') ?? '',
+    localStorage.getItem('userSession') ?? '{}',
   ) as UserSession;
 
   const handleSubmit = async (data: FormDataType, endpoint: string) => {
@@ -41,7 +46,6 @@ export default function FormWithMessage<FormDataType>({
         },
       })
       .then((res) => {
-        setIsSubmitting(false);
         setMessage({
           type: 'success',
           title: 'Your post has been uploaded!',
@@ -68,8 +72,7 @@ export default function FormWithMessage<FormDataType>({
           ),
         });
       })
-      .catch((err: AxiosError) => {
-        setIsSubmitting(false);
+      .catch((err: AxiosError<{ message: string }>) => {
         setMessage({
           type: 'destructive',
           title: 'There was an issue processing your request.',
@@ -77,29 +80,34 @@ export default function FormWithMessage<FormDataType>({
             ? `${err.response?.data.message}`
             : 'Something weird happened with our server. Maybe try submitting again later? Sorry!',
         });
+      })
+      .finally(() => {
+        setIsSubmitting(false);
       });
   };
 
-  return (
-    <div className="relative">
-      {isSubmitting && (
-        <div className="absolute flex justify-center items-center top-0 left-0 bg-slate-300/50 z-50 w-full h-full rounded-lg shadow">
-          <Loader2 size="64" className="animate-spin" />
-        </div>
-      )}
-
-      <div className="z-0">
-        <FormComponent handleSubmit={handleSubmit} setMessage={setMessage} />
-        {message && (
-          <ResponseMessage
-            type={message.type}
-            title={message.title}
-            content={message.content}
+  if (session && session.user) {
+    return (
+      <div className="relative">
+        <div className="z-0">
+          <FormComponent
+            handleSubmit={handleSubmit}
+            setMessage={setMessage}
+            isSubmitting={isSubmitting}
           />
-        )}
+          {message && (
+            <ResponseMessage
+              type={message.type}
+              title={message.title}
+              content={message.content}
+            />
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
+  } else {
+    return <Redirect to="/login" />;
+  }
 }
 
 // TODO - put this somewhere else maybe?

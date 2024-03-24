@@ -13,8 +13,8 @@ import { ModeToggle } from './components/ThemeToggle/ThemeToggle';
 import UserPostsHistory from './components/UserPostsHistory/UserPostsHistory';
 import faq from './components/faq/faq';
 import AuthProvider from './context/AuthContext';
-import { ErrorBoundary } from "react-error-boundary";
-import RequestResponse from './components/RequestResponse/RequestResponse';
+// import { ErrorBoundary } from "react-error-boundary";
+// import RequestResponse from './components/RequestResponse/RequestResponse';
 import FormWithMessage from './components/FormWithMessage/FormWithMessage';
 
 function App() {
@@ -47,7 +47,7 @@ function App() {
                 <Route path="/logout" component={Logout} />
 
                 <Route path="/create-post">
-                  {<FormWithMessage <FormData> FormComponent={NewPostForm} />}
+                  {<FormWithMessage<FormData> FormComponent={NewPostForm} />}
                 </Route>
                 <Route path="/post/:post_id" component={Post} />
 
@@ -62,7 +62,7 @@ function App() {
           </main>
         </Loader>
       </ThemeProvider>
-    </AuthProvider >
+    </AuthProvider>
   );
 }
 
