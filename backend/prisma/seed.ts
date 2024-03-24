@@ -6,13 +6,13 @@ async function main() {
     where: { id: 1 },
     update: {
       bio: 'I like cats!',
-      uuid: '9e4d7592-e44d-46ce-81e2-c18e56bdfe3a',
+      uuid: '',
       name: 'Kareem',
       username: 'keem',
     },
     create: {
       bio: 'I like cats!',
-      uuid: '9e4d7592-e44d-46ce-81e2-c18e56bdfe3a',
+      uuid: '',
       name: 'Kareem',
       username: 'keem',
       location: 'Atlanta, GA',
@@ -40,13 +40,13 @@ async function main() {
     where: { id: 2 },
     update: {
       bio: 'I somewhat like cats',
-      uuid: '34c3dd8c-4179-402c-a13b-969b1b10678b',
+      uuid: '',
       name: 'Runt Runner',
       username: 'Runt Runner',
     },
     create: {
       bio: 'I somewhat like cats',
-      uuid: '34c3dd8c-4179-402c-a13b-969b1b10678b',
+      uuid: '',
       name: 'Runt Runner',
       username: 'Runt Runner',
       location: 'Corvallis, OR',
@@ -74,13 +74,13 @@ async function main() {
     where: { id: 3 },
     update: {
       bio: 'I only like Thaddeus, my cat.',
-      uuid: '7b5eb0a0-3a25-4d89-82a2-bb4b358ffafa',
+      uuid: '',
       name: 'Sunni',
       username: 'sunndawg',
     },
     create: {
       bio: 'I only like Thaddeus, my cat.',
-      uuid: '7b5eb0a0-3a25-4d89-82a2-bb4b358ffafa',
+      uuid: '',
       name: 'Sunni',
       username: 'sunndawg',
       location: 'Corvallis, OR',
