@@ -16,25 +16,44 @@ export default function PostPage() {
 
   useEffect(() => {
     const fetchPost = async () => {
-      try {
-        const res = await axios.get(
-          `${import.meta.env.VITE_API_HOST}/post/${postId}`,
-          {},
-        );
-
-        setPost(res.data.payload.content);
-      } catch (e) {
-        console.error(
-          `An error occured while trying to retrieve posts ${postId}`,
-        );
-      }
+      axios
+        .get(`${import.meta.env.VITE_API_HOST}/post/${postId}`, {})
+        .then((res) => {
+          setPost(res.data.payload.content);
+        })
+        .catch(() => {
+          //TODO - add response message component logic to any axios type logic... how tho?
+          console.error(
+            `An error occured while trying to retrieve post ${postId}`,
+          );
+        });
     };
 
     fetchPost();
+
+    // return () => {
+    //   setPost(null);
+    // };
   }, []);
 
+  // Our upvote logic will increment the posts votes in the UI before actually sending the request to the backend
+  // We work under the assumption that the DB will update the vote count and return the new count upon refresh of the page
+  // If not, then the user will just have to try and upvote once more...
+
+  // TODO - How can we make sure the user can't upvote more than once?
   const upVotePost = () => {
     setPostVotes((prevVotes) => prevVotes + 1);
+    //TODO - add logic to actually send an upvote request to the backend
+    axios
+      .post(`${import.meta.env.VITE_API_HOST}/post/${postId}/upvote`, {})
+      .then((res) => {
+        console.log('success!');
+        console.log(res);
+      })
+      .catch((e) => {
+        console.error('Error upvoting post!');
+        console.error(e);
+      });
   };
 
   // TODO - I need to figure out a way to encapsulate the PostPreview card logic in order to reuse it for the loading state of this page
@@ -57,12 +76,14 @@ export default function PostPage() {
 function PostContent({ post }: { post: Post }) {
   return (
     <>
-      <section className="post-img w-3/4 p-4">
+      <section className="post-img min-w-3/4 w-3/4 p-1 bg-primary-glow border-dotted border border-black">
+        {/* FIXME - this is temp to work with dev data from the db*/}
         {post.contentId.includes('png') ? (
           <img
             src={post.contentId}
             alt={`A cat photo posted by ${post.author.username}`}
-            className="w-full h-full object-cover rounded-md"
+            className="w-full h-full object-cover rounded-md min-w-[300px] min-h-[300px]"
+            loading="lazy"
           />
         ) : (
           post.contentId
