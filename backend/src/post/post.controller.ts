@@ -4,6 +4,7 @@ import {
   Param,
   ParseFilePipe,
   Post,
+  Put,
   Req,
   UploadedFile,
   UseGuards,
@@ -39,14 +40,10 @@ export class PostController {
     return this.postService.upload(file, req.user.sub);
   }
 
-  // @UsePipes(TestDataPipe)
-  // @Post('/test-validation')
-  // createTest(@Body() data) {
-  //   logger.log('pipe working!');
-  //   return (
-  //     'We were able to validate the data! you gave us: ' + JSON.stringify(data)
-  //   );
-  // }
+  @Put(':id')
+  upvote(@Param('id') id: number, @Req() req) {
+    return this.postService.upvote(id, req.user.sub);
+  }
 
   @Get()
   findAll() {

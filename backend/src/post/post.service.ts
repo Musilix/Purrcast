@@ -145,4 +145,19 @@ export class PostService {
       };
     }
   }
+
+  async upvote(id: number, userId: string) {
+    try {
+      // check an upvote table if a user has given an upvote to the given post
+      // if they have, throw an error "You have already upvoted this post"
+      // if they haven't, add an upvote to the post and add a record to the upvote table
+      console.log(id, userId);
+    } catch (e) {
+      console.error(`An error occured while trying to upvote post ${id} ${e}`);
+
+      throw new InternalServerErrorException(
+        'An error occured while trying to upvote post. Please try again later.',
+      );
+    }
+  }
 }
