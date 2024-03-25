@@ -1,8 +1,6 @@
 // import { Button } from "@/components/ui/button";
 
 export default function Test() {
-
-
   return (
     <>
       <section className="w-full h-full flex flex-col flex-1 place-content-center">
@@ -67,8 +65,7 @@ export default function Test() {
         <p>test</p>
         <p>test</p>
         <p>test</p>
-
       </section>
     </>
-  )
+  );
 }

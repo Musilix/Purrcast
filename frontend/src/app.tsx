@@ -1,18 +1,21 @@
-import Home from "@/components/Home/Home";
-import { NavMenu } from "@/components/NavMenu/NavMenu";
-import NewPostForm from "@/components/NewPostForm/NewPostForm";
-import { Route, Switch } from "wouter";
-import Loader from "./components/Loader/Loader";
-import Login from "./components/Login/Login";
-import Logout from "./components/Logout/Logout";
-import Post from "./components/Post/Post";
-import Profile from "./components/Profile/Profile";
-import Test from "./components/Test/Test";
-import { ThemeProvider } from "./components/ThemeProvider/ThemeProvider";
-import { ModeToggle } from "./components/ThemeToggle/ThemeToggle";
-import UserPostsHistory from "./components/UserPostsHistory/UserPostsHistory";
-import faq from "./components/faq/faq";
-import AuthProvider from "./context/AuthContext";
+import Home from '@/components/Home/Home';
+import { NavMenu } from '@/components/NavMenu/NavMenu';
+import NewPostForm from '@/components/NewPostForm/NewPostForm';
+import { Route, Switch } from 'wouter';
+import Loader from './components/Loader/Loader';
+import Login from './components/Login/Login';
+import Logout from './components/Logout/Logout';
+import Post from './components/Post/Post';
+import Profile from './components/Profile/Profile';
+import Test from './components/Test/Test';
+import { ThemeProvider } from './components/ThemeProvider/ThemeProvider';
+import { ModeToggle } from './components/ThemeToggle/ThemeToggle';
+import UserPostsHistory from './components/UserPostsHistory/UserPostsHistory';
+import faq from './components/faq/faq';
+import AuthProvider from './context/AuthContext';
+// import { ErrorBoundary } from "react-error-boundary";
+// import RequestResponse from './components/RequestResponse/RequestResponse';
+import FormWithMessage from './components/FormWithMessage/FormWithMessage';
 
 function App() {
   return (
@@ -24,13 +27,18 @@ function App() {
         */}
         <Loader>
           <main className="flex flex-col flex-auto place-items-center w-full">
-            <header className='w-full sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
+            <header className="w-full sticky z-50 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
               <div className="w-full flex h-14  items-center p-10 justify-between">
                 <NavMenu />
                 <ModeToggle />
               </div>
             </header>
-            <section id="main-content" className="w-full max-w-screen-2xl flex flex-col flex-1 place-items-center justify-center px-5 mx-5">
+
+            {/* <ErrorBoundary FallbackComponent={RequestResponse} onReset={() => console.log('reset')}> */}
+            <section
+              id="main-content"
+              className="w-full h-auto max-w-screen-2xl flex flex-col flex-1 place-items-center justify-center my-8 px-10"
+            >
               <Switch>
                 <Route path="/" component={Home} />
                 <Route path="/faq" component={faq} />
@@ -38,8 +46,9 @@ function App() {
                 <Route path="/login" component={Login} />
                 <Route path="/logout" component={Logout} />
 
-
-                <Route path="/create-post" component={NewPostForm} />
+                <Route path="/create-post">
+                  {<FormWithMessage<FormData> FormComponent={NewPostForm} />}
+                </Route>
                 <Route path="/post/:post_id" component={Post} />
 
                 <Route path="/profile" component={Profile} />
@@ -49,11 +58,12 @@ function App() {
                 <Route component={() => <h1>404 - Not Found</h1>} />
               </Switch>
             </section>
+            {/* </ErrorBoundary> */}
           </main>
         </Loader>
       </ThemeProvider>
     </AuthProvider>
-  )
+  );
 }
 
-export default App
+export default App;

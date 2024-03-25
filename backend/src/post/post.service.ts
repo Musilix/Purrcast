@@ -1,17 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import sharp from 'sharp';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { SharpHelper } from 'src/sharp/sharp.service';
 
-// TODO - find a better way to send back packets of data and errors... lots of repetition here
-export interface PostResponse {
-  payload: {
-    message: string;
-    content: string | null;
-    error: string | null;
-    statusCode: number;
-  };
-}
 @Injectable()
 export class PostService {
   constructor(
@@ -19,25 +14,18 @@ export class PostService {
     private readonly cloudinary: CloudinaryService,
   ) {}
 
-  async upload(image: any): Promise<PostResponse> {
+  async upload(image: any, userId: string) {
     try {
-      //TODO: Move this to a sharp helper pipe
-      // resize image before sending it to cloudinary
-      const resizedImageBuffer = await sharp(image.buffer)
-        .resize(350)
-        .toBuffer();
-      const resizedImageMimeType = image.mimetype;
-
-      const resizedImage = {
-        buffer: resizedImageBuffer,
-        mimetype: resizedImageMimeType,
-      };
+      // TODO - inject this into the service with manual instantion options
+      let reformattedImg = new SharpHelper(image.mimetype, image.buffer);
+      reformattedImg = await reformattedImg.resizeImage(500);
+      const reformattedImgDetails = reformattedImg.getImgDetails();
 
       /* 
         The options sent to our cloudinary service's upload method here are using an upload type of just 'upload'.
-          If we wanted to strengthen our security, we could use the 'authenticated' upload type or even private
+        If we wanted to strengthen our security, we could use the 'authenticated' upload type or even private
       */
-      const res = await this.cloudinary.upload(resizedImage, {
+      const res = await this.cloudinary.upload(reformattedImgDetails, {
         resource_type: 'image',
         unique_filename: true,
         overwrite: false,
@@ -51,65 +39,44 @@ export class PostService {
         // },
       });
 
-      // get user data placeholder
-      if (res.version !== undefined && res.public_id !== undefined) {
-        // TODO: change to true implementation where we utilize users creds sent with req body to /upload
-        //NOTE: if this user search fails, the post creation will fail due to a 500 server error...
-        const user = await this.prisma.user.findUnique({ where: { id: 1 } });
+      if (res && res.secure_url !== undefined) {
+        // NOTE: if this user search fails, the post creation will fail due to a 500 server error...
+        // The user search WILL fail if we didn't properly include the UUID provided by supabase auth upon authenticating with Google OAuth...
+        // TODO - we need to find a way to consistently identify our native users w/ the metadata provided by google/supabase auth
+        const user = await this.prisma.user.findFirst({
+          where: { uuid: userId },
+        });
 
-        await this.prisma.post.create({
+        const newPost = await this.prisma.post.create({
           data: {
-            contentId: `v${res.version}/${res.public_id}.png`,
-            authorId: user.id,
+            contentId: res.secure_url,
+            authorId: user?.id ?? 1,
             published: true,
           },
         });
 
-        return {
-          payload: {
-            message: 'File uploaded successfully.',
-            content: res,
-            error: null,
-            statusCode: 200,
-          },
-        };
+        // TODO - idk what to return... I know I should probably use a hash for the post identifier...
+        return { resource: res.secure_url, postId: newPost.id };
       } else {
-        throw new Error('Unable to upload file.');
+        throw new InternalServerErrorException(
+          'Unable to upload your file due to a communication error with our image hosting provider. Please try again later.',
+        );
       }
     } catch (e) {
-      console.error(`${e}`);
-
-      return {
-        payload: {
-          message: null,
-          content: null,
-          error: 'Unable to upload your file. Please try again later.',
-          statusCode: 501,
-        },
-      };
+      throw new InternalServerErrorException(
+        'Unable to upload your file due to an account issue. Please try again later.',
+      );
     }
   }
 
   async getImage(postId: string) {
     try {
       const res = await this.cloudinary.getUpload(postId);
-      return {
-        payload: {
-          message: 'Image retrieve succesfully.',
-          content: res,
-          error: null,
-          statusCode: 200,
-        },
-      };
+      return res;
     } catch (e) {
-      return {
-        payload: {
-          message: null,
-          content: null,
-          error: 'Unable to retrieve image. Please try again later. Sorry!',
-          statusCode: 501,
-        },
-      };
+      throw new NotFoundException(
+        `Unable to retrieve the image with an ID of ${postId}`,
+      );
     }
   }
 
@@ -179,11 +146,18 @@ export class PostService {
     }
   }
 
-  // update(id: number, updatePostDto: UpdatePostDto) {
-  //   return `This action updates a #${id} post`;
-  // }
+  async upvote(id: number, userId: string) {
+    try {
+      // check an upvote table if a user has given an upvote to the given post
+      // if they have, throw an error "You have already upvoted this post"
+      // if they haven't, add an upvote to the post and add a record to the upvote table
+      console.log(id, userId);
+    } catch (e) {
+      console.error(`An error occured while trying to upvote post ${id} ${e}`);
 
-  // remove(id: number) {
-  //   return `This action removes a #${id} post`;
-  // }
+      throw new InternalServerErrorException(
+        'An error occured while trying to upvote post. Please try again later.',
+      );
+    }
+  }
 }

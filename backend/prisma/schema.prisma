@@ -17,20 +17,12 @@ model Post {
   authorId  Int
 }
 
-model Profile {
-  id     Int     @id @default(autoincrement())
-  bio    String?
-  user   User    @relation(fields: [userId], references: [id])
-  userId Int     @unique
-}
-
 model User {
-  id       Int      @id @default(autoincrement())
-  // Change this to be something related to Clerk in the future probably
-  // email   String   @unique
+  id       Int     @id @default(autoincrement())
+  uuid     String?  @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name     String?
-  username String   @unique
-  location String   @default("Earth") @db.VarChar(255)
+  bio      String?
+  username String  @unique
+  location String  @default("Earth") @db.VarChar(255)
   posts    Post[]
-  profile  Profile?
 }
