@@ -80,36 +80,37 @@ export class PostService {
     }
   }
 
-  async findAll() {
+  async findAll(userId?: string) {
+    const findAllFilters = userId
+      ? { published: true, author: { uuid: userId } }
+      : { published: true };
+
     try {
       const res = await this.prisma.post.findMany({
-        where: {
+        where: findAllFilters,
+        select: {
           published: true,
-        },
-        include: {
-          author: true,
+          contentId: true,
+          createdAt: true,
+          updatedAt: true,
+          id: true,
+          author: {
+            select: {
+              bio: true,
+              location: true,
+              name: true,
+              username: true,
+            },
+          },
         },
       });
 
-      return {
-        payload: {
-          message: 'Posts retrieved succesfully.',
-          content: res,
-          error: null,
-          statusCode: 200,
-        },
-      };
+      return res;
     } catch (e) {
-      console.error(`An error occured while trying to retrieva all posts ${e}`);
-
-      return {
-        payload: {
-          message: null,
-          content: null,
-          error: 'An error occured while trying to retrieva all posts ',
-          statusCode: 501,
-        },
-      };
+      console.error(e);
+      throw new InternalServerErrorException(
+        'An error occured while trying to grab posts. Maybe go smoke a toke and come have a go at it again a little later?',
+      );
     }
   }
 
@@ -124,25 +125,11 @@ export class PostService {
         },
       });
 
-      return {
-        payload: {
-          message: `Post ${id} retrieved succesfully.`,
-          content: res,
-          error: null,
-          statusCode: 200,
-        },
-      };
+      return res;
     } catch (e) {
-      console.error(`An error occured while trying to retrieva all posts ${e}`);
-
-      return {
-        payload: {
-          message: null,
-          content: null,
-          error: `An error occurred while fetching post ${id}. Please try again later.`,
-          statusCode: 501,
-        },
-      };
+      return new InternalServerErrorException(
+        'An error occurred while trying to get the post. Please have a go at it a little later',
+      );
     }
   }
 

@@ -50,6 +50,12 @@ export class PostController {
     return this.postService.findAll();
   }
 
+  @Get('/mine')
+  @UseGuards(TestAuthGuard)
+  findAllUserSpecific(@Req() req) {
+    return this.postService.findAll(req.user.sub);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.postService.findOne(+id);
