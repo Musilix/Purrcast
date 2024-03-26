@@ -40,12 +40,9 @@ export default function NewPostForm({
   };
 
   return (
-    <div
-      id="new-post-wrap"
-      className="w-full max-w-[600px] h-full flex justify-center place-items-center flex-col mt-5"
-    >
+    <div id="new-post-wrap">
       <h1 className="scroll-m-20 pb-4 text-4xl font-extrabold tracking-tight lg:text-5xl break-words">
-        Post a Cat
+        🐱 Post a Cat
       </h1>
 
       <form

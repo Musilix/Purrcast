@@ -4,43 +4,51 @@ import { useEffect, useState } from 'react';
 import { Post } from '../../types/Post';
 import PostPreviewCard from '../PostPreviewCard/PostPreviewCard';
 
-export interface PostResponse {
-  payload: {
-    message: string;
-    content: Post[] | null;
-    error: string | null;
-    statusCode: number;
-  };
+interface UserSession {
+  access_token: string;
 }
-
 // TODO: Set up reducer to handle different post previw cases
 //   1. Splash Page Preview - only grab some X random posts where location is near vicinity of user
 //   2. User Profile Preview - grab all posts by user
 //   3. Grab Paginated Posts - grab all posts in a vicinity of user by page
 // export default function PostsPreview({ className = "", type = "splash" | "profile" | "paginated"}) {
-export default function PostsPreview({ className = '' }) {
+export default function PostsPreview({
+  className = '',
+  onlyCurrUser = false,
+}: {
+  className?: string;
+  onlyCurrUser?: boolean;
+}) {
   const [splashPosts, setPosts] = useState<Post[]>([]);
   const [error, setError] = useState<string>('');
+  const reqUrl = onlyCurrUser
+    ? `${import.meta.env.VITE_API_HOST}/post/mine`
+    : `${import.meta.env.VITE_API_HOST}/post`;
+
+  const userSession = JSON.parse(
+    localStorage.getItem('userSession') ?? '{}',
+  ) as UserSession;
 
   useEffect(() => {
     const controller = new AbortController();
 
     const fetchPosts = async () => {
-      try {
-        const posts = await axios.get(`${import.meta.env.VITE_API_HOST}/post`, {
+      axios
+        .get(reqUrl, {
           headers: {
             Accept: 'application/json',
+            Authorization: `Bearer ${userSession.access_token}`,
           },
+        })
+        .then((res) => {
+          res ? setPosts(res.data) : setPosts([]);
+        })
+        .catch((e) => {
+          // todo - start throwing errors for an error boundary to catch and show...
+          setError((e as Error).message);
+
+          console.error(error);
         });
-
-        posts.data.payload.content
-          ? setPosts(posts.data.payload.content)
-          : setPosts([]);
-      } catch (err) {
-        setError((err as Error).message);
-
-        console.error(error);
-      }
     };
 
     fetchPosts();
