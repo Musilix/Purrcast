@@ -22,8 +22,10 @@ export default function Logout() {
   }, []);
 
   return (
-    <div>
-      <h1>Logging out...</h1>
-    </div>
+    <>
+      <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+        Logging out...
+      </h1>
+    </>
   );
 }

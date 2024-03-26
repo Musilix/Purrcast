@@ -16,7 +16,7 @@ export default function Login() {
   const { session } = useContext(AuthContext);
 
   return (
-    <div className="w-full h-full flex justify-center items-center">
+    <>
       {session && session.user ? (
         <Redirect to="/" />
       ) : (
@@ -45,6 +45,6 @@ export default function Login() {
           </CardContent>
         </Card>
       )}
-    </div>
+    </>
   );
 }

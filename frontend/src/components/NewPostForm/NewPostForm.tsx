@@ -40,10 +40,21 @@ export default function NewPostForm({
   };
 
   return (
-    <div id="new-post-wrap">
-      <h1 className="scroll-m-20 pb-4 text-4xl font-extrabold tracking-tight lg:text-5xl break-words">
-        🐱 Post a Cat
-      </h1>
+    <div
+      id="new-post-wrap"
+      className="flex flex-col justify-center items-center text-left"
+    >
+      <div
+        id="new-post-intro-wrap"
+        className="flex flex-col justify-center items-center mb-2"
+      >
+        <h1 className="scroll-m-20 pb-4 text-3xl lg:text-4xl text-left break-words font-extrabold tracking-tight">
+          Upload a cat pic
+        </h1>
+        <small className="text-sm font-medium leading-none text-muted-foreground">
+          Post a picture of your cat to help predict the weather
+        </small>
+      </div>
 
       <form
         id="new-post-form"

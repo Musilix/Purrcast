@@ -76,7 +76,7 @@ export default function faq() {
             id="pic-details-example-images"
             className="w-full flex flex-col justify-center place-items-center mt-10 *:m-5 md:flex-row md:justify-between"
           >
-            <div className="sm:w-3/4 md:w-1/2">
+            <div className="w-[250px] sm:w-3/4 md:w-1/2">
               <div
                 id="bad-examples"
                 className="aspect-square relative grid grid-cols-3 grid-rows-3 gap-5 mt-5 p-5 bg-accent rounded-lg border-dashed border border-accent-foreground"
@@ -107,7 +107,7 @@ export default function faq() {
                   className="w-full h-full row-span-1 col-span-1 rounded-md"
                 />
 
-                <div className="size-1/6 absolute -left-[20px] -top-[30px] bg-background border-foreground border-dashed border p-4 rounded-full">
+                <div className="min-w-[70px] max-w-[250px] w-1/6 absolute -left-[20px] -top-[30px] bg-background border-foreground border-dashed border p-4 rounded-full">
                   <img
                     src="/incorrect.png"
                     alt="incorrect-indicator-image"
@@ -123,7 +123,7 @@ export default function faq() {
               </div>
             </div>
 
-            <div className="sm:w-3/4 md:w-1/2">
+            <div className="w-[250px] sm:w-3/4 md:w-1/2">
               <div
                 id="good-examples"
                 className="aspect-square relative grid grid-cols-3 grid-rows-3 gap-5 mt-5 p-5 bg-accent rounded-lg border-dashed border border-accent-foreground"
@@ -154,7 +154,7 @@ export default function faq() {
                   className="w-full h-full row-span-1 col-span-1 rounded-md"
                 />
 
-                <div className="size-1/6 absolute -left-[20px] -top-[30px] bg-background border-foreground border-dashed border p-4 rounded-full">
+                <div className="min-w-[70px] max-w-[250px] w-1/6 absolute -left-[20px] -top-[30px] bg-background border-foreground border-dashed border p-4 rounded-full">
                   <img
                     src="/correct.png"
                     alt="correct-indicator-image"

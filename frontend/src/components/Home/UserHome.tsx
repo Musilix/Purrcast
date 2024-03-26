@@ -5,10 +5,7 @@ import { Button } from '../ui/button';
 
 export default function UserHome({ session }: { session: Session }) {
   return (
-    <div
-      id="greeting-wrap"
-      className="flex flex-col w-full h-full items-center place-content-center *:p-2"
-    >
+    <>
       <h1 className="scroll-m-20 font-extrabold tracking-tight text-5xl sm:text-4xl lg:text-5xl break-words text-center sm:text-center">
         {new Date().getHours() >= 5 && new Date().getHours() < 12
           ? 'Good morning'
@@ -58,6 +55,6 @@ export default function UserHome({ session }: { session: Session }) {
           Where are you getting this information?
         </p>
       </Link>
-    </div>
+    </>
   );
 }

@@ -4,10 +4,7 @@ import { Card } from '../ui/card';
 
 export default function NonUserHome() {
   return (
-    <div
-      id="splash-greet-wrap"
-      className="h-full text-center flex flex-col justify-center place-items-center align-middle items-center place-content-center"
-    >
+    <>
       <h1 className="text-center font-bold leading-tight tracking-tighter text-5xl md:text-6xl lg:leading-[1.1] md:block">
         {import.meta.env.PROD ? 'Purrcast' : 'Purrcast Test Feed'}
       </h1>
@@ -24,7 +21,7 @@ export default function NonUserHome() {
           />
         </div>
 
-        <Card className="w-full md:w-full p-6 max-w-[500px] min-w-[300px] mt-2.5">
+        <Card className="w-full md:w-full p-6 max-w-[500px] min-w-[300px] mt-2.5 text-center">
           {/* create an absolute positioned triangle div that makes it's parent div look like a speech bubble */}
           {/* <div className='absolute -bottom-6 left-2 w-[25px] h-[25px] border-solid border-b-slate-400  border-r-slate-400 border-opacity-0 border-8'></div> */}
 
@@ -57,6 +54,6 @@ export default function NonUserHome() {
           </Button>
         </Link>
       </div>
-    </div>
+    </>
   );
 }
