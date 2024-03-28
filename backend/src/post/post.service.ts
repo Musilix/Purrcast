@@ -3,6 +3,8 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import axios from 'axios';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SharpHelper } from 'src/sharp/sharp.service';
@@ -12,61 +14,107 @@ export class PostService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly cloudinary: CloudinaryService,
+    private readonly configService: ConfigService,
   ) {}
 
   async upload(image: any, userId: string) {
-    try {
-      // TODO - inject this into the service with manual instantion options
-      let reformattedImg = new SharpHelper(image.mimetype, image.buffer);
-      reformattedImg = await reformattedImg.resizeImage(500);
-      const reformattedImgDetails = reformattedImg.getImgDetails();
+    // TODO - inject this into the service with manual instantion options
+    let reformattedImg = new SharpHelper(image.mimetype, image.buffer);
+    reformattedImg = await reformattedImg.resizeImage(500);
+    const reformattedImgDetails = reformattedImg.getImgDetails();
 
-      /* 
-        The options sent to our cloudinary service's upload method here are using an upload type of just 'upload'.
-        If we wanted to strengthen our security, we could use the 'authenticated' upload type or even private
-      */
-      const res = await this.cloudinary.upload(reformattedImgDetails, {
-        resource_type: 'image',
-        unique_filename: true,
-        overwrite: false,
-        format: 'png',
-        type: 'upload', //TODO - change this to authenticated or private if we decide to utilize token-based access control
-        // TODO - in the future, it may be necessary to hide assets with access_control settings
-        // If I continue to use cloudinary, I will need to contact them for a encrpytion key to generate valid tokens for authenticated users to access assets
-        // access_control: {
-        //   access_type: 'token',
+    //  fixme- this broke stuff
+    const fd = new FormData();
+    fd.append(
+      'image_base64',
+      Buffer.from(reformattedImgDetails.buffer).toString('base64'),
+    );
+    fd.append('threshold', '10');
 
-        // },
-      });
-
-      if (res && res.secure_url !== undefined) {
-        // NOTE: if this user search fails, the post creation will fail due to a 500 server error...
-        // The user search WILL fail if we didn't properly include the UUID provided by supabase auth upon authenticating with Google OAuth...
-        // TODO - we need to find a way to consistently identify our native users w/ the metadata provided by google/supabase auth
-        const user = await this.prisma.user.findFirst({
-          where: { uuid: userId },
-        });
-
-        const newPost = await this.prisma.post.create({
-          data: {
-            contentId: res.secure_url,
-            authorId: user?.id ?? 1,
-            published: true,
+    // call imagga service to first see if our base64 image is a cat
+    const hasCat = await axios
+      .post(
+        'https://api.imagga.com/v2/tags',
+        {
+          image_base64: Buffer.from(reformattedImgDetails.buffer).toString(
+            'base64',
+          ),
+        },
+        {
+          auth: {
+            username: this.configService.get('IMAGGA_API_KEY') ?? '',
+            password: this.configService.get('IMAGGA_API_SECRET') ?? '',
           },
-        });
+        },
+      )
+      .catch((e) => console.error(e));
 
-        // TODO - idk what to return... I know I should probably use a hash for the post identifier...
-        return { resource: res.secure_url, postId: newPost.id };
-      } else {
-        throw new InternalServerErrorException(
-          'Unable to upload your file due to a communication error with our image hosting provider. Please try again later.',
-        );
-      }
-    } catch (e) {
-      throw new InternalServerErrorException(
-        'Unable to upload your file due to an account issue. Please try again later.',
-      );
-    }
+    // console.log(hasCat);
+
+    return hasCat;
+
+    // fixme - uncomment when done
+    // /*
+    //     The options sent to our cloudinary service's upload method here are using an upload type of just 'upload'.
+    //     If we wanted to strengthen our security, we could use the 'authenticated' upload type or even private
+    //   */
+    // const res = await this.cloudinary.upload(reformattedImgDetails, {
+    //   categorization: 'imagga_tagging',
+    //   auto_tagging: 0.4,
+    //   resource_type: 'image',
+    //   unique_filename: true,
+    //   overwrite: false,
+    //   format: 'png',
+    //   type: 'upload', //TODO - change this to authenticated or private if we decide to utilize token-based access control
+    //   // TODO - in the future, it may be necessary to hide assets with access_control settings
+    //   // If I continue to use cloudinary, I will need to contact them for a encrpytion key to generate valid tokens for authenticated users to access assets
+    //   // access_control: {
+    //   //   access_type: 'token',
+
+    //   // },
+    // });
+
+    // // FIXME - I don't really like this stack of conditionals...
+    // if (!res || res.secure_url == undefined) {
+    //   throw new InternalServerErrorException(
+    //     'Unable to upload your file due to a communication error with our image hosting provider. Please try again later.',
+    //   );
+    // }
+    // console.log(res.tags);
+
+    // // Check if the image is a drawing or art of a cat
+    // for (const tag of res.tags) {
+    //   if (tag.indexOf('art') !== -1) {
+    //     throw new InternalServerErrorException(
+    //       "You gotta make sure you're uploading a real cat picture. No drawings allowed! I'm so sorry.",
+    //     );
+    //   }
+    // }
+
+    // // check to make sure it is indeed a cat
+    // if (!res.tags.includes('cat')) {
+    //   throw new InternalServerErrorException(
+    //     "You gotta make sure you're uploading a cat picture, bruh!",
+    //   );
+    // }
+
+    // // NOTE: if this user search fails, the post creation will fail due to a 500 server error...
+    // // The user search WILL fail if we didn't properly include the UUID provided by supabase auth upon authenticating with Google OAuth...
+    // // TODO - we need to find a way to consistently identify our native users w/ the metadata provided by google/supabase auth
+    // const user = await this.prisma.user.findFirst({
+    //   where: { uuid: userId },
+    // });
+
+    // const newPost = await this.prisma.post.create({
+    //   data: {
+    //     contentId: res.secure_url,
+    //     authorId: user?.id ?? 1,
+    //     published: true,
+    //   },
+    // });
+
+    // // TODO - idk what to return... I know I should probably use a hash for the post identifier...
+    // return { resource: res.secure_url, postId: newPost.id };
   }
 
   async getImage(postId: string) {

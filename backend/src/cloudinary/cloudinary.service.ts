@@ -1,4 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 
 @Injectable()
 export class CloudinaryService {
@@ -13,8 +17,7 @@ export class CloudinaryService {
       });
       return result;
     } catch (error) {
-      console.error(error);
-      return new Error('Unable to sign url');
+      throw new InternalServerErrorException('Unable to create signed url');
     }
   }
 
