@@ -8,9 +8,9 @@ interface UserSession {
   access_token: string;
 }
 // TODO: Set up reducer to handle different post previw cases
-//   1. Splash Page Preview - only grab some X random posts where location is near vicinity of user
-//   2. User Profile Preview - grab all posts by user
-//   3. Grab Paginated Posts - grab all posts in a vicinity of user by page
+//   1. Splash Page Preview - only grab some X random posts where location is near vicinity of user (/post)
+//   2. User Profile Preview - grab all posts by user (/post/mine)
+//   3. Grab Paginated Posts - grab all posts in a vicinity of user by page (post/page=1&limit=10)
 // export default function PostsPreview({ className = "", type = "splash" | "profile" | "paginated"}) {
 export default function PostsPreview({
   className = '',
