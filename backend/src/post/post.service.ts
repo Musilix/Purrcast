@@ -8,6 +8,7 @@ import axios from 'axios';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SharpHelper } from 'src/sharp/sharp.service';
+import FormData from 'form-data';
 
 @Injectable()
 export class PostService {
@@ -18,103 +19,101 @@ export class PostService {
   ) {}
 
   async upload(image: any, userId: string) {
-    // TODO - inject this into the service with manual instantion options
+    // TODO - We could inject this into the service with manual instantion options
     let reformattedImg = new SharpHelper(image.mimetype, image.buffer);
     reformattedImg = await reformattedImg.resizeImage(500);
     const reformattedImgDetails = reformattedImg.getImgDetails();
 
-    //  fixme- this broke stuff
+    // TODO - this bundle of logic should maybe be nested in a helper function of some sort...
     const fd = new FormData();
     fd.append(
       'image_base64',
       Buffer.from(reformattedImgDetails.buffer).toString('base64'),
     );
-    fd.append('threshold', '10');
+    fd.append('threshold', '49');
 
-    // call imagga service to first see if our base64 image is a cat
-    const hasCat = await axios
-      .post(
-        'https://api.imagga.com/v2/tags',
-        {
-          image_base64: Buffer.from(reformattedImgDetails.buffer).toString(
-            'base64',
-          ),
+    const tags = await axios
+      .post('https://api.imagga.com/v2/tags', fd, {
+        headers: {
+          Authorization: `Basic ${Buffer.from(
+            `${this.configService.get(
+              'IMAGGA_API_KEY',
+            )}:${this.configService.get('IMAGGA_API_SECRET')}`,
+          ).toString('base64')}`,
         },
-        {
-          auth: {
-            username: this.configService.get('IMAGGA_API_KEY') ?? '',
-            password: this.configService.get('IMAGGA_API_SECRET') ?? '',
-          },
-        },
-      )
-      .catch((e) => console.error(e));
+      })
+      .then((response) => {
+        return response.data.result.tags;
+      })
+      .catch(() => {
+        throw new InternalServerErrorException(
+          'There was an issue deciphering what was in the image. Please try again later.',
+        );
+      });
 
-    // console.log(hasCat);
+    const hasCat = tags.some((tag: any) =>
+      tag.tag.en.match(/cat|kitten|feline|kitty/i),
+    );
 
-    return hasCat;
+    const isRealCat = !tags.some((tag: any) =>
+      tag.tag.en.match(/art|sketch|paint|draw|doodle/i),
+    );
 
-    // fixme - uncomment when done
-    // /*
-    //     The options sent to our cloudinary service's upload method here are using an upload type of just 'upload'.
-    //     If we wanted to strengthen our security, we could use the 'authenticated' upload type or even private
-    //   */
-    // const res = await this.cloudinary.upload(reformattedImgDetails, {
-    //   categorization: 'imagga_tagging',
-    //   auto_tagging: 0.4,
-    //   resource_type: 'image',
-    //   unique_filename: true,
-    //   overwrite: false,
-    //   format: 'png',
-    //   type: 'upload', //TODO - change this to authenticated or private if we decide to utilize token-based access control
-    //   // TODO - in the future, it may be necessary to hide assets with access_control settings
-    //   // If I continue to use cloudinary, I will need to contact them for a encrpytion key to generate valid tokens for authenticated users to access assets
-    //   // access_control: {
-    //   //   access_type: 'token',
+    // Check if image is a drawing FIRST
+    if (!isRealCat) {
+      throw new InternalServerErrorException(
+        "You gotta make sure you're uploading a real cat picture. No drawings allowed! I'm so sorry.",
+      );
+    }
 
-    //   // },
-    // });
+    // Check if the image is a cat now...
+    if (!hasCat) {
+      throw new InternalServerErrorException(
+        "You gotta make sure you're uploading a cat picture, bruh!",
+      );
+    }
 
-    // // FIXME - I don't really like this stack of conditionals...
-    // if (!res || res.secure_url == undefined) {
-    //   throw new InternalServerErrorException(
-    //     'Unable to upload your file due to a communication error with our image hosting provider. Please try again later.',
-    //   );
-    // }
-    // console.log(res.tags);
+    /*
+        The options sent to our cloudinary service's upload method here are using an upload type of just 'upload'.
+        If we wanted to strengthen our security, we could use the 'authenticated' upload type or even private
+      */
+    const res = await this.cloudinary.upload(reformattedImgDetails, {
+      resource_type: 'image',
+      unique_filename: true,
+      overwrite: false,
+      format: 'png',
+      type: 'upload', //TODO - change this to authenticated or private if we decide to utilize token-based access control
+      // TODO - in the future, it may be necessary to hide assets with access_control settings
+      // If I continue to use cloudinary, I will need to contact them for a encrpytion key to generate valid tokens for authenticated users to access assets
+      // access_control: {
+      //   access_type: 'token',
 
-    // // Check if the image is a drawing or art of a cat
-    // for (const tag of res.tags) {
-    //   if (tag.indexOf('art') !== -1) {
-    //     throw new InternalServerErrorException(
-    //       "You gotta make sure you're uploading a real cat picture. No drawings allowed! I'm so sorry.",
-    //     );
-    //   }
-    // }
+      // },
+    });
 
-    // // check to make sure it is indeed a cat
-    // if (!res.tags.includes('cat')) {
-    //   throw new InternalServerErrorException(
-    //     "You gotta make sure you're uploading a cat picture, bruh!",
-    //   );
-    // }
+    if (!res || res.secure_url == undefined) {
+      throw new InternalServerErrorException(
+        'Unable to upload your file due to a communication error with our image hosting provider. Please try again later.',
+      );
+    }
 
-    // // NOTE: if this user search fails, the post creation will fail due to a 500 server error...
-    // // The user search WILL fail if we didn't properly include the UUID provided by supabase auth upon authenticating with Google OAuth...
-    // // TODO - we need to find a way to consistently identify our native users w/ the metadata provided by google/supabase auth
-    // const user = await this.prisma.user.findFirst({
-    //   where: { uuid: userId },
-    // });
+    // NOTE: if this user search fails, the post creation will fail due to a 500 server error...
+    // The user search WILL fail if we didn't properly include the UUID provided by supabase auth upon authenticating with Google OAuth...
+    // TODO - we need to find a way to consistently identify our native users w/ the metadata provided by google/supabase auth
+    const user = await this.prisma.user.findFirst({
+      where: { uuid: userId },
+    });
 
-    // const newPost = await this.prisma.post.create({
-    //   data: {
-    //     contentId: res.secure_url,
-    //     authorId: user?.id ?? 1,
-    //     published: true,
-    //   },
-    // });
+    const newPost = await this.prisma.post.create({
+      data: {
+        contentId: res.secure_url,
+        authorId: user?.id ?? 1,
+        published: true,
+      },
+    });
 
-    // // TODO - idk what to return... I know I should probably use a hash for the post identifier...
-    // return { resource: res.secure_url, postId: newPost.id };
+    // TODO - idk what to return... I know I should probably use a hash for the post identifier...
+    return { resource: res.secure_url, postId: newPost.id };
   }
 
   async getImage(postId: string) {
