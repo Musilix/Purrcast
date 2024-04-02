@@ -1,9 +1,9 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import {
-  TestAuthGuard,
-  TestSuperAuthGuard,
-} from './guards/testAuth/testAuth.guard';
-import { WhoAmIFor } from './guards/testAuth/whoAmIFor.decorator';
+  JwtAuthGuard,
+  JwtSuperAuthGuard,
+} from './guards/JwtAuth/jwtAuth.guard';
+import { WhoAmIFor } from './guards/JwtAuth/whoAmIFor.decorator';
 
 @Controller()
 export class AppController {
@@ -16,7 +16,7 @@ export class AppController {
       This is a route that will provide only 401 errors if the user does not send a token with their requests
   */
   @Get('/secret')
-  @UseGuards(TestAuthGuard)
+  @UseGuards(JwtAuthGuard)
   getSecret() {
     return 'How did you find this?';
   }
@@ -27,14 +27,14 @@ export class AppController {
   */
   @Get('/kareems-secret')
   @WhoAmIFor('kareem')
-  @UseGuards(TestAuthGuard, TestSuperAuthGuard)
+  @UseGuards(JwtAuthGuard, JwtSuperAuthGuard)
   getKareemsSecret() {
     return 'A secret for Kareem only! I like toast with butter and jam!';
   }
 
   @Get('/sunnis-secret')
   @WhoAmIFor('sunni')
-  @UseGuards(TestAuthGuard, TestSuperAuthGuard)
+  @UseGuards(JwtAuthGuard, JwtSuperAuthGuard)
   getSunnisSecret() {
     return 'A secret for Sunni only! I love you to the moon and beyond!';
   }
