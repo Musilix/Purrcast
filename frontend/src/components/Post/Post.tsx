@@ -19,7 +19,7 @@ export default function PostPage() {
       axios
         .get(`${import.meta.env.VITE_API_HOST}/post/${postId}`, {})
         .then((res) => {
-          setPost(res.data.payload.content);
+          setPost(res.data);
         })
         .catch(() => {
           //TODO - add response message component logic to any axios type logic... how tho?
@@ -76,17 +76,17 @@ export default function PostPage() {
 function PostContent({ post }: { post: Post }) {
   return (
     <>
-      <section className="post-img min-w-3/4 w-3/4 p-1 bg-primary-glow border-dotted border border-black">
+      <section className="post-img w-3/4 min-w-[200px] max-w-[800px] p-1 bg-primary-glow border-dotted border border-black">
         {/* FIXME - this is temp to work with dev data from the db*/}
         {post.contentId.includes('png') ? (
           <img
             src={post.contentId}
             alt={`A cat photo posted by ${post.author.username}`}
-            className="w-full h-full object-cover rounded-md min-w-[300px] min-h-[300px]"
+            className="w-full h-full object-cover rounded-md"
             loading="lazy"
           />
         ) : (
-          post.contentId
+          post.contentId // TODO - show custom broken image icon
         )}
       </section>
       <section className="post-details text-center p-4">

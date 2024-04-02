@@ -1,15 +1,14 @@
-import { FileImage } from 'lucide-react';
+import { Cat, FileImage } from 'lucide-react';
 import { useCallback } from 'react';
 import { FileRejection, useDropzone } from 'react-dropzone';
 
 interface NewPostFormDropZoneProps {
-  handlePostChange: (acceptedFile: File) => void
+  handlePostChange: (acceptedFile: File) => void;
 }
 
 export default function NewPostFormDropZone({
-  handlePostChange
+  handlePostChange,
 }: NewPostFormDropZoneProps) {
-
   const handleDropAccepted = useCallback((acceptedFiles: File[]) => {
     handlePostChange(acceptedFiles[0]);
   }, []);
@@ -35,7 +34,7 @@ export default function NewPostFormDropZone({
   return (
     <>
       <div
-        className="min-w-[350px] sm:min-w-[350px] md:min-w-[500px] flex flex-col justify-center place-items-center text-foreground bg-input rounded-md border-dashed border-muted-foreground border-2 p-8 my-5 cursor-pointer hover:border-foreground *:m-1"
+        className="min-w-[350px] sm:min-w-[350px] flex flex-col justify-center place-items-center text-foreground bg-input rounded-lg border-dashed border-muted-foreground border-2 p-2 my-5 cursor-pointer hover:border-foreground *:m-1"
         {...getRootProps()}
       >
         <input {...getInputProps()} name="postImage" id="postImageFile" />
@@ -48,8 +47,10 @@ export default function NewPostFormDropZone({
           </>
         ) : (
           <>
-            <FileImage size={48} color="hsl(var(--muted-foreground))" />
-            <p className="leading-7 [&:not(:first-child)]:mt-6 break-words text-muted-foreground">
+            {/* <FileImage size={48} color="hsl(var(--muted-foreground))" /> */}
+            <Cat size={48} color="hsl(var(--muted-foreground))" />
+
+            <p className="leading-7 [&:not(:first-child)]:mt-2 break-words text-muted-foreground">
               Drag File to Upload or Click Here
             </p>
           </>
