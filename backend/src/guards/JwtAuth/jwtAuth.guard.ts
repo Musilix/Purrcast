@@ -11,7 +11,7 @@ import { Request } from 'express';
 import { WhoAmIFor } from './whoAmIFor.decorator';
 
 @Injectable()
-export class TestAuthGuard implements CanActivate {
+export class JwtAuthGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
@@ -60,7 +60,7 @@ export class TestAuthGuard implements CanActivate {
 }
 
 @Injectable()
-export class TestSuperAuthGuard implements CanActivate {
+export class JwtSuperAuthGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

@@ -6,16 +6,17 @@ import Loader from './components/Loader/Loader';
 import Login from './components/Login/Login';
 import Logout from './components/Logout/Logout';
 import Post from './components/Post/Post';
+import PostsHistory from './components/PostsHistory/PostsHistory';
 import Profile from './components/Profile/Profile';
 import Test from './components/Test/Test';
 import { ThemeProvider } from './components/ThemeProvider/ThemeProvider';
 import { ModeToggle } from './components/ThemeToggle/ThemeToggle';
-import UserPostsHistory from './components/UserPostsHistory/UserPostsHistory';
 import faq from './components/faq/faq';
 import AuthProvider from './context/AuthContext';
 // import { ErrorBoundary } from "react-error-boundary";
 // import RequestResponse from './components/RequestResponse/RequestResponse';
 import FormWithMessage from './components/FormWithMessage/FormWithMessage';
+import CenterThis from './components/CenterThis/CenterThis';
 
 function App() {
   return (
@@ -26,7 +27,7 @@ function App() {
                 while leaving the specific of the context for said loading to a more dialed in component like PageLoader or <CardLoader>
         */}
         <Loader>
-          <main className="flex flex-col flex-auto place-items-center w-full">
+          <main className="flex flex-col flex-1 place-items-center w-full h-dvh">
             <header className="w-full sticky z-50 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
               <div className="w-full flex h-14  items-center p-10 justify-between">
                 <NavMenu />
@@ -35,29 +36,54 @@ function App() {
             </header>
 
             {/* <ErrorBoundary FallbackComponent={RequestResponse} onReset={() => console.log('reset')}> */}
+            <div className="my-3 grow"></div>
             <section
               id="main-content"
-              className="w-full h-auto max-w-screen-2xl flex flex-col flex-1 place-items-center justify-center my-8 px-10"
+              className="w-full h-full sm:w-5/6 md:w-4/5 max-w-screen-md flex flex-col flex-none px-10 *:my-7"
             >
               <Switch>
-                <Route path="/" component={Home} />
+                <Route path="/">
+                  <CenterThis>
+                    <Home />
+                  </CenterThis>
+                </Route>
                 <Route path="/faq" component={faq} />
 
-                <Route path="/login" component={Login} />
-                <Route path="/logout" component={Logout} />
+                <Route path="/login">
+                  <CenterThis>
+                    <Login />
+                  </CenterThis>
+                </Route>
+                <Route path="/logout">
+                  <CenterThis>
+                    <Logout />
+                  </CenterThis>
+                </Route>
 
                 <Route path="/create-post">
-                  {<FormWithMessage<FormData> FormComponent={NewPostForm} />}
+                  <CenterThis>
+                    <FormWithMessage<FormData> FormComponent={NewPostForm} />
+                  </CenterThis>
                 </Route>
-                <Route path="/post/:post_id" component={Post} />
+                <Route path="/post/:post_id">
+                  <CenterThis>
+                    <Post />
+                  </CenterThis>
+                </Route>
 
                 <Route path="/profile" component={Profile} />
-                <Route path="/profile/posts" component={UserPostsHistory} />
+                <Route path="/profile/posts">
+                  <PostsHistory onlyCurrUser={true} />
+                </Route>
+                <Route path="/posts">
+                  <PostsHistory onlyCurrUser={false} />
+                </Route>
 
                 <Route path="/testing" component={Test} />
                 <Route component={() => <h1>404 - Not Found</h1>} />
               </Switch>
             </section>
+            <div className="my-3 grow"></div>
             {/* </ErrorBoundary> */}
           </main>
         </Loader>

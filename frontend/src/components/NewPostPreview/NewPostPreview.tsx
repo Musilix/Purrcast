@@ -13,14 +13,14 @@ export default function NewPostPreview({
 }) {
   return (
     <>
-      <div className="relative rounded-md min-w-[200px] max-w-[400px] m-5 p-5 shadow-md flex flex-col justify-center items-center border border-foreground">
+      <div className="relative rounded-md min-w-[300px] max-w-[400px] m-5 p-5 shadow-md flex flex-col justify-center items-center border border-foreground">
         {isSubmitting && (
           <div className="absolute flex justify-center items-center top-0 left-0 bg-slate-300/50 z-50 w-full h-full rounded-lg shadow">
             <Loader2 size="64" className="animate-spin" />
           </div>
         )}
         <img
-          className="rounded-md"
+          className="rounded-md w-full"
           src={URL.createObjectURL(postImage)}
           alt="preview"
         />

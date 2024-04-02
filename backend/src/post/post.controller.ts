@@ -12,16 +12,17 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { __file_parse_validators__ } from 'src/constants';
-import { TestAuthGuard } from 'src/guards/testAuth/testAuth.guard';
+import { JwtAuthGuard } from 'src/guards/JwtAuth/jwtAuth.guard';
 // import { TestDataPipe } from 'src/pipes/MyCustomPipe2';
 import { PostService } from './post.service';
-
+import { SkipThrottle, ThrottlerGuard } from '@nestjs/throttler';
+import { PostThrottlerGuard } from 'src/guards/CustomThrottler/customThrottler.guard';
 @Controller('post')
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Post('upload')
-  @UseGuards(TestAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('userUploadedFile'))
   // @UsePipes(new ZodValidationPipe(createPostSchema)) test
   create(
@@ -41,16 +42,26 @@ export class PostController {
   }
 
   @Put(':id')
+  @SkipThrottle()
   upvote(@Param('id') id: number, @Req() req) {
     return this.postService.upvote(id, req.user.sub);
   }
 
   @Get()
+  @SkipThrottle()
   findAll() {
     return this.postService.findAll();
   }
 
+  @Get('/mine')
+  @UseGuards(JwtAuthGuard)
+  @SkipThrottle()
+  findAllUserSpecific(@Req() req) {
+    return this.postService.findAll(req.user.sub);
+  }
+
   @Get(':id')
+  @SkipThrottle()
   findOne(@Param('id') id: string) {
     return this.postService.findOne(+id);
   }

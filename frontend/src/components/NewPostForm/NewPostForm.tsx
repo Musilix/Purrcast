@@ -42,11 +42,19 @@ export default function NewPostForm({
   return (
     <div
       id="new-post-wrap"
-      className="w-full max-w-[600px] h-full flex justify-center place-items-center flex-col mt-5"
+      className="flex flex-col justify-center items-center text-left"
     >
-      <h1 className="scroll-m-20 pb-4 text-4xl font-extrabold tracking-tight lg:text-5xl break-words">
-        Post a Cat
-      </h1>
+      <div
+        id="new-post-intro-wrap"
+        className="flex flex-col justify-center items-center mb-2"
+      >
+        <h1 className="scroll-m-20 pb-4 text-3xl lg:text-4xl text-left break-words font-extrabold tracking-tight">
+          Upload a cat pic
+        </h1>
+        <small className="text-sm font-medium leading-none text-muted-foreground">
+          Post a picture of your cat to help predict the weather
+        </small>
+      </div>
 
       <form
         id="new-post-form"
