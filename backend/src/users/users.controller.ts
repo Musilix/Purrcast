@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { z } from 'zod';
 import { UsersService } from './users.service';
+import { SkipThrottle } from '@nestjs/throttler';
 
 // TODO - temporary solution to the problem of not being able to use zod schemas in the service
 const createUserSchema = z.object({
@@ -23,11 +24,13 @@ export class UsersController {
   }
 
   @Get()
+  @SkipThrottle()
   findAll() {
     return this.usersService.findAll();
   }
 
   @Get(':id')
+  @SkipThrottle()
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(+id);
   }

@@ -166,16 +166,29 @@ export class PostService {
       const res = await this.prisma.post.findUnique({
         where: {
           id: id,
+          published: true,
         },
-        include: {
-          author: true,
+        select: {
+          published: true,
+          contentId: true,
+          createdAt: true,
+          updatedAt: true,
+          id: true,
+          author: {
+            select: {
+              bio: true,
+              location: true,
+              name: true,
+              username: true,
+            },
+          },
         },
       });
 
       return res;
     } catch (e) {
       return new InternalServerErrorException(
-        'An error occurred while trying to get the post. Please have a go at it a little later',
+        'An error occurred while trying to get the post. That post may have been deleted or never existed. Please have a go at it a little later',
       );
     }
   }
