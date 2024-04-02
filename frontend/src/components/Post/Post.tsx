@@ -5,7 +5,9 @@ import { ThumbsUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useParams } from 'wouter';
 import { Button } from '../ui/button';
-
+interface UserSession {
+  access_token: string;
+}
 export default function PostPage() {
   const params = useParams();
 
@@ -14,12 +16,18 @@ export default function PostPage() {
 
   const postId = params.post_id;
 
+  // TODO - define hook to grab local storage items, make this prettier
+  const userSession = JSON.parse(
+    localStorage.getItem('userSession') ?? '{}',
+  ) as UserSession;
+
   useEffect(() => {
     const fetchPost = async () => {
       axios
         .get(`${import.meta.env.VITE_API_HOST}/post/${postId}`, {})
         .then((res) => {
           setPost(res.data);
+          setPostVotes(res.data.upvotes.length);
         })
         .catch(() => {
           //TODO - add response message component logic to any axios type logic... how tho?
@@ -40,19 +48,28 @@ export default function PostPage() {
   // We work under the assumption that the DB will update the vote count and return the new count upon refresh of the page
   // If not, then the user will just have to try and upvote once more...
 
-  // TODO - How can we make sure the user can't upvote more than once?
   const upVotePost = () => {
     setPostVotes((prevVotes) => prevVotes + 1);
-    //TODO - add logic to actually send an upvote request to the backend
+
     axios
-      .post(`${import.meta.env.VITE_API_HOST}/post/${postId}/upvote`, {})
-      .then((res) => {
-        console.log('success!');
-        console.log(res);
+      .put(
+        `${import.meta.env.VITE_API_HOST}/post/${postId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${userSession.access_token}`,
+          },
+        },
+      )
+      .then(() => {
+        // console.log('success!');
+        // console.log(res);
+        // setPostVotes(res.data.upvotes);
       })
       .catch((e) => {
         console.error('Error upvoting post!');
-        console.error(e);
+        console.error(e.response.data.message);
+        setPostVotes((prevVotes) => prevVotes - 1);
       });
   };
 
