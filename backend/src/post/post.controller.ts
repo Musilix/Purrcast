@@ -9,6 +9,8 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { __file_parse_validators__ } from 'src/constants';
@@ -42,6 +44,8 @@ export class PostController {
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true }))
   @SkipThrottle()
   upvote(@Param('id') id: number, @Req() req) {
     return this.postService.upvote(id, req.user.sub);

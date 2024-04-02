@@ -140,6 +140,7 @@ export class PostService {
           contentId: true,
           createdAt: true,
           updatedAt: true,
+          upvotes: true,
           id: true,
           author: {
             select: {
@@ -161,6 +162,17 @@ export class PostService {
     }
   }
 
+  // TODO - add ability to retrieve all posts you've upvoted
+  async findAllUpvotes(userId: string) {
+    console.log(userId);
+    return [];
+  }
+
+  // TODO - add ability to retrieve all posts that are pending classification for isCatOnHead
+  async findAllPending() {
+    return [];
+  }
+
   async findOne(id: number) {
     try {
       const res = await this.prisma.post.findUnique({
@@ -174,6 +186,7 @@ export class PostService {
           createdAt: true,
           updatedAt: true,
           id: true,
+          upvotes: true,
           author: {
             select: {
               bio: true,
@@ -194,17 +207,55 @@ export class PostService {
   }
 
   async upvote(id: number, userId: string) {
-    try {
-      // check an upvote table if a user has given an upvote to the given post
-      // if they have, throw an error "You have already upvoted this post"
-      // if they haven't, add an upvote to the post and add a record to the upvote table
-      console.log(id, userId);
-    } catch (e) {
-      console.error(`An error occured while trying to upvote post ${id} ${e}`);
+    const user = await this.prisma.user
+      .findFirstOrThrow({
+        where: {
+          uuid: userId,
+        },
+      })
+      .catch(() => {
+        throw new InternalServerErrorException(
+          "Somehow, you're user information is invalid. Try logging in again.",
+        );
+      });
 
+    const didUserAlreadyVote = await this.prisma.upvotes.findFirst({
+      where: {
+        postId: id as number,
+        userId: user.id as number,
+      },
+    });
+
+    // const didUserAlreadyVote = await this.prisma.post.findFirst({
+    //   where: {
+    //     id: id,
+    //     Upvotes: {
+    //       some: {
+    //         user: {
+    //           uuid: userId,
+    //         },
+    //       },
+    //     },
+    //   }
+    // });
+
+    if (didUserAlreadyVote) {
       throw new InternalServerErrorException(
-        'An error occured while trying to upvote post. Please try again later.',
+        "You've already upvoted this post.",
       );
     }
+
+    await this.prisma.upvotes.create({
+      data: {
+        postId: id,
+        userId: user.id,
+      },
+    });
+
+    return this.prisma.upvotes.count({
+      where: {
+        postId: id,
+      },
+    });
   }
 }
