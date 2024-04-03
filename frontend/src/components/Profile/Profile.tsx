@@ -55,9 +55,10 @@ export default function Profile() {
               <p className="leading-7 [&:not(:first-child)]:mt-2">0</p>
             </div>
           </div>
-
-          {/* TODO - we need to make it so we can specify filtering properties when displaying a post preview bundle */}
+          // TODO - we need to make it so we can specify filtering properties
+          when displaying a post preview bundle
           <PostsPreview className="p-0" onlyCurrUser={true} />
+          // TODO - enable and add confirmation to deactive account
           <div id="button-wrap">
             <Button variant="destructive" disabled>
               Delete Account
