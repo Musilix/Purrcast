@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Post } from '../../types/Post';
 import PostPreviewCard from '../PostPreviewCard/PostPreviewCard';
+import { useToast } from '../ui/use-toast';
 
 interface UserSession {
   access_token: string;
@@ -20,7 +21,7 @@ export default function PostsPreview({
   onlyCurrUser?: boolean;
 }) {
   const [splashPosts, setPosts] = useState<Post[]>([]);
-  const [error, setError] = useState<string>('');
+  const { toast } = useToast();
   const reqUrl = onlyCurrUser
     ? `${import.meta.env.VITE_API_HOST}/post/mine`
     : `${import.meta.env.VITE_API_HOST}/post`;
@@ -44,10 +45,11 @@ export default function PostsPreview({
           res ? setPosts(res.data) : setPosts([]);
         })
         .catch((e) => {
-          // todo - start throwing errors for an error boundary to catch and show...
-          setError((e as Error).message);
-
-          console.error(error);
+          toast({
+            title: 'There was an issue with your request',
+            description: e.response.data.message,
+            variant: 'destructive',
+          });
         });
     };
 

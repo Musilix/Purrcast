@@ -17,6 +17,7 @@ import AuthProvider from './context/AuthContext';
 // import RequestResponse from './components/RequestResponse/RequestResponse';
 import FormWithMessage from './components/FormWithMessage/FormWithMessage';
 import CenterThis from './components/CenterThis/CenterThis';
+import { Toaster } from './components/ui/toaster';
 
 function App() {
   return (
@@ -82,6 +83,7 @@ function App() {
                 <Route path="/testing" component={Test} />
                 <Route component={() => <h1>404 - Not Found</h1>} />
               </Switch>
+              <Toaster />
             </section>
             <div className="my-3 grow"></div>
             {/* </ErrorBoundary> */}

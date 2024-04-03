@@ -5,12 +5,13 @@ import { ThumbsUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useParams } from 'wouter';
 import { Button } from '../ui/button';
+import { useToast } from '../ui/use-toast';
 interface UserSession {
   access_token: string;
 }
 export default function PostPage() {
   const params = useParams();
-
+  const { toast } = useToast();
   const [postVotes, setPostVotes] = useState<number>(0);
   const [post, setPost] = useState<Post | null>(null);
 
@@ -29,11 +30,13 @@ export default function PostPage() {
           setPost(res.data);
           setPostVotes(res.data.upvotes.length);
         })
-        .catch(() => {
+        .catch((e) => {
           //TODO - add response message component logic to any axios type logic... how tho?
-          console.error(
-            `An error occured while trying to retrieve post ${postId}`,
-          );
+          toast({
+            title: 'There was an issue with your request',
+            description: e.response.data.message,
+            variant: 'destructive',
+          });
         });
     };
 
@@ -61,14 +64,12 @@ export default function PostPage() {
           },
         },
       )
-      .then(() => {
-        // console.log('success!');
-        // console.log(res);
-        // setPostVotes(res.data.upvotes);
-      })
       .catch((e) => {
-        console.error('Error upvoting post!');
-        console.error(e.response.data.message);
+        toast({
+          title: 'There was an issue with your request',
+          description: e.response.data.message,
+          variant: 'destructive',
+        });
         setPostVotes((prevVotes) => prevVotes - 1);
       });
   };
