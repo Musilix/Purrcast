@@ -1,0 +1,15 @@
+Just for reference, I want to lay out some things that I know I'll forget
+
+1. Make sure python and pip are installed on your machine
+  - you can reference them with the python and pip command in the terminal respectively. Or sometimes you'll need to use python3 and pip3
+  - make sure you have pipreqs dependency installed on your machine, as it's useful for generating a requirements.txt (equivalent to package.json dependencies)
+
+2. Use pipreqs to generate a requirements.txt file based on your projects dependencies 
+  - use pipreqs --encoding utf-8 "path-to-project" (use --force option if you need to overwrite and existing requirements.txt)
+  
+3. Install any dependencies from the requirements.txt file with pip
+  - you can do this using pip/pip3 install -r requirements.txt (or whatever your dep file is)
+  
+4. Run the uvicorn project with either uvicorn or python.exe/py/python/python3 if you can't directly refeference the uvicorn command
+  - uvicorn main:<name_of_entry_point> --reload 
+  - python.exe -m uvicorn main:<name_of_entry_point> --reload
