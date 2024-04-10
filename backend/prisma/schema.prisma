@@ -1,10 +1,12 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  schemas  = ["public", "geo"]
 }
 
 model Post {
@@ -18,6 +20,8 @@ model Post {
   isDeleted   Boolean   @default(false)
   isCatOnHead Boolean?
   upvotes     Upvotes[]
+
+  @@schema("public")
 }
 
 model User {
@@ -30,15 +34,40 @@ model User {
   posts         Post[]
   isDeactivated Boolean   @default(false)
   upvotes       Upvotes[]
+
+  @@schema("public")
 }
 
 model Upvotes {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  location  String   @default("Earth") @db.VarChar(255)
   post      Post     @relation(fields: [postId], references: [id])
   postId    Int
   user      User     @relation(fields: [userId], references: [id])
   userId    Int
 
   @@id(name: "voteId", [postId, userId])
+  @@schema("public")
+}
+
+model us_states {
+  id         Int         @id @default(autoincrement())
+  STATE_CODE String
+  STATE_NAME String
+  US_CITIES  us_cities[]
+
+  @@schema("geo")
+}
+
+model us_cities {
+  id        Int       @id @default(autoincrement())
+  CITY      String
+  COUNTY    String
+  LATITUDE  Float
+  LONGITUDE Float
+  US_STATE  us_states @relation(fields: [ID_STATE], references: [id])
+  ID_STATE  Int
+
+  @@schema("geo")
 }

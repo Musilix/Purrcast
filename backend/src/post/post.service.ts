@@ -162,6 +162,25 @@ export class PostService {
     }
   }
 
+  async findAllNearMe(lat: number, long: number) {
+    // TODO - if no locatio provided OR lat/long are missng/invalid, return error message
+
+    try {
+      console.log(`Searching for posts near ${lat}, ${long}`);
+      // Call function to get nearby entities, given the location
+      // TODO - change implementation to do real thing.
+      const res = await this.prisma
+        .$queryRaw`SELECT * FROM get_closest_city(${lat}, ${long})`;
+
+      return res;
+    } catch (e) {
+      console.error(e);
+      throw new InternalServerErrorException(
+        'An error occured while trying to grab posts. We think there could be an issue with the location you provided. Please try again later.',
+      );
+    }
+  }
+
   // TODO - add ability to retrieve all posts you've upvoted
   async findAllUpvotes(userId: string) {
     console.log(userId);

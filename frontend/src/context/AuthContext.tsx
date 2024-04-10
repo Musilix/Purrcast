@@ -17,8 +17,8 @@ export default function AuthProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [session, setSession] = useState<Session | null>(null);
   const { toast } = useToast();
+  const [session, setSession] = useState<Session | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   // TODO - this isn't really used anywhere, so it can probably be removed at some point
   const [isAuthError, setIsAuthError] = useState(false);

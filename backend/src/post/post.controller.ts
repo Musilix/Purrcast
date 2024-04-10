@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   Param,
@@ -62,6 +63,12 @@ export class PostController {
   @SkipThrottle()
   findAllUserSpecific(@Req() req) {
     return this.postService.findAll(req.user.sub);
+  }
+
+  @Post('/nearme')
+  @SkipThrottle()
+  findAllNearMe(@Body() body: { location: { lat: number; long: number}) {
+    return this.postService.findAllNearMe(body.location.lat, body.location.long);
   }
 
   @Get(':id')
