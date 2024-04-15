@@ -1,12 +1,13 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["multiSchema"]
+  previewFeatures = ["multiSchema", "postgresqlExtensions"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-  schemas  = ["public", "geo"]
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  schemas    = ["public", "geo", "predictions"]
+  extensions = [postgis]
 }
 
 model Post {
@@ -52,22 +53,38 @@ model Upvotes {
 }
 
 model us_states {
-  id         Int         @id @default(autoincrement())
-  STATE_CODE String
-  STATE_NAME String
-  US_CITIES  us_cities[]
+  id          Int           @id @default(autoincrement())
+  state_code  String
+  state_name  String
+  us_cities   us_cities[]
+  predictions Predictions[]
 
   @@schema("geo")
 }
 
 model us_cities {
-  id        Int       @id @default(autoincrement())
-  CITY      String
-  COUNTY    String
-  LATITUDE  Float
-  LONGITUDE Float
-  US_STATE  us_states @relation(fields: [ID_STATE], references: [id])
-  ID_STATE  Int
+  id          Int           @id @default(autoincrement())
+  city        String
+  county      String
+  latitude    Float
+  longitude   Float
+  us_state    us_states     @relation(fields: [id_state], references: [id])
+  id_state    Int
+  predictions Predictions[]
 
   @@schema("geo")
+}
+
+model Predictions {
+  id         Int      @id @default(autoincrement())
+  prediction Int
+  date       DateTime @db.Date
+
+  us_state us_states @relation(fields: [id_state], references: [id])
+  id_state Int
+
+  us_city us_cities @relation(fields: [id_city], references: [id])
+  id_city Int
+
+  @@schema("predictions")
 }

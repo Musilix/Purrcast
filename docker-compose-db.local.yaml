@@ -1,7 +1,40 @@
 # docker compose file for only a dev deb instance to easily get up and running
+# services:
+#   postgres:
+#     image: postgres:16.0
+#     container_name: purrcast_dev_db
+#     env_file:
+#       - .env
+#     environment:
+#       # Make sure you have these environment variables set in your .env file on the SAME LEVEL as your docker-compose.yml file
+#       POSTGRES_DB: "${POSTGRES_DB:-Purrcast_Dev}"
+#       POSTGRES_USER: "${POSTGRES_USER:-purrcaster}"
+#       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+#     volumes:
+#       - pgdata:/var/lib/postgresql/data
+#     ports:
+#       - "8888:5432"
+#     healthcheck:
+#       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 5
+#     networks:
+#       - localnet
+#     restart: on-failure
+
+# networks:
+#   localnet:
+
+# volumes:
+#   pgdata:
+
 services:
-  postgres:
-    image: postgres:16.0
+  db:
+    image: supabase/postgres
+    ports:
+      - "5432:5432"
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf 
     container_name: purrcast_dev_db
     env_file:
       - .env
@@ -10,21 +43,3 @@ services:
       POSTGRES_DB: "${POSTGRES_DB:-Purrcast_Dev}"
       POSTGRES_USER: "${POSTGRES_USER:-purrcaster}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    ports:
-      - "8888:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - localnet
-    restart: on-failure
-
-networks:
-  localnet:
-
-volumes:
-  pgdata:
