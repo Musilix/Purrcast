@@ -8,7 +8,9 @@ export const createFunctionsIHateThisWhatIsPrismaReallyGoodFor = async (
 const createGetClosestCity = async (prisma) => {
   await prisma.$queryRaw`CREATE OR REPLACE FUNCTION "geo"."get_closest_city"(lat float, long float)
   RETURNS TABLE (
+    id_city "geo"."us_cities"."id"%TYPE,
     city "geo"."us_cities"."city"%TYPE,
+    id_state "geo"."us_states"."id"%TYPE,
     state "geo"."us_states"."state_code"%TYPE,
     lat float,
     long float,
@@ -17,7 +19,9 @@ const createGetClosestCity = async (prisma) => {
   LANGUAGE SQL
   AS $$
     SELECT
+      cities."id",
       cities."city",
+      states."id",
       states."state_code" as state,
       cities."latitude" as city_lat,
       cities."longitude" as city_long,
