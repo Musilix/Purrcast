@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   ParseFilePipe,
+  ParseIntPipe,
   Post,
   Put,
   Req,
@@ -17,9 +18,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { __file_parse_validators__ } from 'src/constants';
 import { JwtAuthGuard } from 'src/guards/JwtAuth/jwtAuth.guard';
 // import { TestDataPipe } from 'src/pipes/MyCustomPipe2';
+import { SkipThrottle } from '@nestjs/throttler';
 import { PostService } from './post.service';
-import { SkipThrottle, ThrottlerGuard } from '@nestjs/throttler';
-import { PostThrottlerGuard } from 'src/guards/CustomThrottler/customThrottler.guard';
 @Controller('post')
 export class PostController {
   constructor(private readonly postService: PostService) {}
@@ -78,5 +78,14 @@ export class PostController {
   @SkipThrottle()
   findOne(@Param('id') id: string) {
     return this.postService.findOne(+id);
+  }
+
+  //TODO - put this in a different controller
+  @Get('/forecast/:state/:city')
+  getForecast(
+    @Param('state', ParseIntPipe) state: number,
+    @Param('city', ParseIntPipe) city: number,
+  ) {
+    return this.postService.getForecast(state, city);
   }
 }

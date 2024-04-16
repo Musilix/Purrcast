@@ -5,10 +5,10 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
+import FormData from 'form-data';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SharpHelper } from 'src/sharp/sharp.service';
-import FormData from 'form-data';
 
 @Injectable()
 export class PostService {
@@ -109,6 +109,9 @@ export class PostService {
         contentId: res.secure_url,
         authorId: user?.id ?? 1,
         published: true,
+        isCatOnHead: null,
+        postState: 1,
+        postCity: 1,
       },
     });
 
@@ -276,5 +279,17 @@ export class PostService {
         postId: id,
       },
     });
+  }
+
+  async getForecast(state: number, city: number) {
+    const forecast = this.prisma.predictions.findFirst({
+      where: {
+        us_state: state,
+        us_city: city,
+        date: new Date(2024, 3, 15),
+      },
+    });
+
+    return forecast;
   }
 }
