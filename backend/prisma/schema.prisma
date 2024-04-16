@@ -4,10 +4,10 @@ generator client {
 }
 
 datasource db {
-  provider   = "postgresql"
-  url        = env("DATABASE_URL")
-  schemas    = ["public", "geo", "predictions"]
-  extensions = [postgis]
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["public", "geo", "predictions"]
+  extensions = [postgis, plpgsql]
 }
 
 model Post {
@@ -16,10 +16,17 @@ model Post {
   updatedAt   DateTime  @updatedAt
   contentId   String    @db.VarChar(255)
   published   Boolean   @default(false)
-  author      User      @relation(fields: [authorId], references: [id])
-  authorId    Int
   isDeleted   Boolean   @default(false)
   isCatOnHead Boolean?
+  id_state   us_states  @relation(fields: [postState], references: [id])
+  postState    Int
+  
+  id_city   us_cities   @relation(fields: [postCity], references: [id])
+  postCity    Int
+  
+  
+  author      User      @relation(fields: [authorId], references: [id])
+  authorId    Int
   upvotes     Upvotes[]
 
   @@schema("public")
@@ -31,7 +38,7 @@ model User {
   name          String?
   bio           String?
   username      String    @unique
-  location      String    @default("Earth") @db.VarChar(255)
+  location      String    @default("Earth") @db.VarChar(255) // todo : remove
   posts         Post[]
   isDeactivated Boolean   @default(false)
   upvotes       Upvotes[]
@@ -58,6 +65,7 @@ model us_states {
   state_name  String
   us_cities   us_cities[]
   predictions Predictions[]
+  posts       Post[]
 
   @@schema("geo")
 }
@@ -71,20 +79,21 @@ model us_cities {
   us_state    us_states     @relation(fields: [id_state], references: [id])
   id_state    Int
   predictions Predictions[]
+  posts      Post[]
 
   @@schema("geo")
 }
 
 model Predictions {
-  id         Int      @id @default(autoincrement())
   prediction Int
   date       DateTime @db.Date
 
-  us_state us_states @relation(fields: [id_state], references: [id])
-  id_state Int
+  id_state us_states @relation(fields: [us_state], references: [id])
+  us_state Int
 
-  us_city us_cities @relation(fields: [id_city], references: [id])
-  id_city Int
+  id_city us_cities @relation(fields: [us_city], references: [id])
+  us_city Int
 
+  @@id(name: "id", [us_state, us_city, date])
   @@schema("predictions")
 }
