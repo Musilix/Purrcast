@@ -1,11 +1,12 @@
 // import PostsPreview from '@/components/PostsPreview/PostsPreview';
+import { ContentLoadingContext } from '@/context/ContentLoadingContext';
+import useGeo from '@/hooks/useGeo';
 import useLocalStorage from '@/hooks/useLocalStorage';
 import { Session } from '@supabase/supabase-js';
 import axios from 'axios';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { Link } from 'wouter';
 import { Button } from '../ui/button';
-import useGeo from '@/hooks/useGeo';
 import {
   Card,
   CardContent,
@@ -14,7 +15,7 @@ import {
   CardHeader,
   CardTitle,
 } from '../ui/card';
-import { ContentLoadingContext } from '@/context/ContentLoadingContext';
+import { useToast } from '../ui/use-toast';
 //TODO - move this (and the one in useGeo) to a shared location
 export interface reverseGeocodedCoordinates {
   city: string;
@@ -26,46 +27,60 @@ export interface reverseGeocodedCoordinates {
 
 export default function UserHome({ session }: { session: Session }) {
   const [geoCoords, reverseGeoCoords, overwriteGeoCoords] = useGeo();
-  const [forecast, setForecast] = useState(null);
+  const [forecast, setForecast] = useLocalStorage('forecast', null);
+
   const { isContentLoading, setIsContentLoading } = useContext(
     ContentLoadingContext,
   );
 
+  const { toast } = useToast();
+
+  const getForecast = async () => {
+    setIsContentLoading(true);
+    await axios
+      .get(
+        `${import.meta.env.VITE_API_HOST}/post/forecast/${
+          reverseGeoCoords.id_state
+        }/${reverseGeoCoords.id_city}`,
+      )
+      .then((res) => {
+        setForecast(res.data);
+        isContentLoading ? setIsContentLoading(false) : '';
+      })
+      .catch((err) => {
+        toast({
+          description: err.message + '. Maybe try refreshing the page?',
+          variant: 'destructive',
+        });
+      });
+  };
+
   useEffect(() => {
-    // If we have a userLocationText from useGeo, we can use it to get a forecast
-    if (reverseGeoCoords && Object.keys(reverseGeoCoords).length && !forecast) {
-      console.log('Reverse Geo Details');
-      console.log(reverseGeoCoords);
-      const getForecast = async () => {
-        await axios
-          .get(
-            `${import.meta.env.VITE_API_HOST}/post/forecast/${
-              reverseGeoCoords.id_state
-            }/${reverseGeoCoords.id_city}`,
-          )
-          .then((res) => {
-            console.log('PREDICTION:', res.data);
-            setForecast(res.data);
-            console.log('IS content loading...', isContentLoading);
-            setIsContentLoading(false);
-            console.log('IS content loading now...?', isContentLoading);
-          })
-          .catch((err) => {
-            console.error(err);
-          });
-      };
+    // If we for sure obtained the reversed geocoded location of the user, but still don't have a forecast, then get the forecast!
+    if (!forecast) {
+      // If we have the reverse geocoded coordinates, then we can get the forecast!
+      reverseGeoCoords && Object.keys(reverseGeoCoords).length
+        ? getForecast()
+        : isContentLoading
+        ? setIsContentLoading(false)
+        : '';
 
-      getForecast();
+      // toast({
+      //     description:
+      //       'There seems to be an issue with your location. You may need to allow us to access your location in the browser. (it should be a little map icon in the search bar)',
+      //     variant: 'destructive',
+      //   });
+    } else {
+      // There is a chance that we have a stored copy of the forecast from the last time the user was on the site.
+      // In that case, we can show them that, and lazily call the getForecast() function. In that case, we can maybe...
+      //just say content is loaded to get the page to the user faster (and then update the forecast when we get it back from the server)
+      isContentLoading ? setIsContentLoading(false) : '';
+      getForecast(); //This may not work as we could have a forecast in local storage, but no reverseGeoCoords...
     }
-
-    // Else, if we don't have userLocationText, that must mean the user didn't allow us to use their location
-    console.error(
-      'User did not allow location services or there was a server error.',
-    );
-  }, []);
+  }, [reverseGeoCoords]);
 
   return (
-    <>
+    <div className="flex flex-col items-center align-middle *:my-2.5">
       <h1 className="scroll-m-20 font-extrabold tracking-tight text-5xl sm:text-4xl lg:text-5xl break-words text-center sm:text-center">
         {new Date().getHours() >= 5 && new Date().getHours() < 12
           ? 'Good morning'
@@ -74,17 +89,7 @@ export default function UserHome({ session }: { session: Session }) {
           : 'Good evening'}
         {`, ${session.user?.user_metadata.name.split(' ')[0]}`}
       </h1>
-      {/* <small>
-        {geoCoords !== null || geoCoords !== undefined
-          ? `${geoCoords.lat}, ${geoCoords.lon}`
-          : ''}
-      </small>
-      <small>
-        {reverseGeoCoords !== null || reverseGeoCoords !== undefined
-          ? `${reverseGeoCoords.city}, ${reverseGeoCoords.state}`
-          : ''}
-      </small> */}
-
+      {/* Uf we dont have the reverse geocoded address of the user, then the message modal they get is the UnkownLocation one */}
       {!reverseGeoCoords ? (
         <UnknownLocation overwriteGeoCoords={overwriteGeoCoords} />
       ) : (
@@ -106,7 +111,7 @@ export default function UserHome({ session }: { session: Session }) {
         <>
           <div
             id="cta-wrap"
-            className="flex flex-col sm:flex-row w-full align-center place-items-center place-content-center *:w-full sm:*:w-auto *:my-2 *:sm:m-5"
+            className="flex flex-col sm:flex-row w-full align-center place-items-center place-content-center *:w-full sm:*:w-auto *:sm:mx-5"
           >
             <div>
               <Link href="/create-post">
@@ -136,7 +141,7 @@ export default function UserHome({ session }: { session: Session }) {
           </Link>
         </>
       )}
-    </>
+    </div>
   );
 }
 
@@ -150,6 +155,7 @@ export function GeoPlaceMessage({
     <>
       {
         // Perform checks on forecast to make sure we have a proper forecast
+        // IF we dont, then provide user with a modal letting them know the details of the issue + allow them the ability to try and fix it
         !forecast || forecast === undefined ? (
           <>
             <div className="w-full flex flex-col justify-center items-center">
@@ -200,6 +206,10 @@ export function GeoPlaceMessage({
           </>
         ) : (
           <>
+            {/* 
+                If we did get a forecast value back from the server, then check if it was negative. 
+                We send back a -1 prediction if there are no predictions for the users location on the current day. This conditional handles that accordingly
+              */}
             {forecast < 0 ? (
               <div className="w-full flex flex-col justify-center align-middle items-center text-center">
                 <h1 className="scroll-m-20 font-extrabold tracking-tight text-emerald-400 text-8xl sm:text-8xl md:text-8xl break-words">
@@ -229,6 +239,7 @@ export function GeoPlaceMessage({
                 </div>
               </div>
             ) : (
+              // This is where we handle getting an actual forecast entity back from the server
               <>
                 <h1 className="scroll-m-20 font-extrabold tracking-tight text-emerald-400 text-9xl sm:text-9xl md:text-9xl break-words">
                   {`${Math.floor(forecast)}%`}
@@ -246,6 +257,7 @@ export function GeoPlaceMessage({
   );
 }
 
+// TODO - we could maybe try to resolve the prop drilling thats going on in this component and the others below it
 export function UnknownLocation({ overwriteGeoCoords }) {
   return (
     <div
@@ -283,6 +295,7 @@ export function UnknownLocation({ overwriteGeoCoords }) {
   );
 }
 
+// DO we really need this to be a standalone component?
 export function GrantGeoButton({
   overwriteGeoCoords,
   buttonText = 'Find Posts Near You',

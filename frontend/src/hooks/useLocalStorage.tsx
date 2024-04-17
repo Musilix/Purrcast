@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 
-function getLocalStorageValue(
-  key: string,
-  initialValue: string | number | object | boolean | null = null,
-) {
+function getLocalStorageValue<T>(key: string, initialValue: T | null = null) {
+  // In the case that the item isn't in local storage, we'll want to return null.
+  // For some reason, TS doesnt want us to just return null, so we have to return the string 'null'
   const savedValue = JSON.parse(localStorage.getItem(key) ?? 'null');
 
   if (savedValue) {
@@ -13,12 +12,12 @@ function getLocalStorageValue(
   return initialValue;
 }
 
-export default function useLocalStorage(
+export default function useLocalStorage<T>(
   key: string,
-  initialValue: string | number | object | boolean | null = null,
+  initialValue: T | null = null,
 ) {
   const [value, setValue] = useState(() => {
-    return getLocalStorageValue(key, initialValue);
+    return getLocalStorageValue<T>(key, initialValue);
   });
 
   useEffect(() => {

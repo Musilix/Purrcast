@@ -1,11 +1,21 @@
-import { useEffect } from 'react';
-import useLocalStorage from './useLocalStorage';
+import { useToast } from '@/components/ui/use-toast';
+import { ContentLoadingContext } from '@/context/ContentLoadingContext';
+import ShowGeoErrorMessage from '@/utils/ShowGeoErrorMessage';
 import axios from 'axios';
-import showGeoErrorMessage from '@/utils/ShowGeoErrorMessage';
+import { useContext, useEffect } from 'react';
+import useLocalStorage from './useLocalStorage';
 
 export interface Coordinates {
   lat: number;
   lon: number;
+}
+
+export interface ReverseGeocodedLocation {
+  city: string;
+  state: string;
+  lat: number;
+  lon: number;
+  'Distance in Miles from City': number;
 }
 
 /*
@@ -22,41 +32,61 @@ export interface Coordinates {
 export default function useGeo() {
   // Utilize local storage for long term persistence alongside the state that we keep track of
   const [geoCoords, setUserLocationCoords] =
-    useLocalStorage('userLocationCoords');
+    useLocalStorage<Coordinates>('userLocationCoords');
   const [reverseGeoCoords, setUserLocationText] =
-    useLocalStorage('userLocationText');
+    useLocalStorage<ReverseGeocodedLocation>('userLocationText');
+
+  const { toast } = useToast();
+  const { isContentLoading, setIsContentLoading } = useContext(
+    ContentLoadingContext,
+  );
 
   const requestGeocode = async () => {
     if (!navigator.geolocation) {
-      console.error('Geolocation is not supported by your browser');
+      toast({
+        description: 'Geolocation is not supported by your browser',
+        variant: 'destructive',
+      });
       return;
     }
-    console.log('Getting coordinates...');
     // Get the current position upon reference to the useGeo() hook
     // Should we actively update the geoCoordinates upon each reference to the geoCoordinates state though? Idk for now
-    navigator.geolocation.getCurrentPosition((position) => {
-      // Update local storage with retrieved coords
-      setUserLocationCoords({
-        lat: position.coords.latitude,
-        lon: position.coords.longitude,
-      });
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        // Update local storage with retrieved coords
+        setUserLocationCoords({
+          lat: position.coords.latitude,
+          lon: position.coords.longitude,
+        });
 
-      console.log('Got coordinates:');
-      console.log(geoCoords);
-
-      // Make a request to our backend to get the city/state pairings
-      getAndSetReverseGeoLoc(geoCoords, setUserLocationText);
-    }, showGeoErrorMessage);
+        // Make a request to our backend to get the city/state pairings
+        getAndSetReverseGeoLoc(geoCoords);
+      },
+      (error) => {
+        ShowGeoErrorMessage(error, toast);
+      },
+    );
   };
 
   const overwriteGeoCoords = async () => {
     await requestGeocode();
   };
 
+  const getAndSetReverseGeoLoc = async (geoCoords: Coordinates) => {
+    setIsContentLoading(true);
+    // get readable user location bundle
+    return await axios
+      .post(`${import.meta.env.VITE_API_HOST}/users/location`, geoCoords)
+      .then((res) => {
+        setUserLocationText(res.data);
+        isContentLoading ? setIsContentLoading(false) : '';
+      });
+  };
+
   useEffect(() => {
     // If we have the coords, but not the reverseGeocodedLocation, we will make a request to our backend to get the city/state pairings
     if (geoCoords && !reverseGeoCoords) {
-      getAndSetReverseGeoLoc(geoCoords, setUserLocationText);
+      getAndSetReverseGeoLoc(geoCoords);
       // Else if we either don't have the geoCoords or dont have both the geoCoords and reverseGeoCoords, we will make a request to get the coords
     } else if (
       (!geoCoords && reverseGeoCoords) ||
@@ -69,16 +99,18 @@ export default function useGeo() {
   return [geoCoords, reverseGeoCoords, overwriteGeoCoords];
 }
 
-const getAndSetReverseGeoLoc = async (
-  geoCoords: Coordinates,
-  setUserLocationText,
-) => {
-  console.log('Trying to retrieve reverse geocoded location...');
-  // get readable user location bundle
-  return await axios
-    .post(`${import.meta.env.VITE_API_HOST}/users/location`, geoCoords)
-    .then((res) => {
-      console.log('Axios response: ', res.data);
-      setUserLocationText(res.data);
-    });
-};
+// TODO - maybe move this into the component itself so we dont gotta pass it so much junk?
+// const getAndSetReverseGeoLoc = async (
+//   geoCoords: Coordinates,
+//   setUserLocationText: (location: ReverseGeocodedLocation) => void,
+//   setIsContentLoading: (loading: boolean) => void,
+// ) => {
+//   setIsContentLoading(true);
+//   // get readable user location bundle
+//   return await axios
+//     .post(`${import.meta.env.VITE_API_HOST}/users/location`, geoCoords)
+//     .then((res) => {
+//       setUserLocationText(res.data);
+//       setIsContentLoading(false)
+//     });
+// };
