@@ -283,18 +283,25 @@ export class PostService {
 
   async getForecast(state: number, city: number) {
     console.log('someone want the forecast');
+    console.log(state, city);
+    const currDate = new Date();
+    const foreCastDate = `${currDate.getFullYear()}/${
+      currDate.getMonth() + 1
+    }/${currDate.getDate()}`;
+
     const forecast = await this.prisma.predictions.findFirst({
       where: {
         us_state: state,
         us_city: city,
-        date: new Date(2024, 3, 15),
+        date: new Date(foreCastDate),
       },
     });
 
-    if (!forecast) {
+    if (!forecast || !forecast.prediction) {
       return -1;
     }
+
     console.log(forecast);
-    return forecast;
+    return forecast.prediction;
   }
 }
