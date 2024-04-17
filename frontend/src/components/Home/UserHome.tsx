@@ -75,9 +75,9 @@ export default function UserHome({ session }: { session: Session }) {
       // In that case, we can show them that, and lazily call the getForecast() function. In that case, we can maybe...
       //just say content is loaded to get the page to the user faster (and then update the forecast when we get it back from the server)
       isContentLoading ? setIsContentLoading(false) : '';
-      getForecast(); //This may not work as we could have a forecast in local storage, but no reverseGeoCoords...
+      // getForecast(); //This may not work as we could have a forecast in local storage, but no reverseGeoCoords...
     }
-  }, [reverseGeoCoords]);
+  }, [reverseGeoCoords, forecast]);
 
   return (
     <div className="flex flex-col items-center align-middle *:my-2.5">
