@@ -73,13 +73,24 @@ export default function useGeo() {
   };
 
   const getAndSetReverseGeoLoc = async (geoCoords: Coordinates) => {
-    setIsContentLoading(true);
-    // get readable user location bundle
+    !isContentLoading ? setIsContentLoading(true) : '';
+
+    // If we don't have the coords for whatever reason (maybe React was faster than the geolocation api), we will return
+    if (!geoCoords) {
+      return;
+    }
+
     return await axios
       .post(`${import.meta.env.VITE_API_HOST}/users/location`, geoCoords)
       .then((res) => {
         setUserLocationText(res.data);
-        isContentLoading ? setIsContentLoading(false) : '';
+      })
+      .catch((error) => {
+        setIsContentLoading(false);
+        toast({
+          description: `${error.message}: Unable to get your city and state.`,
+          variant: 'destructive',
+        });
       });
   };
 
@@ -98,19 +109,3 @@ export default function useGeo() {
 
   return [geoCoords, reverseGeoCoords, overwriteGeoCoords];
 }
-
-// TODO - maybe move this into the component itself so we dont gotta pass it so much junk?
-// const getAndSetReverseGeoLoc = async (
-//   geoCoords: Coordinates,
-//   setUserLocationText: (location: ReverseGeocodedLocation) => void,
-//   setIsContentLoading: (loading: boolean) => void,
-// ) => {
-//   setIsContentLoading(true);
-//   // get readable user location bundle
-//   return await axios
-//     .post(`${import.meta.env.VITE_API_HOST}/users/location`, geoCoords)
-//     .then((res) => {
-//       setUserLocationText(res.data);
-//       setIsContentLoading(false)
-//     });
-// };

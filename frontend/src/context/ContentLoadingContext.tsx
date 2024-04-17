@@ -28,15 +28,20 @@ export default function ContentLoadingProvider({
   return (
     <>
       <ContentLoadingContext.Provider
-        value={{ isContentLoading, setIsContentLoading }}
+        value={{
+          isContentLoading,
+          setIsContentLoading,
+        }}
       >
         {isContentLoading ? (
-          <div className="absolute top-0 left-0 bg-black w-full h-full flex flex-col items-center justify-center align-middle z-10">
-            <Loader
-              size={50}
-              color={'hsl(var(--primary))'}
-              className="animate-spin"
-            />
+          <div className="m-0">
+            <div className="absolute left-0 top-0 bg-black w-full h-full flex flex-col items-center justify-center align-middle z-10">
+              <Loader
+                size={50}
+                color={'hsl(var(--primary))'}
+                className="animate-spin"
+              />
+            </div>
           </div>
         ) : (
           ''

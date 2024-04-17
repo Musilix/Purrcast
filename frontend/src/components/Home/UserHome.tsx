@@ -36,7 +36,6 @@ export default function UserHome({ session }: { session: Session }) {
   const { toast } = useToast();
 
   const getForecast = async () => {
-    setIsContentLoading(true);
     await axios
       .get(
         `${import.meta.env.VITE_API_HOST}/post/forecast/${
@@ -45,9 +44,9 @@ export default function UserHome({ session }: { session: Session }) {
       )
       .then((res) => {
         setForecast(res.data);
-        isContentLoading ? setIsContentLoading(false) : '';
       })
       .catch((err) => {
+        setIsContentLoading(false);
         toast({
           description: err.message + '. Maybe try refreshing the page?',
           variant: 'destructive',
@@ -56,27 +55,31 @@ export default function UserHome({ session }: { session: Session }) {
   };
 
   useEffect(() => {
+    // Content is loading upon mount of the UserHome component
+    !isContentLoading ? setIsContentLoading(true) : '';
+
     // If we for sure obtained the reversed geocoded location of the user, but still don't have a forecast, then get the forecast!
     if (!forecast) {
       // If we have the reverse geocoded coordinates, then we can get the forecast!
-      reverseGeoCoords && Object.keys(reverseGeoCoords).length
-        ? getForecast()
-        : isContentLoading
-        ? setIsContentLoading(false)
-        : '';
+      if (reverseGeoCoords && Object.keys(reverseGeoCoords).length) {
+        getForecast();
+      }
 
-      // toast({
+      // else {
+      //   toast({
       //     description:
-      //       'There seems to be an issue with your location. You may need to allow us to access your location in the browser. (it should be a little map icon in the search bar)',
+      //       'There was an issue getting your location. Please try refreshing the page or disabling and re-enabling location services.',
       //     variant: 'destructive',
       //   });
-    } else {
-      // There is a chance that we have a stored copy of the forecast from the last time the user was on the site.
-      // In that case, we can show them that, and lazily call the getForecast() function. In that case, we can maybe...
-      //just say content is loaded to get the page to the user faster (and then update the forecast when we get it back from the server)
-      isContentLoading ? setIsContentLoading(false) : '';
-      // getForecast(); //This may not work as we could have a forecast in local storage, but no reverseGeoCoords...
+      // }
+    } else if (forecast && reverseGeoCoords) {
+      // For some reason, isContentLoading ? setIsContentLoading(false) : ''; wasn't working properly...
+      setIsContentLoading(false);
+      // getForecast(); // Should we still call getForecast to get an updated forecast? How could we make it so
     }
+
+    // setIsContentLoading(false);
+    // getForecast(); //This may not work as we could have a forecast in local storage, but no reverseGeoCoords...
   }, [reverseGeoCoords, forecast]);
 
   return (
@@ -196,7 +199,7 @@ export function GeoPlaceMessage({
                       </p>
                     </div>
                     <GrantGeoButton
-                      overwriteGeoCoords={() => {}}
+                      overwriteGeoCoords={overwriteGeoCoords}
                       buttonText={'Refresh Location'}
                     />
                   </div>
