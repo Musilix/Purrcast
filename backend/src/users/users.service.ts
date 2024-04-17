@@ -53,7 +53,7 @@ export class UsersService {
       'Distance in Miles from City': number;
     } = await this.prisma
       .$queryRaw`SELECT * FROM "geo"."get_closest_city"(${locationInCoords.lat}, ${locationInCoords.lon} ) LIMIT 1;`;
-    console.log(locationInText[0]);
+
     return locationInText[0];
   }
 }

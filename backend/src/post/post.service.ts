@@ -282,7 +282,8 @@ export class PostService {
   }
 
   async getForecast(state: number, city: number) {
-    const forecast = this.prisma.predictions.findFirst({
+    console.log('someone want the forecast');
+    const forecast = await this.prisma.predictions.findFirst({
       where: {
         us_state: state,
         us_city: city,
@@ -290,6 +291,10 @@ export class PostService {
       },
     });
 
+    if (!forecast) {
+      return -1;
+    }
+    console.log(forecast);
     return forecast;
   }
 }
