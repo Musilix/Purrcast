@@ -6,16 +6,11 @@ import { Session } from '@supabase/supabase-js';
 import axios from 'axios';
 import { useContext, useEffect } from 'react';
 import { Link } from 'wouter';
+import GeoSpecificSplashMessage from '../Geo/GeoSpecificSplashMessage/GeoSpecificSplashMessage';
+import UnknownLocation from '../Geo/UnknownLocation/UnknownLocation';
 import { Button } from '../ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '../ui/card';
 import { useToast } from '../ui/use-toast';
+
 //TODO - move this (and the one in useGeo) to a shared location
 export interface reverseGeocodedCoordinates {
   city: string;
@@ -75,7 +70,7 @@ export default function UserHome({ session }: { session: Session }) {
     } else if (forecast && reverseGeoCoords) {
       // For some reason, isContentLoading ? setIsContentLoading(false) : ''; wasn't working properly...
       setIsContentLoading(false);
-      // getForecast(); // Should we still call getForecast to get an updated forecast? How could we make it so
+      getForecast(); // Should we still call getForecast to get an updated forecast? How could we make it so
     }
 
     // setIsContentLoading(false);
@@ -92,7 +87,8 @@ export default function UserHome({ session }: { session: Session }) {
           : 'Good evening'}
         {`, ${session.user?.user_metadata.name.split(' ')[0]}`}
       </h1>
-      {/* Uf we dont have the reverse geocoded address of the user, then the message modal they get is the UnkownLocation one */}
+
+      {/* If we dont have the reverse geocoded address of the user, then the message modal they get is the UnkownLocation one */}
       {!reverseGeoCoords ? (
         <UnknownLocation overwriteGeoCoords={overwriteGeoCoords} />
       ) : (
@@ -101,7 +97,7 @@ export default function UserHome({ session }: { session: Session }) {
             id="rain-stats-wrap"
             className="flex flex-col sm:flex-row md:flex-row w-3/4 items-center justify-center *:p-2"
           >
-            <GeoPlaceMessage
+            <GeoSpecificSplashMessage
               reverseGeoCoords={reverseGeoCoords}
               forecast={forecast}
               overwriteGeoCoords={overwriteGeoCoords}
@@ -110,6 +106,7 @@ export default function UserHome({ session }: { session: Session }) {
         </>
       )}
 
+      {/*  Conditionally show CTA and FAQ stuff */}
       {reverseGeoCoords && forecast && (
         <>
           <div
@@ -148,172 +145,4 @@ export default function UserHome({ session }: { session: Session }) {
   );
 }
 
-// TODO - FIX THIS. This is by far the UGLIEST fucking code I've ever written, but I'm bootstrappin baybay!
-export function GeoPlaceMessage({
-  reverseGeoCoords,
-  forecast,
-  overwriteGeoCoords,
-}) {
-  return (
-    <>
-      {
-        // Perform checks on forecast to make sure we have a proper forecast
-        // IF we dont, then provide user with a modal letting them know the details of the issue + allow them the ability to try and fix it
-        !forecast || forecast === undefined ? (
-          <>
-            <div className="w-full flex flex-col justify-center items-center">
-              <Card className="w-5/6">
-                <CardHeader>
-                  <CardTitle>
-                    <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
-                      We're Having Issues Forecasting
-                    </h4>
-                  </CardTitle>
-                  <CardDescription>
-                    For some reason, we were unable to generate a forecast for
-                    your area.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="w-full font-semibold">
-                    To resolve the issue you could try the following
-                  </p>
-                  <div className="flex flex-row w-full">
-                    <img className="w-1/2" src="/error-not-found.png" />
-                    <ul className="my-3 ml-6 list-decimal [&>li]:mt-2">
-                      <li>Clearing your cookies and cache</li>
-                      <li>Refreshing the page</li>
-                      <li>Using a different browser</li>
-                    </ul>
-                  </div>
-                </CardContent>
-                <CardFooter className="flex flex-col justify-between ">
-                  <div className=" flex flex-col items-left rounded-md border p-4 *:my-1">
-                    <div className="flex-1 space-y-1 ">
-                      <p className="text-sm font-medium leading-none">
-                        Reset Location
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        If you want to skip all that, you can press the
-                        following button.
-                      </p>
-                    </div>
-                    <GrantGeoButton
-                      overwriteGeoCoords={overwriteGeoCoords}
-                      buttonText={'Refresh Location'}
-                    />
-                  </div>
-                </CardFooter>
-              </Card>
-            </div>
-          </>
-        ) : (
-          <>
-            {/* 
-                If we did get a forecast value back from the server, then check if it was negative. 
-                We send back a -1 prediction if there are no predictions for the users location on the current day. This conditional handles that accordingly
-              */}
-            {forecast < 0 ? (
-              <div className="w-full flex flex-col justify-center align-middle items-center text-center">
-                <h1 className="scroll-m-20 font-extrabold tracking-tight text-emerald-400 text-8xl sm:text-8xl md:text-8xl break-words">
-                  0%🤔
-                </h1>
-                <h4 className="w-full scroll-m-20 text-center  text-pretty text-lg text-muted-foreground font-semibold tracking-tight">
-                  Chance of rain today in{' '}
-                  {`${reverseGeoCoords.city}, ${reverseGeoCoords.state}`}
-                </h4>
-                <div className=" flex flex-col items-left rounded-md border p-4 my-2.5 *:my-1">
-                  <div className="flex-1 space-y-1 ">
-                    <p className="text-sm font-medium leading-none">
-                      Help Us Make a Forecast!
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      We don't have enough posts for the day to generate a
-                      forecast! You could be the first to post! Just click the{' '}
-                      <Link
-                        href="/create-post"
-                        className="font-extrabold text-primary"
-                      >
-                        Post a Cat
-                      </Link>{' '}
-                      button.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              // This is where we handle getting an actual forecast entity back from the server
-              <>
-                <h1 className="scroll-m-20 font-extrabold tracking-tight text-emerald-400 text-9xl sm:text-9xl md:text-9xl break-words">
-                  {`${Math.floor(forecast)}%`}
-                </h1>
-                <h4 className="w-full sm:w-3/4 md:w-1/4 scroll-m-20 text-center sm:text-left text-pretty text-lg text-muted-foreground font-semibold tracking-tight">
-                  Chance of rain today in{' '}
-                  {`${reverseGeoCoords.city}, ${reverseGeoCoords.state}`}
-                </h4>
-              </>
-            )}
-          </>
-        )
-      }
-    </>
-  );
-}
-
 // TODO - we could maybe try to resolve the prop drilling thats going on in this component and the others below it
-export function UnknownLocation({ overwriteGeoCoords }) {
-  return (
-    <div
-      id="where-are-you"
-      className="w-full flex flex-col justify-center items-center"
-    >
-      <Card className="w-3/4">
-        <CardHeader>
-          <CardTitle>
-            <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
-              We actually don't know where you are...
-            </h4>
-          </CardTitle>
-          <CardDescription>
-            Please enable location services so we can give you an accurate
-            prediction
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="w-full">
-            {' '}
-            If you're not being prompted to let us use your location, you may
-            need to go into your settings or click the map pin icon in your
-            browser's search bar.
-          </p>
-        </CardContent>
-        <CardFooter className="flex flex-col justify-between ">
-          <GrantGeoButton
-            overwriteGeoCoords={overwriteGeoCoords}
-            buttonText={'Grant Access to Location'}
-          />
-        </CardFooter>
-      </Card>
-    </div>
-  );
-}
-
-// DO we really need this to be a standalone component?
-export function GrantGeoButton({
-  overwriteGeoCoords,
-  buttonText = 'Find Posts Near You',
-}) {
-  const onLocationClick = () => {
-    overwriteGeoCoords();
-  };
-
-  return (
-    <Button
-      className="rounded-md w-full"
-      variant="supabasianPrimary"
-      onClick={() => onLocationClick()}
-    >
-      {buttonText}
-    </Button>
-  );
-}
