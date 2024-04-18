@@ -35,19 +35,27 @@ export class PostController {
       }),
     )
     file,
+    @Body() body,
     @Req() req,
   ) {
     /* NOTE 
         we can be confident that our req.user holds the user's information since we have our auth guard in place
         and published will always instrinically be true, but can be switched to false if a user "deletes" their post
     */
-    return this.postService.upload(file, req.user.sub);
+    const { userState, userCity } = body;
+
+    return this.postService.upload(
+      file,
+      req.user.sub,
+      parseInt(userState),
+      parseInt(userCity),
+    );
   }
 
   @Put(':id')
   @UseGuards(JwtAuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  @SkipThrottle()
+  // @SkipThrottle()
   upvote(@Param('id') id: number, @Req() req) {
     return this.postService.upvote(id, req.user.sub);
   }
@@ -65,12 +73,22 @@ export class PostController {
     return this.postService.findAll(req.user.sub);
   }
 
+  // TODO - need to change the name of this endpoint. it's confusing a lil with the other nearby endpoint
   @Post('/nearme')
   @SkipThrottle()
   findAllNearMe(@Body() body: { location: { lat: number; long: number } }) {
     return this.postService.findAllNearMe(
       body.location.lat,
       body.location.long,
+    );
+  }
+  // TODO - body should be UserLocationDTO
+  @Post('/nearby')
+  @SkipThrottle()
+  findAllNearby(@Body() body) {
+    return this.postService.findAllNearby(
+      parseInt(body.userState),
+      parseInt(body.userCity),
     );
   }
 

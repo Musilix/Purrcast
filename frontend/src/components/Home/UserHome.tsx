@@ -111,7 +111,7 @@ export default function UserHome({ session }: { session: Session }) {
         <>
           <div
             id="cta-wrap"
-            className="flex flex-col sm:flex-row w-full align-center place-items-center place-content-center *:w-full sm:*:w-auto *:sm:mx-5"
+            className="flex flex-col sm:flex-row w-full align-center place-items-center place-content-center *:w-full sm:*:w-auto *:my-2.5 *:sm:my-0 *:sm:mx-5"
           >
             <div>
               <Link href="/create-post">
@@ -124,7 +124,7 @@ export default function UserHome({ session }: { session: Session }) {
               </Link>
             </div>
             <div>
-              <Link href="/posts">
+              <Link href="/posts/nearby">
                 <Button
                   className="p-6 text-lg w-full"
                   variant="supabasianSecondary"

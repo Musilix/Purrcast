@@ -12,8 +12,13 @@ interface UserSession {
 export default function PostPage() {
   const params = useParams();
   const { toast } = useToast();
-  const [postVotes, setPostVotes] = useState<number>(0);
+
   const [post, setPost] = useState<Post | null>(null);
+  const [postVotes, setPostVotes] = useState<number>(0);
+  const [postLocation, setPostLocation] = useState<{
+    state: string;
+    city: string;
+  }>();
 
   const postId = params.post_id;
 
@@ -27,8 +32,12 @@ export default function PostPage() {
       axios
         .get(`${import.meta.env.VITE_API_HOST}/post/${postId}`, {})
         .then((res) => {
+          const userState = res.data.id_state;
+          const userCity = res.data.id_city;
+          console.log(userState, userCity);
           setPost(res.data);
           setPostVotes(res.data.upvotes.length);
+          setPostLocation({ state: userState.state_code, city: userCity.city });
         })
         .catch((e) => {
           //TODO - add response message component logic to any axios type logic... how tho?
@@ -80,7 +89,7 @@ export default function PostPage() {
       <article className="flex flex-col size-screen place-items-center">
         {post ? (
           <>
-            <PostContent post={post} />
+            <PostContent post={post} postLocation={postLocation} />
             <PostVotes handleUpVote={upVotePost} postVotes={postVotes} />
           </>
         ) : (
@@ -91,7 +100,13 @@ export default function PostPage() {
   );
 }
 
-function PostContent({ post }: { post: Post }) {
+function PostContent({
+  post,
+  postLocation,
+}: {
+  post: Post;
+  postLocation: any;
+}) {
   return (
     <>
       <section className="post-img w-3/4 min-w-[200px] max-w-[800px] p-1 bg-primary-glow border-dotted border border-black">
@@ -113,7 +128,9 @@ function PostContent({ post }: { post: Post }) {
           {post.author.username ? post.author.username : 'Anonymous Purrcaster'}
         </h3>
         <p className="leading-7 [&:not(:first-child)]:mt-1 place-item-start">
-          {post ? post?.author?.location : 'Earth'}
+          {postLocation
+            ? `${postLocation.city}, ${postLocation.state}`
+            : 'Earth'}
         </p>
       </section>
     </>

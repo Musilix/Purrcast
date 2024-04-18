@@ -1,3 +1,4 @@
+import useGeo from '@/hooks/useGeo';
 import { cn } from '@/lib/utils';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
@@ -16,30 +17,45 @@ interface UserSession {
 export default function PostsPreview({
   className = '',
   onlyCurrUser = false,
+  locationSpecific = false,
 }: {
   className?: string;
   onlyCurrUser?: boolean;
+  locationSpecific?: boolean;
 }) {
   const [splashPosts, setPosts] = useState<Post[]>([]);
   const { toast } = useToast();
+  const [, reverseGeoCoords] = useGeo();
+
   const reqUrl = onlyCurrUser
     ? `${import.meta.env.VITE_API_HOST}/post/mine`
+    : locationSpecific
+    ? `${import.meta.env.VITE_API_HOST}/post/nearby`
     : `${import.meta.env.VITE_API_HOST}/post`;
 
   const userSession = JSON.parse(
     localStorage.getItem('userSession') ?? '{}',
   ) as UserSession;
 
+  const userLocation =
+    locationSpecific && reverseGeoCoords
+      ? {
+          userState: reverseGeoCoords.id_state,
+          userCity: reverseGeoCoords.id_city,
+        }
+      : {};
+
   useEffect(() => {
     const controller = new AbortController();
 
     const fetchPosts = async () => {
       axios
-        .get(reqUrl, {
+        .post(reqUrl, {
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${userSession.access_token}`,
           },
+          ...userLocation,
         })
         .then((res) => {
           res ? setPosts(res.data) : setPosts([]);

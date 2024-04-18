@@ -18,7 +18,12 @@ export class PostService {
     private readonly configService: ConfigService,
   ) {}
 
-  async upload(image: any, userId: string) {
+  async upload(
+    image: any,
+    userId: string,
+    userState: number,
+    userCity: number,
+  ) {
     // TODO - We could inject this into the service with manual instantion options
     let reformattedImg = new SharpHelper(image.mimetype, image.buffer);
     reformattedImg = await reformattedImg.resizeImage(500);
@@ -32,6 +37,7 @@ export class PostService {
     );
     fd.append('threshold', '49');
 
+    // Get an idea if there is a cat in the image... or if the image is a drawing
     const tags = await axios
       .post('https://api.imagga.com/v2/tags', fd, {
         headers: {
@@ -110,8 +116,8 @@ export class PostService {
         authorId: user?.id ?? 1,
         published: true,
         isCatOnHead: null,
-        postState: 1,
-        postCity: 1,
+        postState: userState ?? 99999, // TODO Make a default in our state table for this nullish coalescing value
+        postCity: userCity ?? 99999, // Make a default in our city table for this nullish coalescing value
       },
     });
 
@@ -143,14 +149,25 @@ export class PostService {
           contentId: true,
           createdAt: true,
           updatedAt: true,
-          upvotes: true,
           id: true,
+          upvotes: true,
           author: {
             select: {
               bio: true,
               location: true,
               name: true,
               username: true,
+            },
+          },
+          id_state: {
+            select: {
+              state_code: true,
+              state_name: true,
+            },
+          },
+          id_city: {
+            select: {
+              city: true,
             },
           },
         },
@@ -180,6 +197,53 @@ export class PostService {
       console.error(e);
       throw new InternalServerErrorException(
         'An error occured while trying to grab posts. We think there could be an issue with the location you provided. Please try again later.',
+      );
+    }
+  }
+
+  async findAllNearby(userState: number, userCity: number) {
+    try {
+      console.log(`Searching for posts near ${userCity}, ${userState}`);
+      const res = await this.prisma.post.findMany({
+        where: {
+          postState: userState,
+          postCity: userCity,
+          published: true,
+        },
+        select: {
+          published: true,
+          contentId: true,
+          createdAt: true,
+          updatedAt: true,
+          id: true,
+          upvotes: true,
+          author: {
+            select: {
+              bio: true,
+              location: true,
+              name: true,
+              username: true,
+            },
+          },
+          id_state: {
+            select: {
+              state_code: true,
+              state_name: true,
+            },
+          },
+          id_city: {
+            select: {
+              city: true,
+            },
+          },
+        },
+      });
+
+      return res;
+    } catch (e) {
+      console.error(e);
+      throw new InternalServerErrorException(
+        'An error occured while trying to grab posts. We think there could be an issue your location services. Please try again later.',
       );
     }
   }
@@ -215,6 +279,17 @@ export class PostService {
               location: true,
               name: true,
               username: true,
+            },
+          },
+          id_state: {
+            select: {
+              state_code: true,
+              state_name: true,
+            },
+          },
+          id_city: {
+            select: {
+              city: true,
             },
           },
         },

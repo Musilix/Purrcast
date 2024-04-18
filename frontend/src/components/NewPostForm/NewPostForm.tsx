@@ -1,5 +1,7 @@
+import useGeo from '@/hooks/useGeo';
 import { useState } from 'react';
 import NewPostPreview from '../NewPostPreview/NewPostPreview';
+import { toast } from '../ui/use-toast';
 import NewPostFormDropZone from './NewPostFormDropZone';
 
 // TODO - move this to a shared file
@@ -20,13 +22,34 @@ export default function NewPostForm({
 }) {
   const [postImage, setPostImage] = useState<File | null>();
 
+  // TODO - should I have this in here???... find out how to just get reverse geo coords
+  const [, reverseGeoCoords] = useGeo();
+
   const handlePostSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // TODO - add proper validation and move implementation to service
-    if (postImage) {
+    if (!reverseGeoCoords) {
+      toast({
+        title: "We Don't Know Where You're Posting From 😿",
+        description:
+          'You need to make sure you enable location services before you make a post.',
+        variant: 'destructive',
+      });
+    }
+
+    if (!postImage) {
+      toast({
+        description: 'Make sure you are including an image with your post',
+        variant: 'destructive',
+      });
+      // TODO - add proper validation and move implementation to service
+    } else {
       const formData = new FormData();
+
+      // Append base64 file and location data to FormData object we send to server
       formData.append('userUploadedFile', postImage);
+      formData.append('userState', reverseGeoCoords.id_state);
+      formData.append('userCity', reverseGeoCoords.id_city);
 
       // TODO - this is valid, but we need to define the type of the handleSubmit prop in the func def
       await handleSubmit(formData, '/post/upload');

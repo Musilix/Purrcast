@@ -78,6 +78,9 @@ function App() {
                   <Route path="/profile/posts">
                     <PostsHistory onlyCurrUser={true} />
                   </Route>
+                  <Route path="/posts/nearby">
+                    <PostsHistory locationSpecific={true} />
+                  </Route>
                   <Route path="/posts">
                     <PostsHistory onlyCurrUser={false} />
                   </Route>

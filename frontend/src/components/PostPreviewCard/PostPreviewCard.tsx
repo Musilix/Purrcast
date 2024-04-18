@@ -14,7 +14,7 @@ import { Skeleton } from '../ui/skeleton';
 // TODO - super bloated in here at the moment. Shift this around to be more modular
 interface PostPreviewCardProps {
   author?: User;
-  post?: Post;
+  post?: any;
   skeleton?: boolean;
 }
 
@@ -22,9 +22,10 @@ interface PostProps {
   author: User;
   postedAt: Date;
   content: string;
+  location: { city: string; state: string };
 }
 
-function RealCard({ author, postedAt, content }: PostProps) {
+function RealCard({ author, postedAt, content, location }: PostProps) {
   return (
     <>
       <CardContent className="p-5">
@@ -42,7 +43,7 @@ function RealCard({ author, postedAt, content }: PostProps) {
       </CardContent>
       <CardFooter className="flex flex-col flex-auto  pb-5">
         <CardTitle>Posted by {author.username}</CardTitle>
-        <CardDescription>{author.location}</CardDescription>
+        <CardDescription>{`${location.city}, ${location.state}`}</CardDescription>
         <CardDescription>
           {postedAt
             ? `${new Date(postedAt).toLocaleString('en-US', {
@@ -70,7 +71,7 @@ function SkeletonPreviewCard() {
 
 export default function PostPreviewCard({
   author = {} as User,
-  post = {} as Post,
+  post = {},
   skeleton = false,
 }: PostPreviewCardProps) {
   return (
@@ -82,6 +83,10 @@ export default function PostPreviewCard({
               author={author}
               postedAt={post.createdAt}
               content={post.contentId}
+              location={{
+                city: post.id_city.city,
+                state: post.id_state.state_code,
+              }}
             />
           ) : (
             <SkeletonPreviewCard />

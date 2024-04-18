@@ -22,7 +22,7 @@ export default function ContentLoadingProvider({
 
   useEffect(() => {
     // If for some reason the auth loading state is not set, set it to true on auth provider mount
-    !isContentLoading ? setIsContentLoading(true) : '';
+    // !isContentLoading ? setIsContentLoading(true) : '';
   }, []);
 
   return (
