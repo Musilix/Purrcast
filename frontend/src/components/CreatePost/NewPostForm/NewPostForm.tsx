@@ -1,7 +1,7 @@
 import useGeo from '@/hooks/useGeo';
 import { useState } from 'react';
+import { toast } from '../../ui/use-toast';
 import NewPostPreview from '../NewPostPreview/NewPostPreview';
-import { toast } from '../ui/use-toast';
 import NewPostFormDropZone from './NewPostFormDropZone';
 
 // TODO - move this to a shared file

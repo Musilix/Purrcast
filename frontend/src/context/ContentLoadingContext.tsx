@@ -18,7 +18,7 @@ export default function ContentLoadingProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [isContentLoading, setIsContentLoading] = useState(true);
+  const [isContentLoading, setIsContentLoading] = useState();
 
   useEffect(() => {
     // If for some reason the auth loading state is not set, set it to true on auth provider mount

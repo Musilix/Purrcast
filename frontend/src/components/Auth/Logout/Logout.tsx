@@ -2,7 +2,7 @@
 import { __supabase__ } from '@/constants';
 import { useEffect } from 'react';
 import { useLocation } from 'wouter';
-import { useToast } from '../ui/use-toast';
+import { useToast } from '../../ui/use-toast';
 
 export default function Logout() {
   const [, setLocation] = useLocation();

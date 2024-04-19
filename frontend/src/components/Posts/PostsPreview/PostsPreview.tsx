@@ -2,9 +2,9 @@ import useGeo from '@/hooks/useGeo';
 import { cn } from '@/lib/utils';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { Post } from '../../types/Post';
+import { Post } from '../../../types/Post';
+import { useToast } from '../../ui/use-toast';
 import PostPreviewCard from '../PostPreviewCard/PostPreviewCard';
-import { useToast } from '../ui/use-toast';
 
 interface UserSession {
   access_token: string;
@@ -50,13 +50,16 @@ export default function PostsPreview({
 
     const fetchPosts = async () => {
       axios
-        .post(reqUrl, {
-          headers: {
-            Accept: 'application/json',
-            Authorization: `Bearer ${userSession.access_token}`,
+        .post(
+          reqUrl,
+          { ...userLocation },
+          {
+            headers: {
+              Accept: 'application/json',
+              Authorization: `Bearer ${userSession.access_token}`,
+            },
           },
-          ...userLocation,
-        })
+        )
         .then((res) => {
           res ? setPosts(res.data) : setPosts([]);
         })

@@ -9,7 +9,7 @@ import { Post } from '@/types/Post';
 import { User } from '@/types/User';
 import { formatAMPM } from '@/utils/ConvertDateToTime';
 import { Link } from 'wouter';
-import { Skeleton } from '../ui/skeleton';
+import { Skeleton } from '../../ui/skeleton';
 
 // TODO - super bloated in here at the moment. Shift this around to be more modular
 interface PostPreviewCardProps {

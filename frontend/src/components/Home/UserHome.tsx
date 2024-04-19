@@ -30,6 +30,7 @@ export default function UserHome({ session }: { session: Session }) {
 
   const { toast } = useToast();
 
+  // TODO - incorporate with useGeo hook?
   const getForecast = async () => {
     await axios
       .get(
@@ -41,6 +42,7 @@ export default function UserHome({ session }: { session: Session }) {
         setForecast(res.data);
       })
       .catch((err) => {
+        // Notice that we set is content loading to false each time we reach an error in the geolocation process
         setIsContentLoading(false);
         toast({
           description: err.message + '. Maybe try refreshing the page?',

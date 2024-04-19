@@ -1,5 +1,5 @@
 import { Loader2, X } from 'lucide-react';
-import { Button } from '../ui/button';
+import { Button } from '../../ui/button';
 
 // FIXME - I don't like prop drilling isSubmitting down to this component, but hey... baba booey
 export default function NewPostPreview({

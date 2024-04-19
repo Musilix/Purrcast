@@ -2,7 +2,7 @@ import { AuthContext } from '@/context/AuthContext';
 import { User } from '@supabase/supabase-js';
 import { useContext } from 'react';
 import { Redirect } from 'wouter';
-import PostsPreview from '../PostsPreview/PostsPreview';
+import PostsPreview from '../Posts/PostsPreview/PostsPreview';
 import { Button } from '../ui/button';
 
 export default function Profile() {

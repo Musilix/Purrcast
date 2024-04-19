@@ -4,8 +4,8 @@ import axios from 'axios';
 import { ThumbsUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useParams } from 'wouter';
-import { Button } from '../ui/button';
-import { useToast } from '../ui/use-toast';
+import { Button } from '../../ui/button';
+import { useToast } from '../../ui/use-toast';
 interface UserSession {
   access_token: string;
 }

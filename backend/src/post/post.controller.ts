@@ -60,13 +60,13 @@ export class PostController {
     return this.postService.upvote(id, req.user.sub);
   }
 
-  @Get()
+  @Post()
   @SkipThrottle()
   findAll() {
     return this.postService.findAll();
   }
 
-  @Get('/mine')
+  @Post('/mine')
   @UseGuards(JwtAuthGuard)
   @SkipThrottle()
   findAllUserSpecific(@Req() req) {

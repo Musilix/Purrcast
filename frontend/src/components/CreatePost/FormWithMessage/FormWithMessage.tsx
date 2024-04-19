@@ -3,7 +3,7 @@ import axios, { AxiosError } from 'axios';
 import { BadgeAlert, BadgeCheck } from 'lucide-react';
 import { useContext, useState } from 'react';
 import { Redirect } from 'wouter';
-import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
+import { Alert, AlertDescription, AlertTitle } from '../../ui/alert';
 
 // TODO - move this to a shared file
 interface ResponseMessageType {

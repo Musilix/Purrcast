@@ -63,6 +63,8 @@ export default function useGeo() {
         getAndSetReverseGeoLoc(geoCoords);
       },
       (error) => {
+        // Notice that we set is content loading to false each time we reach an error in the geolocation process
+        setIsContentLoading(false);
         ShowGeoErrorMessage(error, toast);
       },
     );
@@ -86,6 +88,7 @@ export default function useGeo() {
         setUserLocationText(res.data);
       })
       .catch((error) => {
+        // Notice that we set is content loading to false each time we reach an error in the geolocation process
         setIsContentLoading(false);
         toast({
           description: `${error.message}: Unable to get your city and state.`,
