@@ -68,8 +68,7 @@ export function MissingForecast({ overwriteGeoCoords }) {
                   Reset Location
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  If you want to skip all that, you can press the following
-                  button.
+                  If you want to skip all that, you can press the button below.
                 </p>
               </div>
               <GrantGeoButton

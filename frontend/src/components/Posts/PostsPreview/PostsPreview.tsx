@@ -1,7 +1,9 @@
+import { ContentLoadingContext } from '@/context/ContentLoadingContext';
 import useGeo from '@/hooks/useGeo';
 import { cn } from '@/lib/utils';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { Link } from 'wouter';
 import { Post } from '../../../types/Post';
 import { useToast } from '../../ui/use-toast';
 import PostPreviewCard from '../PostPreviewCard/PostPreviewCard';
@@ -32,6 +34,11 @@ export default function PostsPreview({
     : locationSpecific
     ? `${import.meta.env.VITE_API_HOST}/post/nearby`
     : `${import.meta.env.VITE_API_HOST}/post`;
+  const noPostMessage = onlyCurrUser
+    ? 'You have no posts 😿'
+    : locationSpecific
+    ? 'No one has made a post near you yet. 😿'
+    : 'No posts to show 😿';
 
   const userSession = JSON.parse(
     localStorage.getItem('userSession') ?? '{}',
@@ -44,6 +51,8 @@ export default function PostsPreview({
           userCity: reverseGeoCoords.id_city,
         }
       : {};
+
+  const { setIsContentLoading } = useContext(ContentLoadingContext);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -65,14 +74,15 @@ export default function PostsPreview({
         })
         .catch((e) => {
           toast({
-            title: 'There was an issue with your request',
+            title: 'There was an issue retrieving posts.',
             description: e.response.data.message,
             variant: 'destructive',
           });
         });
     };
-
+    setIsContentLoading(true);
     fetchPosts();
+    setIsContentLoading(false);
 
     return () => controller.abort();
   }, []);
@@ -86,6 +96,17 @@ export default function PostsPreview({
             className,
           )}
         >
+          {!splashPosts && (
+            <>
+              <PostPreviewCard skeleton={true} />
+              <PostPreviewCard skeleton={true} />
+              <PostPreviewCard skeleton={true} />
+              <PostPreviewCard skeleton={true} />
+              <PostPreviewCard skeleton={true} />
+              <PostPreviewCard skeleton={true} />
+            </>
+          )}
+
           {splashPosts && splashPosts.length > 0 ? (
             <>
               {splashPosts.map((post) => (
@@ -96,13 +117,64 @@ export default function PostsPreview({
             </>
           ) : (
             <>
-              {/* <p>No Posts to Show. Try refreshing?</p> */}
-              <PostPreviewCard skeleton={true} />
-              <PostPreviewCard skeleton={true} />
-              <PostPreviewCard skeleton={true} />
-              <PostPreviewCard skeleton={true} />
-              <PostPreviewCard skeleton={true} />
-              <PostPreviewCard skeleton={true} />
+              <div className="col-span-2 flex flex-col items-left rounded-md border p-4 my-2.5 *:my-1">
+                <div className="flex-1 space-y-1 ">
+                  <p className="text-sm font-medium leading-none">
+                    {noPostMessage}
+                  </p>
+
+                  {onlyCurrUser ? (
+                    <>
+                      <p className="text-sm text-muted-foreground">
+                        You haven't made any posts yet. You could do good for
+                        your community and{' '}
+                        <Link
+                          href="/create-post"
+                          className="font-extrabold text-primary"
+                        >
+                          post your cat
+                        </Link>{' '}
+                        to help us make a forecast!
+                      </p>
+                    </>
+                  ) : locationSpecific ? (
+                    <>
+                      <p className="text-sm text-muted-foreground">
+                        There are currently no posts near you. You could be the
+                        <i>
+                          <b> Neil Armstrong</b>
+                        </i>{' '}
+                        of your community and be the first to{' '}
+                        <Link
+                          href="/create-post"
+                          className="font-extrabold text-primary"
+                        >
+                          post your cat
+                        </Link>{' '}
+                        to help us make a forecast for your area!
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-sm text-muted-foreground">
+                        There are no posts{' '}
+                        <i>
+                          <b> AT ALL</b>
+                        </i>{' '}
+                        currently. You could go down in history and be the first
+                        to{' '}
+                        <Link
+                          href="/create-post"
+                          className="font-extrabold text-primary"
+                        >
+                          post your cat
+                        </Link>{' '}
+                        to help us make a forecast!
+                      </p>
+                    </>
+                  )}
+                </div>
+              </div>
             </>
           )}
         </ul>
