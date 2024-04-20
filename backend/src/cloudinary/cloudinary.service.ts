@@ -3,6 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
+import { UploadApiResponse } from 'cloudinary';
 
 @Injectable()
 export class CloudinaryService {
@@ -27,12 +28,14 @@ export class CloudinaryService {
       const b64 = Buffer.from(file.buffer).toString('base64');
       const dataURI = 'data:' + file.mimetype + ';base64,' + b64;
 
-      const result = await this.Cloudinary.uploader.upload(dataURI, options);
+      const result: Promise<UploadApiResponse> =
+        await this.Cloudinary.uploader.upload(dataURI, options);
 
       return result;
     } catch (error) {
-      console.error(error);
-      return new Error('Unable to upload file');
+      throw new InternalServerErrorException(
+        'Unable to upload your file due to a communication error with our image hosting provider. Please try again later.',
+      );
     }
   }
 
@@ -43,7 +46,7 @@ export class CloudinaryService {
         publicId,
         options ?? {},
       );
-      console.log(result);
+
       return result.colors;
     } catch (error) {
       console.error(error);

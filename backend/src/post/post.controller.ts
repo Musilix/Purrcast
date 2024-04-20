@@ -19,6 +19,7 @@ import { __file_parse_validators__ } from 'src/constants';
 import { JwtAuthGuard } from 'src/guards/JwtAuth/jwtAuth.guard';
 // import { TestDataPipe } from 'src/pipes/MyCustomPipe2';
 import { SkipThrottle } from '@nestjs/throttler';
+import UserLocationValidationPipe from 'src/pipes/UserLocationValidationPipe';
 import { PostService } from './post.service';
 @Controller('post')
 export class PostController {
@@ -35,7 +36,7 @@ export class PostController {
       }),
     )
     file,
-    @Body() body,
+    @Body(UserLocationValidationPipe) body,
     @Req() req,
   ) {
     /* NOTE 
@@ -82,6 +83,7 @@ export class PostController {
       body.location.long,
     );
   }
+
   // TODO - body should be UserLocationDTO
   @Post('/nearby')
   @SkipThrottle()

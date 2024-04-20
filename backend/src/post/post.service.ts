@@ -5,10 +5,13 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
+import { UploadApiResponse } from 'cloudinary';
 import FormData from 'form-data';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SharpHelper } from 'src/sharp/sharp.service';
+import checkForCat from 'src/utils/CheckForCat';
+import uploadToCloudinary from 'src/utils/UploadToCloudinary';
 
 @Injectable()
 export class PostService {
@@ -24,12 +27,16 @@ export class PostService {
     userState: number,
     userCity: number,
   ) {
-    // TODO - We could inject this into the service with manual instantion options
+    // TODO - I wish I could method chain here, but idk how...
     let reformattedImg = new SharpHelper(image.mimetype, image.buffer);
-    reformattedImg = await reformattedImg.resizeImage(500);
+    // Somewhat nasty way to do method chaining... since these are async functions, we can't just chain them together as normal sadly
+    reformattedImg = await (
+      await reformattedImg.resizeImage(500)
+    ).toFormat('png');
+
     const reformattedImgDetails = reformattedImg.getImgDetails();
 
-    // TODO - this bundle of logic should maybe be nested in a helper function of some sort...
+    // TODO - this bundle of logic down to checkForCats() should maybe be nested in a helper function of some sort...?
     const fd = new FormData();
     fd.append(
       'image_base64',
@@ -37,7 +44,7 @@ export class PostService {
     );
     fd.append('threshold', '49');
 
-    // Get an idea if there is a cat in the image... or if the image is a drawing
+    // Get an idea if there is a cat in the image... or if the image is a drawing. We must ensure the image is of a valid format...
     const tags = await axios
       .post('https://api.imagga.com/v2/tags', fd, {
         headers: {
@@ -57,51 +64,12 @@ export class PostService {
         );
       });
 
-    const hasCat = tags.some((tag: any) =>
-      tag.tag.en.match(/cat|kitten|feline|kitty/i),
+    // I made some random utility functions (probably not with the best practices in mind) to clear up some of the bloat
+    checkForCat(tags);
+    const res: UploadApiResponse = await uploadToCloudinary(
+      this.cloudinary,
+      reformattedImgDetails,
     );
-
-    const isRealCat = !tags.some((tag: any) =>
-      tag.tag.en.match(/art|sketch|paint|draw|doodle/i),
-    );
-
-    // Check if image is a drawing FIRST
-    if (!isRealCat) {
-      throw new InternalServerErrorException(
-        "You gotta make sure you're uploading a real cat picture. No drawings allowed! I'm so sorry.",
-      );
-    }
-
-    // Check if the image is a cat now...
-    if (!hasCat) {
-      throw new InternalServerErrorException(
-        "You gotta make sure you're uploading a cat picture, bruh!",
-      );
-    }
-
-    /*
-        The options sent to our cloudinary service's upload method here are using an upload type of just 'upload'.
-        If we wanted to strengthen our security, we could use the 'authenticated' upload type or even private
-      */
-    const res = await this.cloudinary.upload(reformattedImgDetails, {
-      resource_type: 'image',
-      unique_filename: true,
-      overwrite: false,
-      format: 'png',
-      type: 'upload', //TODO - change this to authenticated or private if we decide to utilize token-based access control
-      // TODO - in the future, it may be necessary to hide assets with access_control settings
-      // If I continue to use cloudinary, I will need to contact them for a encrpytion key to generate valid tokens for authenticated users to access assets
-      // access_control: {
-      //   access_type: 'token',
-
-      // },
-    });
-
-    if (!res || res.secure_url == undefined) {
-      throw new InternalServerErrorException(
-        'Unable to upload your file due to a communication error with our image hosting provider. Please try again later.',
-      );
-    }
 
     // NOTE: if this user search fails, the post creation will fail due to a 500 server error...
     // The user search WILL fail if we didn't properly include the UUID provided by supabase auth upon authenticating with Google OAuth...
@@ -110,18 +78,23 @@ export class PostService {
       where: { uuid: userId },
     });
 
-    const newPost = await this.prisma.post.create({
-      data: {
-        contentId: res.secure_url,
-        authorId: user?.id ?? 1,
-        published: true,
-        isCatOnHead: null,
-        postState: userState ?? 99999, // TODO Make a default in our state table for this nullish coalescing value
-        postCity: userCity ?? 99999, // Make a default in our city table for this nullish coalescing value
-      },
-    });
+    const newPost = await this.prisma.post
+      .create({
+        data: {
+          contentId: res.secure_url,
+          authorId: user?.id ?? 1,
+          published: true,
+          isCatOnHead: null,
+          postState: userState,
+          postCity: userCity,
+        },
+      })
+      .catch(() => {
+        throw new InternalServerErrorException(
+          'There was an issue uploading your image. It could either be due to your location or account. Try clearing your cache/cookies and logging out and back in',
+        );
+      });
 
-    // TODO - idk what to return... I know I should probably use a hash for the post identifier...
     return { resource: res.secure_url, postId: newPost.id };
   }
 
@@ -183,10 +156,7 @@ export class PostService {
   }
 
   async findAllNearMe(lat: number, long: number) {
-    // TODO - if no locatio provided OR lat/long are missng/invalid, return error message
-
     try {
-      console.log(`Searching for posts near ${lat}, ${long}`);
       // Call function to get nearby entities, given the location
       // TODO - change implementation to do real thing.
       const res = await this.prisma
@@ -203,7 +173,6 @@ export class PostService {
 
   async findAllNearby(userState: number, userCity: number) {
     try {
-      console.log(`Searching for posts near ${userCity}, ${userState}`);
       const res = await this.prisma.post.findMany({
         where: {
           postState: userState,
@@ -357,8 +326,7 @@ export class PostService {
   }
 
   async getForecast(state: number, city: number) {
-    console.log('someone want the forecast');
-    console.log(state, city);
+    console.log(`Someone wants the forecast for ${state}, ${city}!`);
     const currDate = new Date();
     const foreCastDate = `${currDate.getFullYear()}/${
       currDate.getMonth() + 1
@@ -376,7 +344,6 @@ export class PostService {
       return -1;
     }
 
-    console.log(forecast);
     return forecast.prediction;
   }
 }
