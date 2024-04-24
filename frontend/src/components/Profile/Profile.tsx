@@ -18,7 +18,7 @@ export default function Profile() {
       </h1>
       {session && session.user ? (
         <>
-          <div className="grid grid-rows-5 grid-flow-row gap-5">
+          <div className="grid grid-rows-4 grid-flow-row gap-5">
             <div className="row-span-2">
               <h2 className="scroll-m-20 text-2xl font-semibold tracking-tight">
                 Profile Picture:
@@ -48,17 +48,17 @@ export default function Profile() {
                 {(session.user as User).user_metadata.full_name}
               </p>
             </div>
-            <div>
+            {/* <div>
               <h2 className="scroll-m-20 text-2xl font-semibold tracking-tight">
                 Posts:
               </h2>
               <p className="leading-7 [&:not(:first-child)]:mt-2">0</p>
-            </div>
+            </div> */}
           </div>
-          // TODO - we need to make it so we can specify filtering properties
-          when displaying a post preview bundle
+          {/* TODO - we need to make it so we can specify filtering properties
+          when displaying a post preview bundle */}
           <PostsPreview className="p-0" onlyCurrUser={true} />
-          // TODO - enable and add confirmation to deactive account
+          {/* TODO - enable and add confirmation to deactive account */}
           <div id="button-wrap">
             <Button variant="destructive" disabled>
               Delete Account
