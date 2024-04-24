@@ -1,5 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import sharp from 'sharp';
+import sharp, { FormatEnum } from 'sharp';
 
 @Injectable()
 export class SharpHelper {
@@ -8,17 +8,23 @@ export class SharpHelper {
     private imgBuffer,
   ) {
     this.imgMimeType = imgMimeType;
-    this.imgBuffer = sharp(imgBuffer);
+    this.imgBuffer = imgBuffer;
   }
 
   async resizeImage(size: number = 500): Promise<SharpHelper> {
+    this.imgBuffer = await sharp(this.imgBuffer).resize(size).toBuffer();
+
+    return this;
+  }
+
+  async toFormat(format: keyof FormatEnum = 'png'): Promise<SharpHelper> {
     try {
-      this.imgBuffer = await this.imgBuffer.resize(size).toBuffer();
+      this.imgBuffer = await sharp(this.imgBuffer).toFormat(format).toBuffer();
 
       return this;
     } catch (error) {
       throw new InternalServerErrorException(
-        'There was a problem while trying to resize the image.',
+        `There was a problem while trying to convert the image to the given format: ${format}.`,
       );
     }
   }

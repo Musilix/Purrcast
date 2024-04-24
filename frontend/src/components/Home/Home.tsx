@@ -6,7 +6,7 @@ import UserHome from './UserHome';
 
 export default function Home() {
   const { session } = useContext(AuthContext);
-  // TODO - can we get jwt from session?
+
   if (session && session.user) {
     return <UserHome session={session as Session} />;
   } else {

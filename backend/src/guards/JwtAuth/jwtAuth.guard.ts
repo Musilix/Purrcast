@@ -23,7 +23,7 @@ export class JwtAuthGuard implements CanActivate {
 
     if (!token) {
       throw new UnauthorizedException(
-        "You aren't authorized to access this resource.",
+        'You must login to access this resource.',
       );
     }
 

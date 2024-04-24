@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { z } from 'zod';
 
@@ -39,5 +39,21 @@ export class UsersService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  async getLocation(locationInCoords: { lat: number; lon: number }) {
+    if (!locationInCoords || !locationInCoords.lat || !locationInCoords.lon) {
+      throw new InternalServerErrorException('Invalid location data');
+    }
+    const locationInText: {
+      city: string;
+      state: string;
+      lat: number;
+      lon: number;
+      'Distance in Miles from City': number;
+    } = await this.prisma
+      .$queryRaw`SELECT * FROM "geo"."get_closest_city"(${locationInCoords.lat}, ${locationInCoords.lon} ) LIMIT 1;`;
+
+    return locationInText[0];
   }
 }

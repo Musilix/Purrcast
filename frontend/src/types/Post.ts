@@ -4,9 +4,13 @@ import { User } from './User';
 export interface Post {
   id: number;
   authorId: number;
-  contentId: string;
   createdAt: Date;
   updatedAt: Date;
-  published: boolean;
+  contentId: string;
+  isDeleted?: boolean;
+  isCatOnHead?: boolean;
+  published?: boolean;
   author: User;
+
+  // upvotes?:
 }
