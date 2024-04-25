@@ -9,11 +9,25 @@ import {
 } from '../../ui/card';
 import GrantGeoButton from '../GrantGeoButton/GrantGeoButton';
 
+interface geoDetails {
+  reverseGeoCoords: {
+    id_city: number;
+    city: string;
+    id_state: number;
+    state: string;
+    lat: number;
+    long: number;
+    DistanceinMilesfromCity: number;
+  };
+  forecast: number;
+  overwriteGeoCoords: () => void;
+}
+
 export default function GeoSpecificSplashMessage({
   reverseGeoCoords,
   forecast,
   overwriteGeoCoords,
-}) {
+}: geoDetails) {
   return (
     <>
       {
@@ -32,7 +46,11 @@ export default function GeoSpecificSplashMessage({
   );
 }
 
-export function MissingForecast({ overwriteGeoCoords }) {
+export function MissingForecast({
+  overwriteGeoCoords,
+}: {
+  overwriteGeoCoords: () => void;
+}) {
   return (
     <>
       <div className="w-full flex flex-col justify-center items-center">
@@ -83,7 +101,21 @@ export function MissingForecast({ overwriteGeoCoords }) {
   );
 }
 
-export function DailyForecast({ forecast, reverseGeoCoords }) {
+export function DailyForecast({
+  forecast,
+  reverseGeoCoords,
+}: {
+  reverseGeoCoords: {
+    id_city: number;
+    city: string;
+    id_state: number;
+    state: string;
+    lat: number;
+    long: number;
+    DistanceinMilesfromCity: number;
+  };
+  forecast: number;
+}) {
   return (
     <>
       {/* 
@@ -108,7 +140,19 @@ export function DailyForecast({ forecast, reverseGeoCoords }) {
   );
 }
 
-export function NotEnoughDataMessage({ reverseGeoCoords }) {
+export function NotEnoughDataMessage({
+  reverseGeoCoords,
+}: {
+  reverseGeoCoords: {
+    id_city: number;
+    city: string;
+    id_state: number;
+    state: string;
+    lat: number;
+    long: number;
+    DistanceinMilesfromCity: number;
+  };
+}) {
   return (
     <div className="w-full flex flex-col justify-center align-middle items-center text-center">
       <h1 className="scroll-m-20 font-extrabold tracking-tight text-emerald-400 text-8xl sm:text-8xl md:text-8xl break-words">

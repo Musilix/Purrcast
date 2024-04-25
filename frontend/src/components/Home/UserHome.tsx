@@ -21,7 +21,8 @@ export interface reverseGeocodedCoordinates {
 }
 
 export default function UserHome({ session }: { session: Session }) {
-  const [geoCoords, reverseGeoCoords, overwriteGeoCoords] = useGeo();
+  // TODO / FIXME - maybe define proper types here for these values and then somehow utilize them in all the components that use em??? IDK!
+  const [, reverseGeoCoords, overwriteGeoCoords] = useGeo();
   const [forecast, setForecast] = useLocalStorage('forecast', null);
 
   const { isContentLoading, setIsContentLoading } = useContext(
