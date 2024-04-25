@@ -8,7 +8,11 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
-export default function UnknownLocation({ overwriteGeoCoords }) {
+export default function UnknownLocation({
+  overwriteGeoCoords,
+}: {
+  overwriteGeoCoords: () => void;
+}) {
   return (
     <div
       id="where-are-you"

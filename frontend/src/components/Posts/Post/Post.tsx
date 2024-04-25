@@ -87,7 +87,7 @@ export default function PostPage() {
   return (
     <div className="flex flex-col w-full h-full place-content-center place-items-center">
       <article className="flex flex-col size-screen place-items-center">
-        {post ? (
+        {post && postLocation ? (
           <>
             <PostContent post={post} postLocation={postLocation} />
             <PostVotes handleUpVote={upVotePost} postVotes={postVotes} />
@@ -105,7 +105,10 @@ function PostContent({
   postLocation,
 }: {
   post: Post;
-  postLocation: any;
+  postLocation: {
+    state: string;
+    city: string;
+  };
 }) {
   return (
     <>
@@ -114,7 +117,7 @@ function PostContent({
         {post.contentId.includes('png') ? (
           <img
             src={post.contentId}
-            alt={`A cat photo posted by ${post.author.username}`}
+            alt={`A cat photo posted by ${post.author!.username}`}
             className="w-full h-full object-cover rounded-md"
             loading="lazy"
           />
@@ -125,7 +128,9 @@ function PostContent({
       <section className="post-details text-center p-4">
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight place-item-end">
           Post by{' '}
-          {post.author.username ? post.author.username : 'Anonymous Purrcaster'}
+          {post.author!.username
+            ? post.author!.username
+            : 'Anonymous Purrcaster'}
         </h3>
         <p className="leading-7 [&:not(:first-child)]:mt-1 place-item-start">
           {postLocation

@@ -1,9 +1,7 @@
 import { useToast } from '@/components/ui/use-toast';
 import { __supabase__ } from '@/constants';
 import { Session } from '@supabase/supabase-js';
-import { createContext, useContext, useEffect, useState } from 'react';
-import { ContentLoadingContext } from './ContentLoadingContext';
-
+import { createContext, useEffect, useState } from 'react';
 interface AuthContextValues {
   session: Session | null;
   isAuthLoading: boolean;

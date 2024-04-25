@@ -3,6 +3,9 @@ import { Button } from '../../ui/button';
 export default function GrantGeoButton({
   overwriteGeoCoords,
   buttonText = 'Find Posts Near You',
+}: {
+  overwriteGeoCoords: () => void;
+  buttonText?: string;
 }) {
   const onLocationClick = () => {
     overwriteGeoCoords();

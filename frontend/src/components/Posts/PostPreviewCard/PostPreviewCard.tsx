@@ -14,7 +14,7 @@ import { Skeleton } from '../../ui/skeleton';
 // TODO - super bloated in here at the moment. Shift this around to be more modular
 interface PostPreviewCardProps {
   author?: User;
-  post?: any;
+  post?: Post;
   skeleton?: boolean;
 }
 
@@ -71,21 +71,21 @@ function SkeletonPreviewCard() {
 
 export default function PostPreviewCard({
   author = {} as User,
-  post = {},
+  post = {} as Post,
   skeleton = false,
 }: PostPreviewCardProps) {
   return (
     <Link href={`/post/${post.id}`} className="w-full h-full">
       <a className="w-full h-full flex justify-center align-middle">
         <Card className="hover:bg-muted cursor-pointer transition-colors w-full h-full text-center place-items-center place-content-center">
-          {!skeleton ? (
+          {!skeleton && post ? (
             <RealCard
               author={author}
               postedAt={post.createdAt}
               content={post.contentId}
               location={{
-                city: post.id_city.city,
-                state: post.id_state.state_code,
+                city: post.id_city!.city,
+                state: post.id_state!.state_code,
               }}
             />
           ) : (

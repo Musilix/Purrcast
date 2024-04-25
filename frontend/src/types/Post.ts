@@ -5,12 +5,13 @@ export interface Post {
   id: number;
   authorId: number;
   createdAt: Date;
-  updatedAt: Date;
+  updatedAt: Date | null;
   contentId: string;
   isDeleted?: boolean;
   isCatOnHead?: boolean;
   published?: boolean;
-  author: User;
-
+  author?: User;
+  id_city: { city: string } | null;
+  id_state: { state_code: string } | null;
   // upvotes?:
 }
