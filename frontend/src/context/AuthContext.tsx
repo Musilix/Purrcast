@@ -1,7 +1,7 @@
+import { useToast } from '@/components/ui/use-toast';
 import { __supabase__ } from '@/constants';
 import { Session } from '@supabase/supabase-js';
 import { createContext, useEffect, useState } from 'react';
-
 interface AuthContextValues {
   session: Session | null;
   isAuthLoading: boolean;
@@ -16,9 +16,10 @@ export default function AuthProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const { toast } = useToast();
   const [session, setSession] = useState<Session | null>(null);
-
   const [isAuthLoading, setIsAuthLoading] = useState(true);
+  // TODO - this isn't really used anywhere, so it can probably be removed at some point
   const [isAuthError, setIsAuthError] = useState(false);
 
   useEffect(() => {
@@ -40,12 +41,17 @@ export default function AuthProvider({
         // Do a final check after session was set to make sure the session object and the session.user object are both set
         if (session && session.user) {
           setIsAuthLoading(false);
-        } else {
-          throw new Error('No session found.');
         }
+        // else {
+        //   throw new Error('No session found.');
+        // }
       })
-      .catch(() => {
-        console.error(`Error fetching session`);
+      .catch((e) => {
+        toast({
+          title: 'There was an issue with your account',
+          description: e.message,
+          variant: 'destructive',
+        });
         setIsAuthError(true);
         setIsAuthLoading(false);
       });

@@ -1,22 +1,24 @@
+import NewPostForm from '@/components/CreatePost/NewPostForm/NewPostForm';
 import Home from '@/components/Home/Home';
 import { NavMenu } from '@/components/NavMenu/NavMenu';
-import NewPostForm from '@/components/NewPostForm/NewPostForm';
 import { Route, Switch } from 'wouter';
-import Loader from './components/Loader/Loader';
-import Login from './components/Login/Login';
-import Logout from './components/Logout/Logout';
-import Post from './components/Post/Post';
-import PostsHistory from './components/PostsHistory/PostsHistory';
+import Login from './components/Auth/Login/Login';
+import Logout from './components/Auth/Logout/Logout';
+import Post from './components/Posts/Post/Post';
+import PostsHistory from './components/Posts/PostsHistory/PostsHistory';
 import Profile from './components/Profile/Profile';
 import Test from './components/Test/Test';
 import { ThemeProvider } from './components/ThemeProvider/ThemeProvider';
 import { ModeToggle } from './components/ThemeToggle/ThemeToggle';
+import Loader from './components/Utility/Loader/Loader';
 import faq from './components/faq/faq';
 import AuthProvider from './context/AuthContext';
 // import { ErrorBoundary } from "react-error-boundary";
 // import RequestResponse from './components/RequestResponse/RequestResponse';
-import FormWithMessage from './components/FormWithMessage/FormWithMessage';
-import CenterThis from './components/CenterThis/CenterThis';
+import FormWithMessage from './components/CreatePost/FormWithMessage/FormWithMessage';
+import CenterThis from './components/Utility/CenterThis/CenterThis';
+import { Toaster } from './components/ui/toaster';
+import ContentLoadingProvider from './context/ContentLoadingContext';
 
 function App() {
   return (
@@ -41,47 +43,53 @@ function App() {
               id="main-content"
               className="w-full h-full sm:w-5/6 md:w-4/5 max-w-screen-md flex flex-col flex-none px-10 *:my-7"
             >
-              <Switch>
-                <Route path="/">
-                  <CenterThis>
-                    <Home />
-                  </CenterThis>
-                </Route>
-                <Route path="/faq" component={faq} />
+              <ContentLoadingProvider>
+                <Switch>
+                  <Route path="/">
+                    <CenterThis>
+                      <Home />
+                    </CenterThis>
+                  </Route>
+                  <Route path="/faq" component={faq} />
 
-                <Route path="/login">
-                  <CenterThis>
-                    <Login />
-                  </CenterThis>
-                </Route>
-                <Route path="/logout">
-                  <CenterThis>
-                    <Logout />
-                  </CenterThis>
-                </Route>
+                  <Route path="/login">
+                    <CenterThis>
+                      <Login />
+                    </CenterThis>
+                  </Route>
+                  <Route path="/logout">
+                    <CenterThis>
+                      <Logout />
+                    </CenterThis>
+                  </Route>
 
-                <Route path="/create-post">
-                  <CenterThis>
-                    <FormWithMessage<FormData> FormComponent={NewPostForm} />
-                  </CenterThis>
-                </Route>
-                <Route path="/post/:post_id">
-                  <CenterThis>
-                    <Post />
-                  </CenterThis>
-                </Route>
+                  <Route path="/create-post">
+                    <CenterThis>
+                      <FormWithMessage<FormData> FormComponent={NewPostForm} />
+                    </CenterThis>
+                  </Route>
+                  <Route path="/post/:post_id">
+                    <CenterThis>
+                      <Post />
+                    </CenterThis>
+                  </Route>
 
-                <Route path="/profile" component={Profile} />
-                <Route path="/profile/posts">
-                  <PostsHistory onlyCurrUser={true} />
-                </Route>
-                <Route path="/posts">
-                  <PostsHistory onlyCurrUser={false} />
-                </Route>
+                  <Route path="/profile" component={Profile} />
+                  <Route path="/profile/posts">
+                    <PostsHistory onlyCurrUser={true} />
+                  </Route>
+                  <Route path="/posts/nearby">
+                    <PostsHistory locationSpecific={true} />
+                  </Route>
+                  <Route path="/posts">
+                    <PostsHistory onlyCurrUser={false} />
+                  </Route>
 
-                <Route path="/testing" component={Test} />
-                <Route component={() => <h1>404 - Not Found</h1>} />
-              </Switch>
+                  <Route path="/testing" component={Test} />
+                  <Route component={() => <h1>404 - Not Found</h1>} />
+                </Switch>
+              </ContentLoadingProvider>
+              <Toaster />
             </section>
             <div className="my-3 grow"></div>
             {/* </ErrorBoundary> */}

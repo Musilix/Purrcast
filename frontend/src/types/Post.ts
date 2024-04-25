@@ -4,9 +4,14 @@ import { User } from './User';
 export interface Post {
   id: number;
   authorId: number;
-  contentId: string;
   createdAt: Date;
-  updatedAt: Date;
-  published: boolean;
-  author: User;
+  updatedAt: Date | null;
+  contentId: string;
+  isDeleted?: boolean;
+  isCatOnHead?: boolean;
+  published?: boolean;
+  author?: User;
+  id_city: { city: string } | null;
+  id_state: { state_code: string } | null;
+  // upvotes?:
 }
