@@ -1,8 +1,7 @@
-import { ContentLoadingContext } from '@/context/ContentLoadingContext';
 import useGeo from '@/hooks/useGeo';
 import { cn } from '@/lib/utils';
 import axios from 'axios';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'wouter';
 import { Post } from '../../../types/Post';
 import { useToast } from '../../ui/use-toast';
@@ -25,7 +24,9 @@ export default function PostsPreview({
   onlyCurrUser?: boolean;
   locationSpecific?: boolean;
 }) {
-  const [splashPosts, setPosts] = useState<Post[]>([]);
+  const [splashPosts, setPosts] = useState<Post[] | null>(null);
+  const [postsRetrieved, setPostsRetrieved] = useState<boolean>(false); // SHould I do this?
+
   const { toast } = useToast();
   const [, reverseGeoCoords] = useGeo();
 
@@ -52,7 +53,7 @@ export default function PostsPreview({
         }
       : {};
 
-  const { setIsContentLoading } = useContext(ContentLoadingContext);
+  // const { setIsContentLoading } = useContext(ContentLoadingContext);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -72,23 +73,36 @@ export default function PostsPreview({
         .then((res) => {
           res ? setPosts(res.data) : setPosts([]);
         })
-        .catch((e) => {
+        .catch(() => {
+          setPosts([]);
           toast({
             title: 'There was an issue retrieving posts.',
-            description: e.response.data.message,
+            // description: e.response.data.message,
             variant: 'destructive',
           });
         });
     };
-    setIsContentLoading(true);
-    fetchPosts();
-    setIsContentLoading(false);
+
+    const handlePostLoadIn = async () => {
+      await fetchPosts();
+      setPostsRetrieved(true);
+    };
+
+    handlePostLoadIn();
 
     return () => controller.abort();
   }, []);
 
   return (
     <>
+      {postsRetrieved && splashPosts && !splashPosts.length && (
+        <NoPostsMessage
+          noPostMessage={noPostMessage}
+          onlyCurrUser={onlyCurrUser}
+          locationSpecific={locationSpecific}
+        />
+      )}
+
       <div id="post-wrap" className="flex justify-center align-middle">
         <ul
           className={cn(
@@ -96,7 +110,7 @@ export default function PostsPreview({
             className,
           )}
         >
-          {!splashPosts && (
+          {(!postsRetrieved || !splashPosts) && (
             <>
               <PostPreviewCard skeleton={true} />
               <PostPreviewCard skeleton={true} />
@@ -107,7 +121,7 @@ export default function PostsPreview({
             </>
           )}
 
-          {splashPosts && splashPosts.length > 0 ? (
+          {postsRetrieved && splashPosts && splashPosts.length > 0 && (
             <>
               {splashPosts.map((post) => (
                 <li className="post-content w-full h-full" key={post.id}>
@@ -115,69 +129,78 @@ export default function PostsPreview({
                 </li>
               ))}
             </>
-          ) : (
-            <>
-              <div className="col-span-2 flex flex-col items-left rounded-md border p-4 my-2.5 *:my-1">
-                <div className="flex-1 space-y-1 ">
-                  <p className="text-sm font-medium leading-none">
-                    {noPostMessage}
-                  </p>
-
-                  {onlyCurrUser ? (
-                    <>
-                      <p className="text-sm text-muted-foreground">
-                        You haven't made any posts yet. You could do good for
-                        your community and{' '}
-                        <Link
-                          href="/create-post"
-                          className="font-extrabold text-primary"
-                        >
-                          post your cat
-                        </Link>{' '}
-                        to help us make a forecast!
-                      </p>
-                    </>
-                  ) : locationSpecific ? (
-                    <>
-                      <p className="text-sm text-muted-foreground">
-                        There are currently no posts near you. You could be the
-                        <i>
-                          <b> Neil Armstrong</b>
-                        </i>{' '}
-                        of your community and be the first to{' '}
-                        <Link
-                          href="/create-post"
-                          className="font-extrabold text-primary"
-                        >
-                          post your cat
-                        </Link>{' '}
-                        to help us make a forecast for your area!
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <p className="text-sm text-muted-foreground">
-                        There are no posts{' '}
-                        <i>
-                          <b> AT ALL</b>
-                        </i>{' '}
-                        currently. You could go down in history and be the first
-                        to{' '}
-                        <Link
-                          href="/create-post"
-                          className="font-extrabold text-primary"
-                        >
-                          post your cat
-                        </Link>{' '}
-                        to help us make a forecast!
-                      </p>
-                    </>
-                  )}
-                </div>
-              </div>
-            </>
           )}
         </ul>
+      </div>
+    </>
+  );
+}
+
+export function NoPostsMessage({
+  noPostMessage,
+  onlyCurrUser,
+  locationSpecific,
+}: {
+  noPostMessage: string;
+  onlyCurrUser: boolean;
+  locationSpecific: boolean;
+}) {
+  return (
+    <>
+      <div className="col-span-2 flex flex-col items-left rounded-md border p-4 my-2.5 *:my-1">
+        <div className="flex-1 space-y-1 ">
+          <p className="text-sm font-medium leading-none">{noPostMessage}</p>
+
+          {onlyCurrUser ? (
+            <>
+              <p className="text-sm text-muted-foreground">
+                You haven't made any posts yet. You could do good for your
+                community and{' '}
+                <Link
+                  href="/create-post"
+                  className="font-extrabold text-primary"
+                >
+                  post your cat
+                </Link>{' '}
+                to help us make a forecast!
+              </p>
+            </>
+          ) : locationSpecific ? (
+            <>
+              <p className="text-sm text-muted-foreground">
+                There are currently no posts near you. You could be the
+                <i>
+                  <b> Neil Armstrong</b>
+                </i>{' '}
+                of your community and be the first to{' '}
+                <Link
+                  href="/create-post"
+                  className="font-extrabold text-primary"
+                >
+                  post your cat
+                </Link>{' '}
+                to help us make a forecast for your area!
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="text-sm text-muted-foreground">
+                There are no posts{' '}
+                <i>
+                  <b> AT ALL</b>
+                </i>{' '}
+                currently. You could go down in history and be the first to{' '}
+                <Link
+                  href="/create-post"
+                  className="font-extrabold text-primary"
+                >
+                  post your cat
+                </Link>{' '}
+                to help us make a forecast!
+              </p>
+            </>
+          )}
+        </div>
       </div>
     </>
   );

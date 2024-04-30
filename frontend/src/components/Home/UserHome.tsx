@@ -53,7 +53,9 @@ export default function UserHome({ session }: { session: Session }) {
   };
 
   useEffect(() => {
-    // Content is loading upon mount of the UserHome component
+    const controller = new AbortController();
+
+    // Content should be set to loading upon mount of the UserHome component just to be safe
     !isContentLoading ? setIsContentLoading(true) : '';
 
     // If we for sure obtained the reversed geocoded location of the user, but still don't have a forecast, then get the forecast!
@@ -76,7 +78,10 @@ export default function UserHome({ session }: { session: Session }) {
       getForecast(); // Should we still call getForecast to get an updated forecast? How could we make it so
     }
 
-    // setIsContentLoading(false);
+    // If we did have a forecast, then go ahead and flip that ContentLoading boolean we switched to true up there^
+    isContentLoading ? setIsContentLoading(false) : '';
+
+    return () => controller.abort();
     // getForecast(); //This may not work as we could have a forecast in local storage, but no reverseGeoCoords...
   }, [reverseGeoCoords, forecast]);
 
@@ -98,7 +103,7 @@ export default function UserHome({ session }: { session: Session }) {
         <>
           <div
             id="rain-stats-wrap"
-            className="flex flex-col sm:flex-row md:flex-row w-3/4 items-center justify-center *:p-2"
+            className="flex flex-col sm:flex-row md:flex-row w-full sm:w-3/4 items-center justify-center *:p-2"
           >
             <GeoSpecificSplashMessage
               reverseGeoCoords={reverseGeoCoords}

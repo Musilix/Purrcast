@@ -1,5 +1,5 @@
 import { Loader } from 'lucide-react';
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useState } from 'react';
 
 interface ContentLoadingContextValues {
   isContentLoading: boolean | null;
@@ -20,11 +20,6 @@ export default function ContentLoadingProvider({
 }) {
   const [isContentLoading, setIsContentLoading] =
     useState<ContentLoadingContextValues['isContentLoading']>(null);
-
-  useEffect(() => {
-    // If for some reason the auth loading state is not set, set it to true on auth provider mount
-    // !isContentLoading ? setIsContentLoading(true) : '';
-  }, []);
 
   return (
     <>

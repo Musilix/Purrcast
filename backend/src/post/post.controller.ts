@@ -102,6 +102,7 @@ export class PostController {
 
   //TODO - put this in a different controller
   @Get('/forecast/:state/:city')
+  @SkipThrottle() // Is this smart? I'm not sure yet...
   getForecast(
     @Param('state', ParseIntPipe) state: number,
     @Param('city', ParseIntPipe) city: number,

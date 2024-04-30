@@ -108,6 +108,8 @@ export default function useGeo() {
     ) {
       requestGeocode();
     }
+
+    setIsContentLoading(false);
   }, [geoCoords]);
 
   return [geoCoords, reverseGeoCoords, overwriteGeoCoords];
