@@ -35,25 +35,25 @@ export default function NewPostForm({
           'You need to make sure you enable location services before you make a post.',
         variant: 'destructive',
       });
-    }
-
-    if (!postImage) {
-      toast({
-        description: 'Make sure you are including an image with your post',
-        variant: 'destructive',
-      });
-      // TODO - add proper validation and move implementation to service
     } else {
-      const formData = new FormData();
+      if (!postImage) {
+        toast({
+          description: 'Make sure you are including an image with your post',
+          variant: 'destructive',
+        });
+        // TODO - add proper validation and move implementation to service
+      } else {
+        const formData = new FormData();
 
-      // Append base64 file and location data to FormData object we send to server
-      formData.append('userUploadedFile', postImage);
-      formData.append('userState', reverseGeoCoords.id_state);
-      formData.append('userCity', reverseGeoCoords.id_city);
+        // Append base64 file and location data to FormData object we send to server
+        formData.append('userUploadedFile', postImage);
+        formData.append('userState', reverseGeoCoords.id_state);
+        formData.append('userCity', reverseGeoCoords.id_city);
 
-      // TODO - this is valid, but we need to define the type of the handleSubmit prop in the func def
-      await handleSubmit(formData, '/post/upload');
-      setPostImage(null);
+        // TODO - this is valid, but we need to define the type of the handleSubmit prop in the func def
+        await handleSubmit(formData, '/post/upload');
+        setPostImage(null);
+      }
     }
   };
 

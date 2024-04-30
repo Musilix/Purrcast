@@ -1,8 +1,10 @@
 import { Button } from '@/components/ui/button';
+import { useState } from 'react';
 import { Link } from 'wouter';
 import { Card } from '../ui/card';
 
 export default function NonUserHome() {
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
   return (
     <>
       <h1 className="text-center font-bold leading-tight tracking-tighter text-5xl md:text-6xl lg:leading-[1.1] md:block">
@@ -17,7 +19,12 @@ export default function NonUserHome() {
         <div className="w-full flex justify-center align-middle p-2.5">
           <img
             src="/purrcaster-home.png"
-            className=" top-50 w-3/4 min-w-[100px] max-w-[250px]"
+            className={`${
+              isImageLoaded ? 'opacity-1' : 'opacity-0'
+            } top-50 w-3/4 min-w-[100px] max-w-[250px] transition-all duration-500 ease-in-out`}
+            onLoad={() => {
+              setIsImageLoaded(true);
+            }}
           />
         </div>
 

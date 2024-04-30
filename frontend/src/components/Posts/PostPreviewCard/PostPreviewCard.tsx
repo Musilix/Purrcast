@@ -8,6 +8,8 @@ import {
 import { Post } from '@/types/Post';
 import { User } from '@/types/User';
 import { formatAMPM } from '@/utils/ConvertDateToTime';
+import { Loader2 } from 'lucide-react';
+import { useState } from 'react';
 import { Link } from 'wouter';
 import { Skeleton } from '../../ui/skeleton';
 
@@ -26,16 +28,35 @@ interface PostProps {
 }
 
 function RealCard({ author, postedAt, content, location }: PostProps) {
+  const [postImageLoaded, setPostImageLoaded] = useState<boolean>(false);
+
   return (
     <>
       <CardContent className="p-5">
-        <div className="w-full max-w-1/2 min-w-1/2 aspect-square object-cover overflow-hidden rounded-md flex justify-center align-middle items-center text-center text-xs sm:text-lg break-all bg-secondary">
+        <div className="relative w-full max-w-1/2 min-w-1/2 aspect-square object-cover overflow-hidden rounded-md flex justify-center align-middle items-center text-center text-xs sm:text-lg break-all bg-secondary">
           {content.includes('png') ? (
-            <img
-              src={content}
-              alt="Post Image"
-              className="size-full p-2 object-cover rounded-lg"
-            />
+            <>
+              {!postImageLoaded && (
+                <Loader2
+                  color="hsl(var(--primary))"
+                  className={`${
+                    postImageLoaded ? 'opacity-0' : 'opacity-1'
+                  } animate-spin z-10 absolute transition-all ease-in-out duration-500 `}
+                />
+              )}
+
+              <img
+                src={content}
+                alt={`A preview card for a post made by ${author!.username}`}
+                className={`${
+                  postImageLoaded ? 'opacity-1' : 'opacity-0'
+                } size-full p-2 object-cover rounded-lg transition-all ease-in-out duration-500`}
+                loading="lazy"
+                onLoad={() => {
+                  setPostImageLoaded(true);
+                }}
+              />
+            </>
           ) : (
             content
           )}
@@ -75,7 +96,7 @@ export default function PostPreviewCard({
   skeleton = false,
 }: PostPreviewCardProps) {
   return (
-    <Link href={`/post/${post.id}`} className="w-full h-full">
+    <Link href={post.id ? `/post/${post.id}` : ``} className="w-full h-full">
       <a className="w-full h-full flex justify-center align-middle">
         <Card className="hover:bg-muted cursor-pointer transition-colors w-full h-full text-center place-items-center place-content-center">
           {!skeleton && post ? (

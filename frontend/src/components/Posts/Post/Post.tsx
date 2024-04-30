@@ -1,7 +1,7 @@
 import { Post } from '@/types/Post';
 import { getUpVoteBarLength } from '@/utils/GetUpvoteBarLength';
 import axios from 'axios';
-import { ThumbsUp } from 'lucide-react';
+import { Loader2, ThumbsUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useParams } from 'wouter';
 import { Button } from '../../ui/button';
@@ -28,13 +28,14 @@ export default function PostPage() {
   ) as UserSession;
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const fetchPost = async () => {
       axios
         .get(`${import.meta.env.VITE_API_HOST}/post/${postId}`, {})
         .then((res) => {
           const userState = res.data.id_state;
           const userCity = res.data.id_city;
-          console.log(userState, userCity);
           setPost(res.data);
           setPostVotes(res.data.upvotes.length);
           setPostLocation({ state: userState.state_code, city: userCity.city });
@@ -43,13 +44,17 @@ export default function PostPage() {
           //TODO - add response message component logic to any axios type logic... how tho?
           toast({
             title: 'There was an issue with your request',
-            description: e.response.data.message,
+            description: e.response.data ? e.response.data.message : '',
             variant: 'destructive',
           });
         });
     };
 
     fetchPost();
+
+    return () => {
+      controller.abort();
+    };
 
     // return () => {
     //   setPost(null);
@@ -110,17 +115,37 @@ function PostContent({
     city: string;
   };
 }) {
+  const [postImageLoaded, setPostImageLoaded] = useState<boolean>(false);
+
   return (
     <>
-      <section className="post-img w-3/4 min-w-[200px] max-w-[800px] p-1 bg-primary-glow border-dotted border border-black">
+      <section
+        className={`post-img relative w-3/4 min-w-[200px] max-w-[800px] p-1 flex justify-center items-center align-middle bg-primary-glow border-dotted border border-black transition-all duration-500 ease-in-out rounded-md`}
+      >
         {/* FIXME - this is temp to work with dev data from the db*/}
         {post.contentId.includes('png') ? (
-          <img
-            src={post.contentId}
-            alt={`A cat photo posted by ${post.author!.username}`}
-            className="w-full h-full object-cover rounded-md"
-            loading="lazy"
-          />
+          <>
+            {!postImageLoaded && (
+              <Loader2
+                color="hsl(var(--secondary))"
+                className={`${
+                  postImageLoaded ? 'opacity-0' : 'opacity-1'
+                } animate-spin absolute transition-all ease-in-out duration-500 `}
+              />
+            )}
+
+            <img
+              src={post.contentId}
+              alt={`A cat photo posted by ${post.author!.username}`}
+              className={`${
+                postImageLoaded ? 'opacity-1' : 'opacity-0'
+              } w-full h-full object-cover rounded-md transition-all ease-in-out duration-500`}
+              loading="lazy"
+              onLoad={() => {
+                setPostImageLoaded(true);
+              }}
+            />
+          </>
         ) : (
           post.contentId // TODO - show custom broken image icon
         )}
