@@ -12,6 +12,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { SharpHelper } from 'src/sharp/sharp.service';
 import checkForCat from 'src/utils/CheckForCat';
 import uploadToCloudinary from 'src/utils/UploadToCloudinary';
+import { PredictionService } from './../prediction/prediction.service';
 
 @Injectable()
 export class PostService {
@@ -19,6 +20,7 @@ export class PostService {
     private readonly prisma: PrismaService,
     private readonly cloudinary: CloudinaryService,
     private readonly configService: ConfigService,
+    private readonly predictionService: PredictionService,
   ) {}
 
   async upload(
@@ -95,6 +97,10 @@ export class PostService {
         );
       });
 
+    // After post has been created, make a call to the predictions svc to start generating a prediction for the post.
+    // TODO - is this a blocking operation for other people who are trying to make posts? I'm not fully sure...
+    this.predictionService.generatePrediction(res.secure_url, newPost.id);
+
     return { resource: res.secure_url, postId: newPost.id };
   }
 
@@ -124,6 +130,7 @@ export class PostService {
           updatedAt: true,
           id: true,
           upvotes: true,
+          isCatOnHead: true,
           author: {
             select: {
               bio: true,
@@ -166,7 +173,7 @@ export class PostService {
     } catch (e) {
       console.error(e);
       throw new InternalServerErrorException(
-        'An error occured while trying to grab posts. We think there could be an issue with the location you provided. Please try again later.',
+        'An error occured while trying to figure out where you are. We think there could be an issue with the location you provided. Please try again later.',
       );
     }
   }
@@ -212,7 +219,7 @@ export class PostService {
     } catch (e) {
       console.error(e);
       throw new InternalServerErrorException(
-        'An error occured while trying to grab posts. We think there could be an issue your location services. Please try again later.',
+        'An error occured while trying to grab posts near you. We think there could be an issue your location services. Please try again later.',
       );
     }
   }
@@ -242,6 +249,7 @@ export class PostService {
           updatedAt: true,
           id: true,
           upvotes: true,
+          isCatOnHead: true,
           author: {
             select: {
               bio: true,
@@ -325,6 +333,7 @@ export class PostService {
     });
   }
 
+  // TODO - add try-catch?
   async getForecast(state: number, city: number) {
     console.log(`Someone wants the forecast for ${state}, ${city}!`);
     const currDate = new Date();
