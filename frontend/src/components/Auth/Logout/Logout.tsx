@@ -1,5 +1,6 @@
 // import { Button } from "@/components/ui/button";
 import { __supabase__ } from '@/constants';
+import useGeo from '@/hooks/useGeo';
 import { useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { useToast } from '../../ui/use-toast';
@@ -7,12 +8,13 @@ import { useToast } from '../../ui/use-toast';
 export default function Logout() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const [, , , , clearAllGeoCoords] = useGeo();
 
   useEffect(() => {
     const logout = async () => {
       await __supabase__.auth
         .signOut({ scope: 'local' })
-        .then()
+        .then(() => clearAllGeoCoords())
         .catch((error) => {
           toast({
             description:

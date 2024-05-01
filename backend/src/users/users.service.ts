@@ -50,7 +50,9 @@ export class UsersService {
       state: string;
       lat: number;
       lon: number;
-      'Distance in Miles from City': number;
+      id_state: number;
+      id_city: number;
+      dist_from_city_in_miles: number;
     } = await this.prisma
       .$queryRaw`SELECT * FROM "geo"."get_closest_city"(${locationInCoords.lat}, ${locationInCoords.lon} ) LIMIT 1;`;
 

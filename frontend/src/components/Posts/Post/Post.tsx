@@ -120,7 +120,7 @@ function PostContent({
   return (
     <>
       <section
-        className={`post-img relative w-3/4 min-w-[200px] max-w-[800px] p-1 flex justify-center items-center align-middle bg-primary-glow border-dotted border border-black transition-all duration-500 ease-in-out rounded-md`}
+        className={`post-img relative w-3/4 min-w-[200px] max-w-[800px] min-h-[200px] p-1 flex justify-center items-center align-middle bg-primary-glow border-dotted border border-black transition-all duration-500 ease-in-out rounded-md`}
       >
         {/* FIXME - this is temp to work with dev data from the db*/}
         {post.contentId.includes('png') ? (

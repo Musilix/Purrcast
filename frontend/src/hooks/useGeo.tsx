@@ -3,6 +3,7 @@ import { ContentLoadingContext } from '@/context/ContentLoadingContext';
 import ShowGeoErrorMessage from '@/utils/ShowGeoErrorMessage';
 import axios from 'axios';
 import { useContext, useEffect } from 'react';
+import useForecast from './useForecast';
 import useLocalStorage from './useLocalStorage';
 
 export interface Coordinates {
@@ -15,7 +16,13 @@ export interface ReverseGeocodedLocation {
   state: string;
   lat: number;
   lon: number;
-  'Distance in Miles from City': number;
+  id_state: number;
+  id_city: number;
+  dist_from_city_in_miles: number;
+}
+
+interface UserSession {
+  access_token: string;
 }
 
 /*
@@ -32,14 +39,19 @@ export interface ReverseGeocodedLocation {
 export default function useGeo() {
   // Utilize local storage for long term persistence alongside the state that we keep track of
   const [geoCoords, setUserLocationCoords] =
-    useLocalStorage<Coordinates>('userLocationCoords');
+    useLocalStorage<Coordinates | null>('userLocationCoords');
   const [reverseGeoCoords, setUserLocationText] =
-    useLocalStorage<ReverseGeocodedLocation>('userLocationText');
+    useLocalStorage<ReverseGeocodedLocation | null>('userLocationText');
+  const [forecast, setForecast] = useForecast(reverseGeoCoords);
 
   const { toast } = useToast();
   const { isContentLoading, setIsContentLoading } = useContext(
     ContentLoadingContext,
   );
+
+  const userSession = JSON.parse(
+    localStorage.getItem('userSession') ?? '{}',
+  ) as UserSession;
 
   const requestGeocode = async () => {
     if (!navigator.geolocation) {
@@ -74,6 +86,13 @@ export default function useGeo() {
     await requestGeocode();
   };
 
+  const clearAllGeoCoords = () => {
+    console.log('CLEARING ALL GEO COORDS');
+    setUserLocationText(null);
+    setUserLocationCoords(null);
+    setForecast(null);
+  };
+
   const getAndSetReverseGeoLoc = async (geoCoords: Coordinates) => {
     !isContentLoading ? setIsContentLoading(true) : '';
 
@@ -83,7 +102,11 @@ export default function useGeo() {
     }
 
     return await axios
-      .post(`${import.meta.env.VITE_API_HOST}/users/location`, geoCoords)
+      .post(`${import.meta.env.VITE_API_HOST}/users/location`, geoCoords, {
+        headers: {
+          Authorization: `Bearer ${userSession.access_token}`,
+        },
+      })
       .then((res) => {
         setUserLocationText(res.data);
       })
@@ -112,5 +135,11 @@ export default function useGeo() {
     setIsContentLoading(false);
   }, [geoCoords]);
 
-  return [geoCoords, reverseGeoCoords, overwriteGeoCoords];
+  return [
+    geoCoords,
+    forecast,
+    reverseGeoCoords,
+    overwriteGeoCoords,
+    clearAllGeoCoords,
+  ];
 }

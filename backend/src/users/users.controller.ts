@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { SkipThrottle } from '@nestjs/throttler';
+import { JwtAuthGuard } from 'src/guards/JwtAuth/jwtAuth.guard';
 import { z } from 'zod';
 import { UsersService } from './users.service';
 
@@ -36,6 +37,7 @@ export class UsersController {
   }
 
   @Post('/location')
+  @UseGuards(JwtAuthGuard)
   getLocation(@Body() location: { lat: number; lon: number }) {
     const coordsToLocation = this.usersService.getLocation(location);
 
