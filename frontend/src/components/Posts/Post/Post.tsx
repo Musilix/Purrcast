@@ -80,7 +80,7 @@ export default function PostPage() {
       )
       .catch((e) => {
         toast({
-          title: 'There was an issue with your request',
+          title: 'Unable to Upvote',
           description: e.response.data.message,
           variant: 'destructive',
         });

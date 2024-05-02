@@ -103,8 +103,8 @@ export default function useGeo() {
 
   const clearAllGeoCoords = () => {
     console.log('CLEARING ALL GEO COORDS');
+    //setUserLocationCoords(null);
     setUserLocationText(null);
-    setUserLocationCoords(null);
     setForecast(null);
   };
 

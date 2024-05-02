@@ -7,7 +7,6 @@ import {
 } from '@/components/ui/card';
 import { Post } from '@/types/Post';
 import { User } from '@/types/User';
-import { formatAMPM } from '@/utils/ConvertDateToTime';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'wouter';
@@ -70,8 +69,11 @@ function RealCard({ author, postedAt, content, location }: PostProps) {
             ? `${new Date(postedAt).toLocaleString('en-US', {
                 month: 'long',
                 day: 'numeric',
-              })}, ${formatAMPM(new Date(postedAt))}`
-            : 'Aug 12th, 12:56pm'}
+              })}, ${new Date(postedAt).toLocaleString('en-US', {
+                hour: 'numeric',
+                minute: 'numeric',
+              })}`
+            : 'posted outside the bounds of time and space'}
         </CardDescription>
       </CardFooter>
     </>
