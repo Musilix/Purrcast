@@ -300,19 +300,6 @@ export class PostService {
       },
     });
 
-    // const didUserAlreadyVote = await this.prisma.post.findFirst({
-    //   where: {
-    //     id: id,
-    //     Upvotes: {
-    //       some: {
-    //         user: {
-    //           uuid: userId,
-    //         },
-    //       },
-    //     },
-    //   }
-    // });
-
     if (didUserAlreadyVote) {
       throw new InternalServerErrorException(
         "You've already upvoted this post.",
@@ -349,6 +336,7 @@ export class PostService {
       },
     });
 
+    // No forecast found for the given location, so we return -1
     if (!forecast || !forecast.prediction) {
       return -1;
     }

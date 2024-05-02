@@ -52,14 +52,4 @@ export class UsersController {
   getSpecialCoords(@Body() locationInCoords: { lat: number; lon: number }) {
     return this.usersService.getSpecialCoords(locationInCoords);
   }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-  //   return this.usersService.update(+id, updateUserDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.usersService.remove(+id);
-  // }
 }

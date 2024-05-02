@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import BcryptService from 'src/bcrypt/bcrypt.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { hashLocation } from 'src/utils/HashLocation';
 import { z } from 'zod';
 
 // TODO - temporary solution to the problem of not being able to use zod schemas in the service
@@ -15,7 +15,10 @@ const createUserSchema = z.object({
 type CreateUserDto = z.infer<typeof createUserSchema>;
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly bcryptService: BcryptService,
+  ) {}
 
   create(createUserDto: CreateUserDto) {
     try {
@@ -58,13 +61,16 @@ export class UsersService {
     } = await this.prisma
       .$queryRaw`SELECT * FROM "geo"."get_closest_city"(${locationInCoords.lat}, ${locationInCoords.lon} ) LIMIT 1;`;
 
-    const hashedLocationData = await hashLocation(locationInText[0]);
+    const hashedLocationData = await this.bcryptService.hashLocation(
+      locationInText[0],
+    );
 
     return { ...locationInText[0], fingerprint: hashedLocationData };
   }
 
   async getSpecialCoords(locationInCoords: { lat: number; lon: number }) {
-    const hashedLocationData = await hashLocation(locationInCoords);
+    const hashedLocationData =
+      await this.bcryptService.hashLocation(locationInCoords);
 
     return { ...locationInCoords, fingerprint: hashedLocationData };
   }

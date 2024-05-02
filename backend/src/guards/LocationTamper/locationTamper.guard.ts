@@ -3,10 +3,11 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { verifyHashedLocation } from 'src/utils/HashLocation';
+import BcryptService from 'src/bcrypt/bcrypt.service';
 
 @Injectable()
 export class LocationTamperGuard implements CanActivate {
+  constructor(private readonly bcryptService: BcryptService) {}
   async canActivate(context) {
     const req = context.switchToHttp().getRequest();
 
@@ -17,7 +18,10 @@ export class LocationTamperGuard implements CanActivate {
       );
     }
 
-    const isValidLocation = await verifyHashedLocation(req.body, fingerprint);
+    const isValidLocation = await this.bcryptService.verifyHashedLocation(
+      req.body,
+      fingerprint,
+    );
     if (!isValidLocation) {
       throw new InternalServerErrorException(
         'It seems you tampered with your location data (intentionally maybe?). Please clear cache/cookies and refresh the page to get back to normal',

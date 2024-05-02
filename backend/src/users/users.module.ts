@@ -4,9 +4,10 @@ import { LocationTamperModule } from 'src/guards/LocationTamper/locationTamper.m
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
+import { BcryptModule } from 'src/bcrypt/bcrypt.module';
 
 @Module({
-  imports: [PrismaModule, JwtAuthModule, LocationTamperModule],
+  imports: [PrismaModule, JwtAuthModule, LocationTamperModule, BcryptModule],
   controllers: [UsersController],
   providers: [UsersService],
 })
