@@ -14,7 +14,7 @@ const createGetClosestCity = async (prisma) => {
     state "geo"."us_states"."state_code"%TYPE,
     lat float,
     long float,
-    "Distance in Miles from City" float
+    "dist_from_city_in_miles" float
   )
   LANGUAGE SQL
   AS $$

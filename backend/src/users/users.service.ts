@@ -1,5 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { hashLocation } from 'src/utils/HashLocation';
 import { z } from 'zod';
 
 // TODO - temporary solution to the problem of not being able to use zod schemas in the service
@@ -45,6 +46,7 @@ export class UsersService {
     if (!locationInCoords || !locationInCoords.lat || !locationInCoords.lon) {
       throw new InternalServerErrorException('Invalid location data');
     }
+
     const locationInText: {
       city: string;
       state: string;
@@ -56,6 +58,14 @@ export class UsersService {
     } = await this.prisma
       .$queryRaw`SELECT * FROM "geo"."get_closest_city"(${locationInCoords.lat}, ${locationInCoords.lon} ) LIMIT 1;`;
 
-    return locationInText[0];
+    const hashedLocationData = await hashLocation(locationInText[0]);
+
+    return { ...locationInText[0], fingerprint: hashedLocationData };
+  }
+
+  async getSpecialCoords(locationInCoords: { lat: number; lon: number }) {
+    const hashedLocationData = await hashLocation(locationInCoords);
+
+    return { ...locationInCoords, fingerprint: hashedLocationData };
   }
 }

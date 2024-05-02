@@ -4,7 +4,6 @@ import {
   Get,
   Param,
   ParseFilePipe,
-  ParseIntPipe,
   Post,
   Put,
   Req,
@@ -15,10 +14,10 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { SkipThrottle } from '@nestjs/throttler';
 import { __file_parse_validators__ } from 'src/constants';
 import { JwtAuthGuard } from 'src/guards/JwtAuth/jwtAuth.guard';
-// import { TestDataPipe } from 'src/pipes/MyCustomPipe2';
-import { SkipThrottle } from '@nestjs/throttler';
+import { LocationTamperGuard } from 'src/guards/LocationTamper/locationTamper.guard';
 import UserLocationValidationPipe from 'src/pipes/UserLocationValidationPipe';
 import { PostService } from './post.service';
 @Controller('post')
@@ -74,23 +73,26 @@ export class PostController {
     return this.postService.findAll(req.user.sub);
   }
 
-  // TODO - need to change the name of this endpoint. it's confusing a lil with the other nearby endpoint
-  @Post('/nearme')
-  @SkipThrottle()
-  findAllNearMe(@Body() body: { location: { lat: number; long: number } }) {
-    return this.postService.findAllNearMe(
-      body.location.lat,
-      body.location.long,
-    );
-  }
+  // TODO - I think this is a dead route for now. Maybe remove it in the future?
+  // @Post('/nearme')
+  // @SkipThrottle()
+  // @UseGuards(JwtAuthGuard, LocationTamperGuard)
+  // findAllCitiesNearMe(@Body() body: { location: { lat: number; long: number } }) {
+  //   return this.postService.findAllNearMe(
+  //     body.location.lat,
+  //     body.location.long,
+  //   );
+  // }
 
   // TODO - body should be UserLocationDTO
+  // TODO - add hash validtor guard
   @Post('/nearby')
   @SkipThrottle()
-  findAllNearby(@Body() body) {
+  @UseGuards(LocationTamperGuard)
+  findAllNearby(@Body() reverseGeocodedLocation) {
     return this.postService.findAllNearby(
-      parseInt(body.userState),
-      parseInt(body.userCity),
+      parseInt(reverseGeocodedLocation.id_state),
+      parseInt(reverseGeocodedLocation.id_city),
     );
   }
 
@@ -100,13 +102,13 @@ export class PostController {
     return this.postService.findOne(+id);
   }
 
-  //TODO - put this in a different controller
-  @Get('/forecast/:state/:city')
+  @Post('/forecast')
   @SkipThrottle() // Is this smart? I'm not sure yet...
-  getForecast(
-    @Param('state', ParseIntPipe) state: number,
-    @Param('city', ParseIntPipe) city: number,
-  ) {
-    return this.postService.getForecast(state, city);
+  @UseGuards(LocationTamperGuard)
+  getForecast(@Body() reverseGeocodedLocation) {
+    return this.postService.getForecast(
+      parseInt(reverseGeocodedLocation.id_state),
+      parseInt(reverseGeocodedLocation.id_city),
+    );
   }
 }

@@ -28,7 +28,7 @@ export default function PostsPreview({
   const [postsRetrieved, setPostsRetrieved] = useState<boolean>(false); // SHould I do this?
 
   const { toast } = useToast();
-  const [, reverseGeoCoords] = useGeo();
+  const [, , reverseGeoCoords] = useGeo();
 
   const reqUrl = onlyCurrUser
     ? `${import.meta.env.VITE_API_HOST}/post/mine`
@@ -46,34 +46,27 @@ export default function PostsPreview({
   ) as UserSession;
 
   const userLocation =
-    locationSpecific && reverseGeoCoords
-      ? {
-          userState: reverseGeoCoords.id_state,
-          userCity: reverseGeoCoords.id_city,
-        }
-      : {};
-
-  // const { setIsContentLoading } = useContext(ContentLoadingContext);
+    locationSpecific && reverseGeoCoords ? reverseGeoCoords : {};
 
   useEffect(() => {
     const controller = new AbortController();
 
     const fetchPosts = async () => {
       axios
-        .post(
-          reqUrl,
-          { ...userLocation },
-          {
-            headers: {
-              Accept: 'application/json',
-              Authorization: `Bearer ${userSession.access_token}`,
-            },
+        .post(reqUrl, userLocation, {
+          headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${userSession.access_token}`,
           },
-        )
+        })
         .then((res) => {
           res ? setPosts(res.data) : setPosts([]);
         })
-        .catch(() => {
+        .catch((err) => {
+          if (err.response.data.message) {
+            err.message = err.response.data.message;
+          }
+
           setPosts([]);
           toast({
             title: 'There was an issue retrieving posts.',
@@ -88,10 +81,12 @@ export default function PostsPreview({
       setPostsRetrieved(true);
     };
 
-    handlePostLoadIn();
+    if (userLocation && Object.keys(userLocation).length > 0) {
+      handlePostLoadIn();
+    }
 
     return () => controller.abort();
-  }, []);
+  }, [userLocation]);
 
   return (
     <>

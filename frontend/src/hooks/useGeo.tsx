@@ -9,6 +9,7 @@ import useLocalStorage from './useLocalStorage';
 export interface Coordinates {
   lat: number;
   lon: number;
+  fingerprint: string;
 }
 
 export interface ReverseGeocodedLocation {
@@ -61,15 +62,29 @@ export default function useGeo() {
       });
       return;
     }
+
     // Get the current position upon reference to the useGeo() hook
     // Should we actively update the geoCoordinates upon each reference to the geoCoordinates state though? Idk for now
+    // Should we also had some form of try-catch somewhere if the server fails to return a fingerprinted geoCoords object?
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      async (position) => {
+        const geoCoordsWithFingerPrint = (await axios
+          .post(
+            `${import.meta.env.VITE_API_HOST}/users/location/special-coords`,
+            {
+              lat: position.coords.latitude,
+              lon: position.coords.longitude,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${userSession.access_token}`,
+              },
+            },
+          )
+          .then((res) => res.data)) as Coordinates;
+
         // Update local storage with retrieved coords
-        setUserLocationCoords({
-          lat: position.coords.latitude,
-          lon: position.coords.longitude,
-        });
+        setUserLocationCoords(geoCoordsWithFingerPrint);
 
         // Make a request to our backend to get the city/state pairings
         getAndSetReverseGeoLoc(geoCoords);
@@ -113,8 +128,14 @@ export default function useGeo() {
       .catch((error) => {
         // Notice that we set is content loading to false each time we reach an error in the geolocation process
         setIsContentLoading(false);
+
+        if (error.response.data.message) {
+          error.message = error.response.data.message;
+        }
+
         toast({
-          description: `${error.message}: Unable to get your city and state.`,
+          title: 'Unable to find your city and state',
+          description: `${error.message}`,
           variant: 'destructive',
         });
       });

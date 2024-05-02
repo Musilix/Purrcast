@@ -24,11 +24,7 @@ export default function useForecast(reverseGeoCoords: ReverseGeocodedLocation) {
   // TODO - incorporate with useGeo hook?
   const getForecast = async () => {
     await axios
-      .get(
-        `${import.meta.env.VITE_API_HOST}/post/forecast/${
-          reverseGeoCoords.id_state
-        }/${reverseGeoCoords.id_city}`,
-      )
+      .post(`${import.meta.env.VITE_API_HOST}/post/forecast`, reverseGeoCoords)
       .then((res) => {
         setForecast(res.data);
       })
