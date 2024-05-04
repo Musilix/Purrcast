@@ -44,7 +44,7 @@ function App() {
               <div className="my-3 grow"></div>
               <section
                 id="main-content"
-                className="w-full h-vh sm:w-5/6 md:w-4/5 max-w-screen-md flex flex-col flex-none px-8 *:my-7"
+                className="relative w-full h-vh sm:w-5/6 md:w-4/5 max-w-screen-md flex flex-col flex-none px-8 *:my-7"
               >
                 <ContentLoadingProvider>
                   <Switch>

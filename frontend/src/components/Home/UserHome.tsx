@@ -21,7 +21,7 @@ export default function UserHome({ session }: { session: Session }) {
         {`, ${session.user?.user_metadata.name.split(' ')[0]}`}
       </h1>
 
-      {/* If we dont have the reverse geocoded address of the user, then the message modal they get is the UnkownLocation one */}
+      {/* If we dont have the reverse geocoded address of the user, then the forecast message modal they get is the UnkownLocation one */}
       {!reverseGeoCoords ? (
         <UnknownLocation overwriteGeoCoords={overwriteGeoCoords} />
       ) : (

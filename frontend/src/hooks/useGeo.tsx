@@ -1,5 +1,6 @@
 import { useToast } from '@/components/ui/use-toast';
 import { ContentLoadingContext } from '@/context/ContentLoadingContext';
+import { UserSession } from '@/types/UserSession';
 import ShowGeoErrorMessage from '@/utils/ShowGeoErrorMessage';
 import axios from 'axios';
 import { useContext, useEffect } from 'react';
@@ -22,10 +23,6 @@ export interface ReverseGeocodedLocation {
   dist_from_city_in_miles: number;
 }
 
-interface UserSession {
-  access_token: string;
-}
-
 /*
     Abstract: I wanted to avoid using googles geolocation API for reverse geocoding, so I opted to set up a DB table with city/state pairings, and coordinates,
     How it Should Work: Since I am cutting corners, I will have to take the loss and make a roundtrip each time we are initializing the useGeo hook
@@ -44,15 +41,10 @@ export default function useGeo() {
   const [reverseGeoCoords, setUserLocationText] =
     useLocalStorage<ReverseGeocodedLocation | null>('userLocationText');
   const [forecast, setForecast] = useForecast(reverseGeoCoords);
+  const [userSession] = useLocalStorage<UserSession>('userSession');
 
   const { toast } = useToast();
-  const { isContentLoading, setIsContentLoading } = useContext(
-    ContentLoadingContext,
-  );
-
-  const userSession = JSON.parse(
-    localStorage.getItem('userSession') ?? '{}',
-  ) as UserSession;
+  const { setIsContentLoading } = useContext(ContentLoadingContext);
 
   const requestGeocode = async () => {
     if (!navigator.geolocation) {
@@ -81,7 +73,14 @@ export default function useGeo() {
               },
             },
           )
-          .then((res) => res.data)) as Coordinates;
+          .then((res) => res.data)
+          .catch((err) => {
+            toast({
+              title: 'There was an issue verifying your location',
+              description: err.message,
+              variant: 'destructive',
+            });
+          })) as Coordinates;
 
         // Update local storage with retrieved coords
         setUserLocationCoords(geoCoordsWithFingerPrint);
@@ -102,15 +101,12 @@ export default function useGeo() {
   };
 
   const clearAllGeoCoords = () => {
-    console.log('CLEARING ALL GEO COORDS');
     //setUserLocationCoords(null);
     setUserLocationText(null);
     setForecast(null);
   };
 
   const getAndSetReverseGeoLoc = async (geoCoords: Coordinates) => {
-    !isContentLoading ? setIsContentLoading(true) : '';
-
     // If we don't have the coords for whatever reason (maybe React was faster than the geolocation api), we will return
     if (!geoCoords) {
       return;
@@ -141,20 +137,31 @@ export default function useGeo() {
       });
   };
 
+  // If our coords, our reverse geocoded location, or forecast gets updated, go through the process of making
+  // sure everything else in place, all while showing a content loading screen in the meantime
   useEffect(() => {
-    // If we have the coords, but not the reverseGeocodedLocation, we will make a request to our backend to get the city/state pairings
-    if (geoCoords && !reverseGeoCoords) {
-      getAndSetReverseGeoLoc(geoCoords);
-      // Else if we either don't have the geoCoords or dont have both the geoCoords and reverseGeoCoords, we will make a request to get the coords
-    } else if (
-      (!geoCoords && reverseGeoCoords) ||
-      (!geoCoords && !reverseGeoCoords)
-    ) {
-      requestGeocode();
-    }
+    setIsContentLoading(true);
+    const controller = new AbortController();
 
-    setIsContentLoading(false);
-  }, [geoCoords]);
+    const updateLocationInfo = async () => {
+      // If we have the coords, but not the reverseGeocodedLocation, we will make a request to our backend to get the city/state pairings
+      if (geoCoords && !reverseGeoCoords) {
+        await getAndSetReverseGeoLoc(geoCoords);
+        // Else if we either don't have the geoCoords or dont have both the geoCoords and reverseGeoCoords, we will make a request to get the coords
+      } else if (
+        (!geoCoords && reverseGeoCoords) ||
+        (!geoCoords && !reverseGeoCoords)
+      ) {
+        await requestGeocode();
+      } else {
+        forecast ? setIsContentLoading(false) : '';
+      }
+    };
+
+    updateLocationInfo();
+
+    return () => controller.abort();
+  }, [geoCoords, reverseGeoCoords, forecast]);
 
   return [
     geoCoords,

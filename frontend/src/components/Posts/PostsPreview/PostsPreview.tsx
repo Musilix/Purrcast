@@ -70,7 +70,7 @@ export default function PostsPreview({
           setPosts([]);
           toast({
             title: 'There was an issue retrieving posts.',
-            // description: e.response.data.message,
+            description: err.message,
             variant: 'destructive',
           });
         });
