@@ -3,6 +3,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import useLocalStorage from '@/hooks/useLocalStorage';
 import { Post } from '@/types/Post';
 import { UserSession } from '@/types/UserSession';
+import formatVotes from '@/utils/FormatVotes';
 import { getUpVoteBarLength } from '@/utils/GetUpvoteBarLength';
 import {
   QueryClientContext,
@@ -76,7 +77,11 @@ export default function PostPage() {
     },
   });
 
-  const { isLoading, isFetching, data } = useQuery<Post, AxiosError>({
+  const {
+    data: post,
+    isLoading,
+    isFetching,
+  } = useQuery<Post, AxiosError>({
     queryKey: [`post-${postId}`],
     queryFn: fetchPost,
     initialData: {} as Post,
@@ -89,15 +94,15 @@ export default function PostPage() {
   return (
     <div className="flex flex-col w-full h-full place-content-center place-items-center">
       <article className="flex flex-col size-screen place-items-center">
-        {!isLoading && data && (
+        {!isLoading && post && (
           <>
-            <PostContent post={data} />
+            <PostContent post={post} />
             <PostVotes
-              initialUpVotes={data?.upvotes?.length ?? 0}
+              initialUpVotes={post?.upvotes?.length ?? 0}
               isFetching={isFetching}
               isPending={upvotePending}
               handleUpvote={() => {
-                handleUpvote(data?.upvotes?.length ?? 0);
+                handleUpvote(post?.upvotes?.length ?? 0);
               }}
             />
           </>
@@ -195,7 +200,7 @@ function PostVotes({
         <section className=" flex flex-row justify-center post-metrics border-slate-400 border-solid border-[1px] rounded-full p-1 hover:border-slate-800 hover:bg-secondary transition-all">
           <div
             className={`${getUpVoteBarLength(
-              initialUpVotes,
+              1111,
             )} grid grid-cols-2 divide-x text-center`}
           >
             <div>
@@ -210,7 +215,7 @@ function PostVotes({
             {/* <Separator orientation="vertical" className="h-full -mx-95" /> */}
             <div className="flex flex-col justify-center place-items-center">
               <p className="text-xl text-center font-semibold tracking-tight">
-                {initialUpVotes}
+                {formatVotes(initialUpVotes)}
               </p>
             </div>
           </div>
@@ -250,7 +255,7 @@ function PostVotesSkeleton({ votesToHold }: { votesToHold: number }) {
     <section className=" flex flex-row justify-center post-metrics border-slate-600 border-solid border-[1px] rounded-full p-1  transition-all">
       <div
         className={`${getUpVoteBarLength(
-          votesToHold,
+          1111,
         )} grid grid-cols-2 divide-x text-center`}
       >
         <div>
@@ -265,7 +270,7 @@ function PostVotesSkeleton({ votesToHold }: { votesToHold: number }) {
         {/* <Separator orientation="vertical" className="h-full -mx-95" /> */}
         <div className="flex flex-col justify-center place-items-center">
           <p className="text-xl text-center font-semibold tracking-tight">
-            {votesToHold}
+            {formatVotes(votesToHold)}
           </p>
         </div>
       </div>
