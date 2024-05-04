@@ -55,7 +55,7 @@ export class PostController {
   @Put(':id')
   @UseGuards(JwtAuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  // @SkipThrottle()
+  @SkipThrottle()
   upvote(@Param('id') id: number, @Req() req) {
     return this.postService.upvote(id, req.user.sub);
   }

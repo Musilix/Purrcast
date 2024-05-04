@@ -1,7 +1,8 @@
 import useGeo from '@/hooks/useGeo';
+import useLocalStorage from '@/hooks/useLocalStorage';
 import { cn } from '@/lib/utils';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
 import { Link } from 'wouter';
 import { Post } from '../../../types/Post';
 import { useToast } from '../../ui/use-toast';
@@ -24,73 +25,46 @@ export default function PostsPreview({
   onlyCurrUser?: boolean;
   locationSpecific?: boolean;
 }) {
-  const [splashPosts, setPosts] = useState<Post[] | null>(null);
-  const [postsRetrieved, setPostsRetrieved] = useState<boolean>(false); // SHould I do this?
-
-  const { toast } = useToast();
+  const [userSession] = useLocalStorage<UserSession>('userSession');
   const [, , reverseGeoCoords] = useGeo();
+  const { toast } = useToast();
+  const { reqUrl, reqOptions, noPostMessage } = getPostListParams(
+    onlyCurrUser,
+    locationSpecific,
+    userSession,
+  );
 
-  const reqUrl = onlyCurrUser
-    ? `${import.meta.env.VITE_API_HOST}/post/mine`
-    : locationSpecific
-    ? `${import.meta.env.VITE_API_HOST}/post/nearby`
-    : `${import.meta.env.VITE_API_HOST}/post`;
-  const noPostMessage = onlyCurrUser
-    ? 'You have no posts 😿'
-    : locationSpecific
-    ? 'No one has made a post near you yet. 😿'
-    : 'No posts to show 😿';
+  const fetchPosts = async (): Promise<Post[]> => {
+    try {
+      return await axios.post(reqUrl, userLocation, reqOptions).then((res) => {
+        return res.data;
+      });
+    } catch (err) {
+      if (err instanceof Error) {
+        toast({
+          title: 'There was an issue retrieving posts.',
+          description: err.message,
+          variant: 'destructive',
+        });
+      }
 
-  const userSession = JSON.parse(
-    localStorage.getItem('userSession') ?? '{}',
-  ) as UserSession;
+      return [];
+    }
+  };
+
+  const { isLoading, isFetching, isError, data } = useQuery<Post[], Error>({
+    queryKey: ['posts'],
+    queryFn: fetchPosts,
+    initialData: [],
+    refetchOnMount: true,
+  });
 
   const userLocation =
     locationSpecific && reverseGeoCoords ? reverseGeoCoords : {};
 
-  useEffect(() => {
-    const controller = new AbortController();
-
-    const fetchPosts = async () => {
-      axios
-        .post(reqUrl, userLocation, {
-          headers: {
-            Accept: 'application/json',
-            Authorization: `Bearer ${userSession.access_token}`,
-          },
-        })
-        .then((res) => {
-          res ? setPosts(res.data) : setPosts([]);
-        })
-        .catch((err) => {
-          if (err.response.data.message) {
-            err.message = err.response.data.message;
-          }
-
-          setPosts([]);
-          toast({
-            title: 'There was an issue retrieving posts.',
-            description: err.message,
-            variant: 'destructive',
-          });
-        });
-    };
-
-    const handlePostLoadIn = async () => {
-      await fetchPosts();
-      setPostsRetrieved(true);
-    };
-
-    if (userLocation && Object.keys(userLocation).length > 0) {
-      handlePostLoadIn();
-    }
-
-    return () => controller.abort();
-  }, [userLocation]);
-
   return (
     <>
-      {postsRetrieved && splashPosts && !splashPosts.length && (
+      {((!isLoading && !isFetching && data.length <= 0) || isError) && (
         <NoPostsMessage
           noPostMessage={noPostMessage}
           onlyCurrUser={onlyCurrUser}
@@ -105,7 +79,7 @@ export default function PostsPreview({
             className,
           )}
         >
-          {(!postsRetrieved || !splashPosts) && (
+          {(isLoading || isFetching) && (
             <>
               <PostPreviewCard skeleton={true} />
               <PostPreviewCard skeleton={true} />
@@ -116,15 +90,13 @@ export default function PostsPreview({
             </>
           )}
 
-          {postsRetrieved && splashPosts && splashPosts.length > 0 && (
-            <>
-              {splashPosts.map((post) => (
-                <li className="post-content w-full h-full" key={post.id}>
-                  <PostPreviewCard author={post.author} post={post} />
-                </li>
-              ))}
-            </>
-          )}
+          {!isFetching &&
+            !isLoading &&
+            data.map((post) => (
+              <li className="post-content w-full h-full" key={post.id}>
+                <PostPreviewCard author={post.author} post={post} />
+              </li>
+            ))}
         </ul>
       </div>
     </>
@@ -199,4 +171,33 @@ export function NoPostsMessage({
       </div>
     </>
   );
+}
+
+// I feel like hiding this junk away in a helper function
+function getPostListParams(
+  onlyCurrUser: boolean,
+  locationSpecific: boolean,
+  userSession: UserSession,
+) {
+  const reqUrl = onlyCurrUser
+    ? `${import.meta.env.VITE_API_HOST}/post/mine`
+    : locationSpecific
+    ? `${import.meta.env.VITE_API_HOST}/post/nearby`
+    : `${import.meta.env.VITE_API_HOST}/post`;
+  const noPostMessage = onlyCurrUser
+    ? 'You have no posts 😿'
+    : locationSpecific
+    ? 'No one has made a post near you yet. 😿'
+    : 'No posts to show 😿';
+  const reqOptions =
+    onlyCurrUser || locationSpecific
+      ? {
+          headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${userSession.access_token}`,
+          },
+        }
+      : {};
+
+  return { reqUrl, reqOptions, noPostMessage };
 }

@@ -289,7 +289,7 @@ export class PostService {
       })
       .catch(() => {
         throw new InternalServerErrorException(
-          "Somehow, you're user information is invalid. Try logging in again.",
+          'Somehow, your user information is invalid. This is most probably an issue on our side.',
         );
       });
 
@@ -313,7 +313,7 @@ export class PostService {
       },
     });
 
-    return this.prisma.upvotes.count({
+    return await this.prisma.upvotes.findMany({
       where: {
         postId: id,
       },
