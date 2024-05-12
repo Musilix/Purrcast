@@ -8,7 +8,7 @@ export default function Loader({ children }: { children: React.ReactNode }) {
 
   if (isAuthLoading)
     return (
-      <div className="absolute left-0 top-0 h-full w-full flex flex-col place-content-center place-items-center">
+      <div className="absolute z-50 left-0 top-0 h-full w-full flex flex-col place-content-center place-items-center">
         <Loader2
           size={50}
           color={'hsl(var(--primary))'}

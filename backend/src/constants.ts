@@ -15,3 +15,4 @@ export const __file_parse_validators__ = [
       'The file you uploaded is not a valid image. It must be a .png, .jpg, .jpeg, or .webp file.',
   }),
 ];
+export const __post_page_offset__ = 8;

@@ -1,89 +1,14 @@
 // import PostsPreview from '@/components/PostsPreview/PostsPreview';
-import { ContentLoadingContext } from '@/context/ContentLoadingContext';
 import useGeo from '@/hooks/useGeo';
-import useLocalStorage from '@/hooks/useLocalStorage';
 import { Session } from '@supabase/supabase-js';
-import axios from 'axios';
-import { useContext, useEffect } from 'react';
 import { Link } from 'wouter';
 import GeoSpecificSplashMessage from '../Geo/GeoSpecificSplashMessage/GeoSpecificSplashMessage';
 import UnknownLocation from '../Geo/UnknownLocation/UnknownLocation';
 import { Button } from '../ui/button';
-import { useToast } from '../ui/use-toast';
-
-//TODO - move this (and the one in useGeo) to a shared location
-export interface reverseGeocodedCoordinates {
-  city: string;
-  state: string;
-  lat: number;
-  lon: number;
-  'Distance in Miles from City': number;
-}
 
 export default function UserHome({ session }: { session: Session }) {
   // TODO / FIXME - maybe define proper types here for these values and then somehow utilize them in all the components that use em??? IDK!
-  const [, reverseGeoCoords, overwriteGeoCoords] = useGeo();
-  const [forecast, setForecast] = useLocalStorage('forecast', null);
-
-  const { isContentLoading, setIsContentLoading } = useContext(
-    ContentLoadingContext,
-  );
-
-  const { toast } = useToast();
-
-  // TODO - incorporate with useGeo hook?
-  const getForecast = async () => {
-    await axios
-      .get(
-        `${import.meta.env.VITE_API_HOST}/post/forecast/${
-          reverseGeoCoords.id_state
-        }/${reverseGeoCoords.id_city}`,
-      )
-      .then((res) => {
-        setForecast(res.data);
-      })
-      .catch((err) => {
-        // Notice that we set is content loading to false each time we reach an error in the geolocation process
-        setIsContentLoading(false);
-        toast({
-          description: err.message + '. Maybe try refreshing the page?',
-          variant: 'destructive',
-        });
-      });
-  };
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    // Content should be set to loading upon mount of the UserHome component just to be safe
-    !isContentLoading ? setIsContentLoading(true) : '';
-
-    // If we for sure obtained the reversed geocoded location of the user, but still don't have a forecast, then get the forecast!
-    if (!forecast) {
-      // If we have the reverse geocoded coordinates, then we can get the forecast!
-      if (reverseGeoCoords && Object.keys(reverseGeoCoords).length) {
-        getForecast();
-      }
-
-      // else {
-      //   toast({
-      //     description:
-      //       'There was an issue getting your location. Please try refreshing the page or disabling and re-enabling location services.',
-      //     variant: 'destructive',
-      //   });
-      // }
-    } else if (forecast && reverseGeoCoords) {
-      // For some reason, isContentLoading ? setIsContentLoading(false) : ''; wasn't working properly...
-      setIsContentLoading(false);
-      getForecast(); // Should we still call getForecast to get an updated forecast? How could we make it so
-    }
-
-    // If we did have a forecast, then go ahead and flip that ContentLoading boolean we switched to true up there^
-    isContentLoading ? setIsContentLoading(false) : '';
-
-    return () => controller.abort();
-    // getForecast(); //This may not work as we could have a forecast in local storage, but no reverseGeoCoords...
-  }, [reverseGeoCoords, forecast]);
+  const [, forecast, reverseGeoCoords, overwriteGeoCoords] = useGeo();
 
   return (
     <div className="flex flex-col items-center align-middle *:my-2.5">
@@ -96,7 +21,7 @@ export default function UserHome({ session }: { session: Session }) {
         {`, ${session.user?.user_metadata.name.split(' ')[0]}`}
       </h1>
 
-      {/* If we dont have the reverse geocoded address of the user, then the message modal they get is the UnkownLocation one */}
+      {/* If we dont have the reverse geocoded address of the user, then the forecast message modal they get is the UnkownLocation one */}
       {!reverseGeoCoords ? (
         <UnknownLocation overwriteGeoCoords={overwriteGeoCoords} />
       ) : (

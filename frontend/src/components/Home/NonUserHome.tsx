@@ -47,16 +47,23 @@ export default function NonUserHome() {
 
       <div
         id="splash-buttons"
-        className="flex flex-col md:flex-row lg:flex-row justify-center align-middle w-5/6 sm:w-3/4 md:w-full  mt-8 space-x-0 space-y-4 md:space-x-4 md:space-y-0 lg:space-x-4 lg:space-y-0 "
+        className="flex flex-col md:flex-row lg:flex-row justify-center align-middle w-5/6 sm:w-3/4 md:w-full mt-4 *:mx-2 space-y-4 md:space-y-0 lg:space-y-0 "
       >
+        <Link href="/posts/nearby">
+          <Button className="p-6 text-lg w-1/4" variant="funky">
+            Posts Near You
+          </Button>
+        </Link>
         <Link href="/create-post">
-          <Button className="p-6 text-lg" variant={'supabasianPrimary'}>
+          <Button className="p-6 text-lg w-1/2 " variant="supabasianPrimary">
             Post a Cat
           </Button>
         </Link>
-
         <Link href="/faq">
-          <Button className="p-6 text-lg" variant={'supabasianSecondary'}>
+          <Button
+            className="p-6 text-lg flex-1 w-1/4"
+            variant="supabasianSecondary"
+          >
             I'm Confused
           </Button>
         </Link>

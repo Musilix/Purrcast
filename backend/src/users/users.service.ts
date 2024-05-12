@@ -1,4 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import BcryptService from 'src/bcrypt/bcrypt.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { z } from 'zod';
 
@@ -14,7 +15,10 @@ const createUserSchema = z.object({
 type CreateUserDto = z.infer<typeof createUserSchema>;
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly bcryptService: BcryptService,
+  ) {}
 
   create(createUserDto: CreateUserDto) {
     try {
@@ -45,15 +49,29 @@ export class UsersService {
     if (!locationInCoords || !locationInCoords.lat || !locationInCoords.lon) {
       throw new InternalServerErrorException('Invalid location data');
     }
+
     const locationInText: {
       city: string;
       state: string;
       lat: number;
       lon: number;
-      'Distance in Miles from City': number;
+      id_state: number;
+      id_city: number;
+      dist_from_city_in_miles: number;
     } = await this.prisma
       .$queryRaw`SELECT * FROM "geo"."get_closest_city"(${locationInCoords.lat}, ${locationInCoords.lon} ) LIMIT 1;`;
 
-    return locationInText[0];
+    const hashedLocationData = await this.bcryptService.hashLocation(
+      locationInText[0],
+    );
+
+    return { ...locationInText[0], fingerprint: hashedLocationData };
+  }
+
+  async getSpecialCoords(locationInCoords: { lat: number; lon: number }) {
+    const hashedLocationData =
+      await this.bcryptService.hashLocation(locationInCoords);
+
+    return { ...locationInCoords, fingerprint: hashedLocationData };
   }
 }

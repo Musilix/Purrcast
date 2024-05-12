@@ -1,3 +1,6 @@
+import { City } from './City';
+import { State } from './State';
+import { Upvote } from './Upvote';
 import { User } from './User';
 
 // TODO - replace this with a zod schema + infered type
@@ -8,10 +11,10 @@ export interface Post {
   updatedAt: Date | null;
   contentId: string;
   isDeleted?: boolean;
-  isCatOnHead?: boolean;
+  isCatOnHead?: boolean | null;
   published?: boolean;
   author?: User;
-  id_city: { city: string } | null;
-  id_state: { state_code: string } | null;
-  // upvotes?:
+  id_city: City;
+  id_state: State;
+  upvotes: Upvote[];
 }

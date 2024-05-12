@@ -12,7 +12,7 @@ export default async function handleTestClick() {
 
   await axios.post(`${import.meta.env.VITE_API_HOST}/test`, {
     headers: {
-      Authorization: `Bearer ${userSession.access_token}`,
+      Authorization: `Bearer ${userSession?.access_token}`,
     },
   });
 }
