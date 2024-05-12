@@ -242,7 +242,7 @@ export default function faq() {
         </div>
       </section>
 
-      <section id="what-kind-of-cat-pics" className="w-full">
+      <section id="how-do-we-make-predictions" className="w-full">
         <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
           How do we make our predictions?
         </h2>

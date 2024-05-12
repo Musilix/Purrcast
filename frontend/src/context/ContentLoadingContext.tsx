@@ -30,14 +30,12 @@ export default function ContentLoadingProvider({
         }}
       >
         {isContentLoading ? (
-          <div className="m-0">
-            <div className="absolute left-0 top-0 bg-black w-full h-full flex flex-col items-center justify-center align-middle z-10">
-              <Loader
-                size={50}
-                color={'hsl(var(--primary))'}
-                className="animate-spin"
-              />
-            </div>
+          <div className="absolute z-40 bg-background left-0 top-0 !m-0 w-full h-full flex flex-col items-center justify-center align-middle">
+            <Loader
+              size={50}
+              color={'hsl(var(--primary))'}
+              className="animate-spin"
+            />
           </div>
         ) : (
           ''

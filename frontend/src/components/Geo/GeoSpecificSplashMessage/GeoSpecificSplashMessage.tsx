@@ -130,7 +130,7 @@ export function DailyForecast({
           <h1 className="scroll-m-20 font-extrabold tracking-tight text-emerald-400 text-9xl sm:text-9xl md:text-9xl break-words">
             {`${Math.floor(forecast)}%`}
           </h1>
-          <h4 className="w-full sm:w-3/4 md:w-1/4 scroll-m-20 text-center sm:text-left text-pretty text-lg text-muted-foreground font-semibold tracking-tight">
+          <h4 className="w-full sm:w-3/4 md:w-1/4 scroll-m-20 py-5 text-center sm:text-left text-pretty text-lg text-muted-foreground font-semibold tracking-tight">
             Chance of rain today in{' '}
             {`${reverseGeoCoords.city}, ${reverseGeoCoords.state}`}
           </h4>

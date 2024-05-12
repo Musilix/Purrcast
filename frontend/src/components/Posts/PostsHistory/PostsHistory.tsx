@@ -1,4 +1,4 @@
-import PostsPreview from '../PostsPreview/PostsPreview';
+import PostList from '../PostList/PostList';
 
 // TODO - i think this component may be unecessary
 export default function PostsHistory({
@@ -23,7 +23,7 @@ function RandomPosts() {
       <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
         Random Posts
       </h1>
-      <PostsPreview />
+      <PostList />
     </>
   );
 }
@@ -34,7 +34,7 @@ function UserPosts() {
       <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
         Your Recent Posts
       </h1>
-      <PostsPreview onlyCurrUser={true} />
+      <PostList onlyCurrUser={true} />
     </>
   );
 }
@@ -45,7 +45,7 @@ function NearbyPosts() {
       <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
         Nearby Posts
       </h1>
-      <PostsPreview locationSpecific={true} />
+      <PostList locationSpecific={true} />
     </>
   );
 }

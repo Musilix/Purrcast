@@ -23,7 +23,7 @@ export default function NewPostForm({
   const [postImage, setPostImage] = useState<File | null>();
 
   // TODO - should I have this in here???... find out how to just get reverse geo coords
-  const [, reverseGeoCoords] = useGeo();
+  const [, , reverseGeoCoords] = useGeo();
 
   const handlePostSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

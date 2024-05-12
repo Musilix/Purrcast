@@ -7,6 +7,7 @@ import { PostThrottlerModule } from './guards/CustomThrottler/customThrottler.mo
 import { JwtAuthModule } from './guards/JwtAuth/jwtAuth.module';
 import { PostModule } from './post/post.module';
 import { UsersModule } from './users/users.module';
+import { PredictionModule } from './prediction/prediction.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { UsersModule } from './users/users.module';
         limit: 3,
       },
     ]),
+    PredictionModule,
   ],
   controllers: [AppController],
   providers: [

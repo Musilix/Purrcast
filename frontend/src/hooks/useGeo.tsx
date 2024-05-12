@@ -1,13 +1,16 @@
 import { useToast } from '@/components/ui/use-toast';
 import { ContentLoadingContext } from '@/context/ContentLoadingContext';
+import { UserSession } from '@/types/UserSession';
 import ShowGeoErrorMessage from '@/utils/ShowGeoErrorMessage';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useContext, useEffect } from 'react';
+import useForecast from './useForecast';
 import useLocalStorage from './useLocalStorage';
 
 export interface Coordinates {
   lat: number;
   lon: number;
+  fingerprint: string;
 }
 
 export interface ReverseGeocodedLocation {
@@ -15,7 +18,9 @@ export interface ReverseGeocodedLocation {
   state: string;
   lat: number;
   lon: number;
-  'Distance in Miles from City': number;
+  id_state: number;
+  id_city: number;
+  dist_from_city_in_miles: number;
 }
 
 /*
@@ -32,14 +37,14 @@ export interface ReverseGeocodedLocation {
 export default function useGeo() {
   // Utilize local storage for long term persistence alongside the state that we keep track of
   const [geoCoords, setUserLocationCoords] =
-    useLocalStorage<Coordinates>('userLocationCoords');
+    useLocalStorage<Coordinates | null>('userLocationCoords');
   const [reverseGeoCoords, setUserLocationText] =
-    useLocalStorage<ReverseGeocodedLocation>('userLocationText');
+    useLocalStorage<ReverseGeocodedLocation | null>('userLocationText');
+  const [forecast, setForecast] = useForecast(reverseGeoCoords);
+  const [userSession] = useLocalStorage<UserSession>('userSession');
 
   const { toast } = useToast();
-  const { isContentLoading, setIsContentLoading } = useContext(
-    ContentLoadingContext,
-  );
+  const { setIsContentLoading } = useContext(ContentLoadingContext);
 
   const requestGeocode = async () => {
     if (!navigator.geolocation) {
@@ -49,15 +54,42 @@ export default function useGeo() {
       });
       return;
     }
+
     // Get the current position upon reference to the useGeo() hook
     // Should we actively update the geoCoordinates upon each reference to the geoCoordinates state though? Idk for now
+    // Should we also had some form of try-catch somewhere if the server fails to return a fingerprinted geoCoords object?
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        // Update local storage with retrieved coords
-        setUserLocationCoords({
-          lat: position.coords.latitude,
-          lon: position.coords.longitude,
-        });
+      async (position) => {
+        const geoCoordsWithFingerPrint = (await axios
+          .post(
+            `${import.meta.env.VITE_API_HOST}/users/location/special-coords`,
+            {
+              lat: position.coords.latitude,
+              lon: position.coords.longitude,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${userSession?.access_token}`,
+              },
+            },
+          )
+          .then((res) => res.data)
+          .catch((err) => {
+            if (err instanceof AxiosError) {
+              err.message = err.response?.data.message;
+            }
+
+            toast({
+              title: 'There was an issue verifying your location',
+              description: (err as Error)?.message,
+              variant: 'destructive',
+            });
+          })) as Coordinates;
+
+        // Update local storage with retrieved coords only if it has a defined value
+        if (geoCoordsWithFingerPrint) {
+          setUserLocationCoords(geoCoordsWithFingerPrint);
+        }
 
         // Make a request to our backend to get the city/state pairings
         getAndSetReverseGeoLoc(geoCoords);
@@ -74,43 +106,73 @@ export default function useGeo() {
     await requestGeocode();
   };
 
-  const getAndSetReverseGeoLoc = async (geoCoords: Coordinates) => {
-    !isContentLoading ? setIsContentLoading(true) : '';
+  const clearAllGeoCoords = () => {
+    //setUserLocationCoords(null);
+    setUserLocationText(null);
+    setForecast(null);
+  };
 
+  const getAndSetReverseGeoLoc = async (geoCoords: Coordinates) => {
     // If we don't have the coords for whatever reason (maybe React was faster than the geolocation api), we will return
     if (!geoCoords) {
       return;
     }
 
     return await axios
-      .post(`${import.meta.env.VITE_API_HOST}/users/location`, geoCoords)
+      .post(`${import.meta.env.VITE_API_HOST}/users/location`, geoCoords, {
+        headers: {
+          Authorization: `Bearer ${userSession?.access_token}`,
+        },
+      })
       .then((res) => {
         setUserLocationText(res.data);
       })
-      .catch((error) => {
+      .catch((err) => {
         // Notice that we set is content loading to false each time we reach an error in the geolocation process
         setIsContentLoading(false);
+        if (err instanceof AxiosError) {
+          err.message = err.response?.data.message;
+        }
+
         toast({
-          description: `${error.message}: Unable to get your city and state.`,
+          title: 'Unable to find your city and state',
+          description: (err as Error)?.message,
           variant: 'destructive',
         });
       });
   };
 
+  // If our coords, our reverse geocoded location, or forecast gets updated, go through the process of making
+  // sure everything else in place, all while showing a content loading screen in the meantime
   useEffect(() => {
-    // If we have the coords, but not the reverseGeocodedLocation, we will make a request to our backend to get the city/state pairings
-    if (geoCoords && !reverseGeoCoords) {
-      getAndSetReverseGeoLoc(geoCoords);
-      // Else if we either don't have the geoCoords or dont have both the geoCoords and reverseGeoCoords, we will make a request to get the coords
-    } else if (
-      (!geoCoords && reverseGeoCoords) ||
-      (!geoCoords && !reverseGeoCoords)
-    ) {
-      requestGeocode();
-    }
+    setIsContentLoading(true);
+    const controller = new AbortController();
 
-    setIsContentLoading(false);
-  }, [geoCoords]);
+    const updateLocationInfo = async () => {
+      // If we have the coords, but not the reverseGeocodedLocation, we will make a request to our backend to get the city/state pairings
+      if (geoCoords && !reverseGeoCoords) {
+        await getAndSetReverseGeoLoc(geoCoords);
+        // Else if we either don't have the geoCoords or dont have both the geoCoords and reverseGeoCoords, we will make a request to get the coords
+      } else if (
+        (!geoCoords && reverseGeoCoords) ||
+        (!geoCoords && !reverseGeoCoords)
+      ) {
+        await requestGeocode();
+      } else {
+        forecast ? setIsContentLoading(false) : '';
+      }
+    };
 
-  return [geoCoords, reverseGeoCoords, overwriteGeoCoords];
+    updateLocationInfo();
+
+    return () => controller.abort();
+  }, [geoCoords, reverseGeoCoords, forecast]);
+
+  return [
+    geoCoords,
+    forecast,
+    reverseGeoCoords,
+    overwriteGeoCoords,
+    clearAllGeoCoords,
+  ];
 }

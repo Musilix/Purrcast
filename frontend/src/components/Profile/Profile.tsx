@@ -2,7 +2,7 @@ import { AuthContext } from '@/context/AuthContext';
 import { User } from '@supabase/supabase-js';
 import { useContext } from 'react';
 import { Redirect } from 'wouter';
-import PostsPreview from '../Posts/PostsPreview/PostsPreview';
+import PostList from '../Posts/PostList/PostList';
 import { Button } from '../ui/button';
 
 export default function Profile() {
@@ -57,7 +57,7 @@ export default function Profile() {
           </div>
           {/* TODO - we need to make it so we can specify filtering properties
           when displaying a post preview bundle */}
-          <PostsPreview className="p-0" onlyCurrUser={true} />
+          <PostList className="p-0" onlyCurrUser={true} />
           {/* TODO - enable and add confirmation to deactive account */}
           <div id="button-wrap">
             <Button variant="destructive" disabled>
