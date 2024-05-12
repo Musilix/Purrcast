@@ -15,13 +15,13 @@ export default function Logout() {
       await __supabase__.auth
         .signOut({ scope: 'local' })
         .then(() => clearAllGeoCoords())
-        .catch((error) => {
+        .catch((err) => {
           toast({
             description:
               "There was an issue while trying to sign you out for some reason. That's strange. Maybe try refreshing the page?",
             variant: 'destructive',
           });
-          console.error('Error signing out:', error, '. Try again.');
+          console.error('Error signing out:', err, '. Try again.');
         });
 
       setLocation('/');

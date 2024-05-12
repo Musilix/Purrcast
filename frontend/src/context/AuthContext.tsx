@@ -1,6 +1,7 @@
 import { useToast } from '@/components/ui/use-toast';
 import { __supabase__ } from '@/constants';
 import { Session } from '@supabase/supabase-js';
+import { AxiosError } from 'axios';
 import { createContext, useEffect, useState } from 'react';
 interface AuthContextValues {
   session: Session | null;
@@ -46,12 +47,17 @@ export default function AuthProvider({
         //   throw new Error('No session found.');
         // }
       })
-      .catch((e) => {
+      .catch((err) => {
+        if (err instanceof AxiosError) {
+          err.message = err.response?.data.message;
+        }
+
         toast({
           title: 'There was an issue with your account',
-          description: e.message,
+          description: (err as Error)?.message,
           variant: 'destructive',
         });
+
         setIsAuthError(true);
         setIsAuthLoading(false);
       });

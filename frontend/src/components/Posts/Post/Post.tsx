@@ -41,7 +41,7 @@ export default function PostPage() {
 
       toast({
         title: 'There was an issue with your request',
-        description: err.message,
+        description: (err as Error)?.message,
         variant: 'destructive',
       });
 
@@ -67,7 +67,7 @@ export default function PostPage() {
 
       toast({
         title: 'Unable to Upvote Post',
-        description: err.message,
+        description: (err as Error)?.message,
         variant: 'destructive',
       });
 
@@ -89,7 +89,7 @@ export default function PostPage() {
     data: post,
     isLoading,
     isFetching,
-  } = useQuery<Post, AxiosError>({
+  } = useQuery({
     queryKey: [`post-${postId}`],
     queryFn: fetchPost,
     initialData: {} as Post,
@@ -200,7 +200,7 @@ function PostVotes({
   initialUpVotes: number;
   isFetching: boolean;
   isPending: boolean;
-  handleUpvote;
+  handleUpvote: () => void;
 }) {
   return (
     <>

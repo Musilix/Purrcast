@@ -1,6 +1,6 @@
 import { useToast } from '@/components/ui/use-toast';
 import { ContentLoadingContext } from '@/context/ContentLoadingContext';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useContext, useEffect } from 'react';
 import useLocalStorage from './useLocalStorage';
 
@@ -27,15 +27,13 @@ export default function useForecast(reverseGeoCoords: ReverseGeocodedLocation) {
         setForecast(res.data);
       })
       .catch((err) => {
-        if (err.response.data.message) {
-          err.message = err.response.data.message;
+        if (err instanceof AxiosError) {
+          err.message = err.response?.data.message;
         }
-
-        // // Notice that we set is content loading to false each time we reach an error in the geolocation process
-        // setIsContentLoading(false);
+        setIsContentLoading(false);
         toast({
           title: 'There was an issue retrieving the forecast.',
-          description: err.message,
+          description: (err as Error)?.message,
           variant: 'destructive',
         });
       });

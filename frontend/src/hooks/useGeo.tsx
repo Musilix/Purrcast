@@ -2,7 +2,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { ContentLoadingContext } from '@/context/ContentLoadingContext';
 import { UserSession } from '@/types/UserSession';
 import ShowGeoErrorMessage from '@/utils/ShowGeoErrorMessage';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useContext, useEffect } from 'react';
 import useForecast from './useForecast';
 import useLocalStorage from './useLocalStorage';
@@ -75,9 +75,13 @@ export default function useGeo() {
           )
           .then((res) => res.data)
           .catch((err) => {
+            if (err instanceof AxiosError) {
+              err.message = err.response?.data.message;
+            }
+
             toast({
               title: 'There was an issue verifying your location',
-              description: err.message,
+              description: (err as Error)?.message,
               variant: 'destructive',
             });
           })) as Coordinates;
@@ -123,17 +127,16 @@ export default function useGeo() {
       .then((res) => {
         setUserLocationText(res.data);
       })
-      .catch((error) => {
+      .catch((err) => {
         // Notice that we set is content loading to false each time we reach an error in the geolocation process
         setIsContentLoading(false);
-
-        if (error.response.data.message) {
-          error.message = error.response.data.message;
+        if (err instanceof AxiosError) {
+          err.message = err.response?.data.message;
         }
 
         toast({
           title: 'Unable to find your city and state',
-          description: `${error.message}`,
+          description: (err as Error)?.message,
           variant: 'destructive',
         });
       });

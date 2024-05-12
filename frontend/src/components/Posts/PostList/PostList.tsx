@@ -4,12 +4,7 @@ import { cn } from '@/lib/utils';
 import { Post } from '@/types/Post';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
-import {
-  ArrowBigDownDash,
-  ChevronDownCircle,
-  Loader2Icon,
-  MousePointerClick,
-} from 'lucide-react';
+import { ChevronDownCircle, Loader2Icon } from 'lucide-react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Link } from 'wouter';
 import { useToast } from '../../ui/use-toast';
@@ -47,12 +42,14 @@ export default function PostList({
       return res.data;
     } catch (err) {
       if (err instanceof AxiosError) {
-        toast({
-          title: 'There was an issue retrieving posts.',
-          description: err.message, //TODO - I HATE HOW I HANDLE ERRORS DIFFRENTLY IN EVERY COMPONENT
-          variant: 'destructive',
-        });
+        err.message = err.response?.data.message;
       }
+
+      toast({
+        title: 'There was an issue retrieving posts.',
+        description: (err as Error)?.message,
+        variant: 'destructive',
+      });
 
       return null;
     }
