@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { SkipThrottle } from '@nestjs/throttler';
-import { JwtAuthGuard } from 'src/guards/JwtAuth/jwtAuth.guard';
+// import { JwtAuthGuard } from 'src/guards/JwtAuth/jwtAuth.guard';
 import { LocationTamperGuard } from 'src/guards/LocationTamper/locationTamper.guard';
 import { z } from 'zod';
 import { UsersService } from './users.service';
@@ -40,7 +40,8 @@ export class UsersController {
   // Get a reverse geocoded location (w/ a fingerprint) for the given coordinates
   @Post('/location')
   @SkipThrottle()
-  @UseGuards(JwtAuthGuard, LocationTamperGuard)
+  // @UseGuards(JwtAuthGuard, LocationTamperGuard)
+  @UseGuards(LocationTamperGuard)
   getLocation(@Body() locationInCoords: { lat: number; lon: number }) {
     return this.usersService.getLocation(locationInCoords);
   }

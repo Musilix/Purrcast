@@ -107,8 +107,8 @@ export default function PostPreviewCard({
               postedAt={post.createdAt}
               content={post.contentId}
               location={{
-                city: post.id_city!.city,
-                state: post.id_state!.state_code,
+                city: post?.id_city?.city,
+                state: post?.id_state?.state_code,
               }}
             />
           ) : (

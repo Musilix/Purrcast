@@ -69,7 +69,7 @@ export default function useGeo() {
             },
             {
               headers: {
-                Authorization: `Bearer ${userSession.access_token}`,
+                Authorization: `Bearer ${userSession?.access_token}`,
               },
             },
           )
@@ -82,8 +82,10 @@ export default function useGeo() {
             });
           })) as Coordinates;
 
-        // Update local storage with retrieved coords
-        setUserLocationCoords(geoCoordsWithFingerPrint);
+        // Update local storage with retrieved coords only if it has a defined value
+        if (geoCoordsWithFingerPrint) {
+          setUserLocationCoords(geoCoordsWithFingerPrint);
+        }
 
         // Make a request to our backend to get the city/state pairings
         getAndSetReverseGeoLoc(geoCoords);
@@ -115,7 +117,7 @@ export default function useGeo() {
     return await axios
       .post(`${import.meta.env.VITE_API_HOST}/users/location`, geoCoords, {
         headers: {
-          Authorization: `Bearer ${userSession.access_token}`,
+          Authorization: `Bearer ${userSession?.access_token}`,
         },
       })
       .then((res) => {

@@ -6,6 +6,7 @@ import {
   ParseFilePipe,
   Post,
   Put,
+  Query,
   Req,
   UploadedFile,
   UseGuards,
@@ -60,17 +61,42 @@ export class PostController {
     return this.postService.upvote(id, req.user.sub);
   }
 
+  // TODO - accept another parameter for date range. default is curr day to now()
   @Post()
+  @UsePipes(new ValidationPipe({ transform: true }))
   @SkipThrottle()
-  findAll() {
-    return this.postService.findAll();
+  findAll(@Query('page') page: number = 0) {
+    return this.postService.findAll(page);
+  }
+
+  // TODO - body should be UserLocationDTO
+  // TODO - add hash validtor guard
+  @Post('/nearby')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @SkipThrottle()
+  @UseGuards(LocationTamperGuard)
+  findAllNearby(
+    @Body() reverseGeocodedLocation,
+    @Query('page') page: number = 0,
+  ) {
+    return this.postService.findAllNearby(
+      page,
+      parseInt(reverseGeocodedLocation.id_state),
+      parseInt(reverseGeocodedLocation.id_city),
+    );
   }
 
   @Post('/mine')
   @UseGuards(JwtAuthGuard)
   @SkipThrottle()
-  findAllUserSpecific(@Req() req) {
-    return this.postService.findAll(req.user.sub);
+  findAllUserSpecific(@Req() req, @Query('page') page: number = 0) {
+    return this.postService.findAll(page, req.user.sub);
+  }
+
+  @Get(':id')
+  @SkipThrottle()
+  findOne(@Param('id') id: string) {
+    return this.postService.findOne(+id);
   }
 
   // TODO - I think this is a dead route for now. Maybe remove it in the future?
@@ -83,24 +109,6 @@ export class PostController {
   //     body.location.long,
   //   );
   // }
-
-  // TODO - body should be UserLocationDTO
-  // TODO - add hash validtor guard
-  @Post('/nearby')
-  @SkipThrottle()
-  @UseGuards(LocationTamperGuard)
-  findAllNearby(@Body() reverseGeocodedLocation) {
-    return this.postService.findAllNearby(
-      parseInt(reverseGeocodedLocation.id_state),
-      parseInt(reverseGeocodedLocation.id_city),
-    );
-  }
-
-  @Get(':id')
-  @SkipThrottle()
-  findOne(@Param('id') id: string) {
-    return this.postService.findOne(+id);
-  }
 
   @Post('/forecast')
   @SkipThrottle() // Is this smart? I'm not sure yet...

@@ -35,7 +35,7 @@ function App() {
                 while leaving the specific of the context for said loading to a more dialed in component like PageLoader or <CardLoader>
         */}
             <Loader>
-              <main className="relative w-full h-full flex flex-col flex-1 place-items-center z-1">
+              <main className="relative w-full h-full flex flex-col flex-1 place-items-center">
                 <header className="w-full sticky z-50 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
                   <div className="w-full flex h-14  items-center p-10 justify-between">
                     <NavMenu />

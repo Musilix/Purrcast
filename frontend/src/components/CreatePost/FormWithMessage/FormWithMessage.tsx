@@ -42,7 +42,7 @@ export default function FormWithMessage<FormDataType>({
       .post(`${import.meta.env.VITE_API_HOST}${endpoint}`, data, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${userSession.access_token}`,
+          Authorization: `Bearer ${userSession?.access_token}`,
         },
       })
       .then((res) => {

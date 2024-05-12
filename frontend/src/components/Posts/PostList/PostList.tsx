@@ -1,10 +1,17 @@
 import useGeo from '@/hooks/useGeo';
 import useLocalStorage from '@/hooks/useLocalStorage';
 import { cn } from '@/lib/utils';
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import { Post } from '@/types/Post';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import axios, { AxiosError } from 'axios';
+import {
+  ArrowBigDownDash,
+  ChevronDownCircle,
+  Loader2Icon,
+  MousePointerClick,
+} from 'lucide-react';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import { Link } from 'wouter';
-import { Post } from '../../../types/Post';
 import { useToast } from '../../ui/use-toast';
 import PostPreviewCard from '../PostPreviewCard/PostPreviewCard';
 
@@ -16,7 +23,7 @@ interface UserSession {
 //   2. User Profile Preview - grab all posts by user (/post/mine)
 //   3. Grab Paginated Posts - grab all posts in a vicinity of user by page (post/page=1&limit=10)
 // export default function PostsPreview({ className = "", type = "splash" | "profile" | "paginated"}) {
-export default function PostsPreview({
+export default function PostList({
   className = '',
   onlyCurrUser = false,
   locationSpecific = false,
@@ -28,77 +35,132 @@ export default function PostsPreview({
   const [userSession] = useLocalStorage<UserSession>('userSession');
   const [, , reverseGeoCoords] = useGeo();
   const { toast } = useToast();
-  const { reqUrl, reqOptions, noPostMessage } = getPostListParams(
-    onlyCurrUser,
-    locationSpecific,
-    userSession,
-  );
+  const { reqUrl, reqOptions, noPostMessage, additionaPostQueryOpts } =
+    getPostListParams(onlyCurrUser, locationSpecific, userSession);
 
-  const fetchPosts = async (): Promise<Post[]> => {
+  const fetchPosts = async ({ pageParam = 0 }: { pageParam?: number }) => {
     try {
-      return await axios.post(reqUrl, userLocation, reqOptions).then((res) => {
-        return res.data;
+      const res = await axios.post(reqUrl, userLocation, {
+        ...reqOptions,
+        params: { page: pageParam },
       });
+      return res.data;
     } catch (err) {
-      if (err instanceof Error) {
+      if (err instanceof AxiosError) {
         toast({
           title: 'There was an issue retrieving posts.',
-          description: err.message,
+          description: err.message, //TODO - I HATE HOW I HANDLE ERRORS DIFFRENTLY IN EVERY COMPONENT
           variant: 'destructive',
         });
       }
 
-      return [];
+      return null;
     }
   };
 
-  const { isLoading, isFetching, isError, data } = useQuery<Post[], Error>({
-    queryKey: ['posts'],
+  const {
+    data: posts,
+    error,
+    isLoading,
+    isFetching,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery({
+    queryKey: ['posts', additionaPostQueryOpts],
     queryFn: fetchPosts,
-    initialData: [],
-    refetchOnMount: true,
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => (lastPage ? lastPage.nextPage : undefined),
   });
+
+  const handleManualFetchPage = () => {
+    if (!isLoading && !isFetching && hasNextPage) {
+      fetchNextPage();
+    }
+  };
+
+  // useCallback?
+  const flattenedPosts = posts?.pages.reduce((acc, page) => {
+    if (page && page !== undefined) {
+      return [...acc, ...page.posts];
+    } else {
+      return acc;
+    }
+  }, []);
 
   const userLocation =
     locationSpecific && reverseGeoCoords ? reverseGeoCoords : {};
 
+  console.log(posts);
+  // TODO - apply this to all components using react query?
+  if (isError) {
+    toast({
+      title: 'There was an issue retrieving posts.',
+      description: error?.message,
+      variant: 'destructive',
+    });
+  }
+
   return (
     <>
-      {((!isLoading && !isFetching && data.length <= 0) || isError) && (
+      {((!isLoading && !isFetching && flattenedPosts.length <= 0) ||
+        isError) && (
         <NoPostsMessage
           noPostMessage={noPostMessage}
           onlyCurrUser={onlyCurrUser}
           locationSpecific={locationSpecific}
         />
       )}
+      <InfiniteScroll
+        className="flex flex-col justify-center align-middle"
+        dataLength={flattenedPosts ? flattenedPosts.length : 0}
+        hasMore={hasNextPage}
+        next={fetchNextPage}
+        loader={
+          <div
+            className="flex flex-col w-full justify-center items-center align-middle bg-secondary/20 rounded-lg p-5 *:m-2 hover:cursor-pointer hover:bg-secondary/40 transition-all"
+            onClick={() => handleManualFetchPage()}
+          >
+            {!isFetching && !isLoading ? (
+              <div className="relative">
+                <ChevronDownCircle className="animate-bounce" />
+                {/* <MousePointerClick className="absolute right-0 top-1/2 animate-ping" /> */}
+              </div>
+            ) : (
+              <Loader2Icon className="animate-spin" />
+            )}
+          </div>
+        }
+      >
+        <div id="post-wrap" className="flex justify-center align-middle">
+          <ul
+            className={cn(
+              'w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 3xl:grid-cols-6 grid-flow-row align-middle place-content-center place-items-center gap-5 p-5',
+              className,
+            )}
+          >
+            {isLoading && (
+              <>
+                <PostPreviewCard skeleton={true} />
+                <PostPreviewCard skeleton={true} />
+                <PostPreviewCard skeleton={true} />
+                <PostPreviewCard skeleton={true} />
+                <PostPreviewCard skeleton={true} />
+                <PostPreviewCard skeleton={true} />
+                <PostPreviewCard skeleton={true} />
+                <PostPreviewCard skeleton={true} />
+              </>
+            )}
 
-      <div id="post-wrap" className="flex justify-center align-middle">
-        <ul
-          className={cn(
-            'w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 3xl:grid-cols-6 grid-flow-row align-middle place-content-center place-items-center gap-5 p-5',
-            className,
-          )}
-        >
-          {(isLoading || isFetching) && (
-            <>
-              <PostPreviewCard skeleton={true} />
-              <PostPreviewCard skeleton={true} />
-              <PostPreviewCard skeleton={true} />
-              <PostPreviewCard skeleton={true} />
-              <PostPreviewCard skeleton={true} />
-              <PostPreviewCard skeleton={true} />
-            </>
-          )}
-
-          {!isFetching &&
-            !isLoading &&
-            data.map((post) => (
-              <li className="post-content w-full h-full" key={post.id}>
-                <PostPreviewCard author={post.author} post={post} />
-              </li>
-            ))}
-        </ul>
-      </div>
+            {!isLoading &&
+              flattenedPosts.map((post: Post) => (
+                <li className="post-content w-full h-full" key={post.id}>
+                  <PostPreviewCard author={post.author} post={post} />
+                </li>
+              ))}
+          </ul>
+        </div>
+      </InfiniteScroll>
     </>
   );
 }
@@ -194,10 +256,16 @@ function getPostListParams(
       ? {
           headers: {
             Accept: 'application/json',
-            Authorization: `Bearer ${userSession.access_token}`,
+            Authorization: `Bearer ${userSession?.access_token}`,
           },
         }
       : {};
 
-  return { reqUrl, reqOptions, noPostMessage };
+  const additionaPostQueryOpts = onlyCurrUser
+    ? 'mine'
+    : locationSpecific
+    ? 'nearby'
+    : '';
+
+  return { reqUrl, reqOptions, noPostMessage, additionaPostQueryOpts };
 }

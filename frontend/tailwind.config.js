@@ -38,6 +38,8 @@ module.exports = {
           foreground: 'hsl(var(--primary-foreground))',
           glow: 'hsl(var(--primary-glow))',
           dim: 'hsl(var(--primary-dim))',
+          funky: 'hsl(var(--primary-funky))',
+          funkyBorder: 'hsl(var(--primary-funky-border))',
         },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',

@@ -30,7 +30,7 @@ export default function ContentLoadingProvider({
         }}
       >
         {isContentLoading ? (
-          <div className="absolute z-100 bg-background left-0 top-0 !m-0 w-full h-full flex flex-col items-center justify-center align-middle">
+          <div className="absolute z-40 bg-background left-0 top-0 !m-0 w-full h-full flex flex-col items-center justify-center align-middle">
             <Loader
               size={50}
               color={'hsl(var(--primary))'}

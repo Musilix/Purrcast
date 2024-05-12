@@ -8,6 +8,7 @@ import axios from 'axios';
 import { UploadApiResponse } from 'cloudinary';
 import FormData from 'form-data';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { __post_page_offset__ } from 'src/constants';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SharpHelper } from 'src/sharp/sharp.service';
 import checkForCat from 'src/utils/CheckForCat';
@@ -115,7 +116,10 @@ export class PostService {
     }
   }
 
-  async findAll(userId?: string) {
+  async findAll(page: number, userId?: string) {
+    // TODO - make this a constant?
+    const pageOffset = __post_page_offset__;
+
     const findAllFilters = userId
       ? { published: true, author: { uuid: userId } }
       : { published: true };
@@ -151,9 +155,16 @@ export class PostService {
             },
           },
         },
+        skip: (page - 1) * pageOffset,
+        take: pageOffset,
       });
 
-      return res;
+      return {
+        posts: [...res],
+        nextPage: res.length >= pageOffset ? page + 1 : undefined,
+        currPage: page,
+        prevPage: page > 1 ? page - 1 : undefined,
+      };
     } catch (e) {
       console.error(e);
       throw new InternalServerErrorException(
@@ -162,23 +173,10 @@ export class PostService {
     }
   }
 
-  async findAllNearMe(lat: number, long: number) {
-    try {
-      // Call function to get nearby entities, given the location
-      // TODO - change implementation to do real thing.
-      const res = await this.prisma
-        .$queryRaw`SELECT * FROM get_closest_city(${lat}, ${long})`;
+  async findAllNearby(page: number, userState: number, userCity: number) {
+    // TODO - make this a constant?
+    const pageOffset = __post_page_offset__;
 
-      return res;
-    } catch (e) {
-      console.error(e);
-      throw new InternalServerErrorException(
-        'An error occured while trying to figure out where you are. We think there could be an issue with the location you provided. Please try again later.',
-      );
-    }
-  }
-
-  async findAllNearby(userState: number, userCity: number) {
     try {
       const res = await this.prisma.post.findMany({
         where: {
@@ -213,9 +211,16 @@ export class PostService {
             },
           },
         },
+        skip: (page - 1) * pageOffset,
+        take: pageOffset,
       });
 
-      return res;
+      return {
+        posts: [...res],
+        nextPage: res.length >= pageOffset ? page + 1 : undefined,
+        currPage: page,
+        prevPage: page > 1 ? page - 1 : undefined,
+      };
     } catch (e) {
       console.error(e);
       throw new InternalServerErrorException(
@@ -342,5 +347,21 @@ export class PostService {
     }
 
     return forecast.prediction;
+  }
+
+  async findClosestCity(lat: number, long: number) {
+    try {
+      // Call function to get nearby entities, given the location
+      // TODO - change implementation to do real thing.
+      const res = await this.prisma
+        .$queryRaw`SELECT * FROM get_closest_city(${lat}, ${long})`;
+
+      return res;
+    } catch (e) {
+      console.error(e);
+      throw new InternalServerErrorException(
+        'An error occured while trying to figure out where you are. We think there could be an issue with the location you provided. Please try again later.',
+      );
+    }
   }
 }

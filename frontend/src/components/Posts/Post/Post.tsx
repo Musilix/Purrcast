@@ -35,9 +35,13 @@ export default function PostPage() {
           // return {userLocation: {state: res.data.id_state.state_code, city: res.data.id_city.city, post: res.data, postVotes: res.data.upvotes.length}};
         });
     } catch (err) {
+      if (err instanceof AxiosError) {
+        err.message = err.response?.data.message;
+      }
+
       toast({
         title: 'There was an issue with your request',
-        description: err.response.data.message,
+        description: err.message,
         variant: 'destructive',
       });
 
@@ -52,14 +56,18 @@ export default function PostPage() {
         {},
         {
           headers: {
-            Authorization: `Bearer ${userSession.access_token}`,
+            Authorization: `Bearer ${userSession?.access_token}`,
           },
         },
       );
     } catch (err) {
+      if (err instanceof AxiosError) {
+        err.message = err.response?.data.message;
+      }
+
       toast({
         title: 'Unable to Upvote Post',
-        description: err.response.data.message,
+        description: err.message,
         variant: 'destructive',
       });
 
