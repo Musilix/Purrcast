@@ -45,6 +45,8 @@ export class PostController {
     */
     const { userState, userCity, timezoneOffset } = body;
 
+    // FIXME - I don't like having to parse out/manually write out each field I want from the body. The controller shouldnt care!
+    // I should just be able to pass the body object to the service and let it handle the parsing
     return this.postService.upload(
       file,
       req.user.sub,
