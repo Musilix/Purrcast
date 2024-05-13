@@ -4,30 +4,30 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-  schemas  = ["public", "geo", "predictions"]
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  schemas    = ["public", "geo", "predictions"]
   extensions = [postgis, plpgsql]
 }
 
 model Post {
-  id          Int       @id @default(autoincrement())
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  contentId   String    @db.VarChar(255)
-  published   Boolean   @default(false)
-  isDeleted   Boolean   @default(false)
-  isCatOnHead Boolean?
-  id_state   us_states  @relation(fields: [postState], references: [id])
-  postState    Int
-  
-  id_city   us_cities   @relation(fields: [postCity], references: [id])
-  postCity    Int
-  
-  
-  author      User      @relation(fields: [authorId], references: [id])
-  authorId    Int
-  upvotes     Upvotes[]
+  id             Int       @id @default(autoincrement())
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  contentId      String    @db.VarChar(255)
+  published      Boolean   @default(false)
+  isDeleted      Boolean   @default(false)
+  isCatOnHead    Boolean?
+  timeZoneOffset Int?      @default(0)
+  id_state       us_states @relation(fields: [postState], references: [id])
+  postState      Int
+
+  id_city  us_cities @relation(fields: [postCity], references: [id])
+  postCity Int
+
+  author   User      @relation(fields: [authorId], references: [id])
+  authorId Int
+  upvotes  Upvotes[]
 
   @@schema("public")
 }
@@ -79,7 +79,7 @@ model us_cities {
   us_state    us_states     @relation(fields: [id_state], references: [id])
   id_state    Int
   predictions Predictions[]
-  posts      Post[]
+  posts       Post[]
 
   @@schema("geo")
 }

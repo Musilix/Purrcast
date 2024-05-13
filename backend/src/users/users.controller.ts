@@ -42,7 +42,14 @@ export class UsersController {
   @SkipThrottle()
   // @UseGuards(JwtAuthGuard, LocationTamperGuard)
   @UseGuards(LocationTamperGuard)
-  getLocation(@Body() locationInCoords: { lat: number; lon: number }) {
+  getLocation(
+    @Body()
+    locationInCoords: {
+      lat: number;
+      lon: number;
+      timezoneOffset: number;
+    },
+  ) {
     return this.usersService.getLocation(locationInCoords);
   }
 
@@ -50,7 +57,14 @@ export class UsersController {
   @Post('/location/special-coords')
   @SkipThrottle()
   // @UseGuards(LocationTamperGuard)
-  getSpecialCoords(@Body() locationInCoords: { lat: number; lon: number }) {
+  getSpecialCoords(
+    @Body()
+    locationInCoords: {
+      lat: number;
+      lon: number;
+      timezoneOffset: number;
+    },
+  ) {
     return this.usersService.getSpecialCoords(locationInCoords);
   }
 }

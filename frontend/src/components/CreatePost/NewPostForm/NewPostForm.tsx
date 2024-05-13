@@ -49,6 +49,7 @@ export default function NewPostForm({
         formData.append('userUploadedFile', postImage);
         formData.append('userState', reverseGeoCoords.id_state);
         formData.append('userCity', reverseGeoCoords.id_city);
+        formData.append('timezoneOffset', reverseGeoCoords.timezoneOffset);
 
         // TODO - this is valid, but we need to define the type of the handleSubmit prop in the func def
         await handleSubmit(formData, '/post/upload');

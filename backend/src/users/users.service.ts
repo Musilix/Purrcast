@@ -45,8 +45,17 @@ export class UsersService {
     return `This action removes a #${id} user`;
   }
 
-  async getLocation(locationInCoords: { lat: number; lon: number }) {
-    if (!locationInCoords || !locationInCoords.lat || !locationInCoords.lon) {
+  async getLocation(locationInCoords: {
+    lat: number;
+    lon: number;
+    timezoneOffset: number;
+  }) {
+    if (
+      !locationInCoords ||
+      !locationInCoords.lat ||
+      !locationInCoords.lon ||
+      !locationInCoords.timezoneOffset
+    ) {
       throw new InternalServerErrorException('Invalid location data');
     }
 
@@ -61,14 +70,23 @@ export class UsersService {
     } = await this.prisma
       .$queryRaw`SELECT * FROM "geo"."get_closest_city"(${locationInCoords.lat}, ${locationInCoords.lon} ) LIMIT 1;`;
 
-    const hashedLocationData = await this.bcryptService.hashLocation(
-      locationInText[0],
-    );
+    const hashedLocationData = await this.bcryptService.hashLocation({
+      ...locationInText[0],
+      timezoneOffset: locationInCoords.timezoneOffset,
+    });
 
-    return { ...locationInText[0], fingerprint: hashedLocationData };
+    return {
+      ...locationInText[0],
+      timezoneOffset: locationInCoords.timezoneOffset,
+      fingerprint: hashedLocationData,
+    };
   }
 
-  async getSpecialCoords(locationInCoords: { lat: number; lon: number }) {
+  async getSpecialCoords(locationInCoords: {
+    lat: number;
+    lon: number;
+    timezoneOffset: number;
+  }) {
     const hashedLocationData =
       await this.bcryptService.hashLocation(locationInCoords);
 
