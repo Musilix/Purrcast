@@ -113,13 +113,28 @@ export class PostController {
   //   );
   // }
 
+  // TODO - this area looks ripe for a Strategy Pattern perhaps...
   @Post('/forecast')
   @SkipThrottle() // Is this smart? I'm not sure yet...
   @UseGuards(LocationTamperGuard)
   getForecast(@Body() reverseGeocodedLocation) {
-    return this.postService.getForecast(
-      parseInt(reverseGeocodedLocation.id_state),
-      parseInt(reverseGeocodedLocation.id_city),
-    );
+    return this.postService.getForecast({
+      state: parseInt(reverseGeocodedLocation.id_state),
+      city: parseInt(reverseGeocodedLocation.id_city),
+      timezoneOffset: parseInt(reverseGeocodedLocation.timezoneOffset),
+      scope: 'daily',
+    });
+  }
+
+  @Post('/weekly-forecast')
+  @SkipThrottle() // Is this smart? I'm not sure yet...
+  @UseGuards(LocationTamperGuard)
+  getWeeklyForecast(@Body() reverseGeocodedLocation) {
+    return this.postService.getForecast({
+      state: parseInt(reverseGeocodedLocation.id_state),
+      city: parseInt(reverseGeocodedLocation.id_city),
+      timezoneOffset: parseInt(reverseGeocodedLocation.timezoneOffset),
+      scope: 'weekly',
+    });
   }
 }

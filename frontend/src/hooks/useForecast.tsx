@@ -12,6 +12,7 @@ export interface ReverseGeocodedLocation {
   id_state: number;
   id_city: number;
   dist_from_city_in_miles: number;
+  timezoneOffset: number;
 }
 
 export default function useForecast(reverseGeoCoords: ReverseGeocodedLocation) {
