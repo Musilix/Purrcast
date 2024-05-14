@@ -66,6 +66,7 @@ export default function useGeo() {
             {
               lat: position.coords.latitude,
               lon: position.coords.longitude,
+              timezoneOffset: new Date().getTimezoneOffset(),
             },
             {
               headers: {

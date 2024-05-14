@@ -43,13 +43,16 @@ export class PostController {
         we can be confident that our req.user holds the user's information since we have our auth guard in place
         and published will always instrinically be true, but can be switched to false if a user "deletes" their post
     */
-    const { userState, userCity } = body;
+    const { userState, userCity, timezoneOffset } = body;
 
+    // FIXME - I don't like having to parse out/manually write out each field I want from the body. The controller shouldnt care!
+    // I should just be able to pass the body object to the service and let it handle the parsing
     return this.postService.upload(
       file,
       req.user.sub,
       parseInt(userState),
       parseInt(userCity),
+      parseInt(timezoneOffset),
     );
   }
 

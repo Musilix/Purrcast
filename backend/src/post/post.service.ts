@@ -29,6 +29,7 @@ export class PostService {
     userId: string,
     userState: number,
     userCity: number,
+    timezoneOffset: number,
   ) {
     // TODO - I wish I could method chain here, but idk how...
     let reformattedImg = new SharpHelper(image.mimetype, image.buffer);
@@ -90,6 +91,7 @@ export class PostService {
           isCatOnHead: null,
           postState: userState,
           postCity: userCity,
+          timeZoneOffset: timezoneOffset,
         },
       })
       .catch(() => {
