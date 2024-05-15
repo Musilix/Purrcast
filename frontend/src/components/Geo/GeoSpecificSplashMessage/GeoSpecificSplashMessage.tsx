@@ -1,3 +1,4 @@
+// import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
 import {
   Card,
@@ -127,7 +128,22 @@ export function DailyForecast({
       ) : (
         // This is where we handle getting an actual forecast entity back from the server
         <>
-          <h1 className="scroll-m-20 font-extrabold tracking-tight text-emerald-400 text-9xl sm:text-9xl md:text-9xl break-words">
+          {/* <div className="flex flex-col w-[75px]  -mt-[10px]">
+            <Button
+              className="p-5 text-sm  rounded-t-full"
+              variant="supabasianPrimary"
+            >
+              weekly
+            </Button>
+            <Button
+              className="p-5 text-sm rounded-b-full"
+              variant="supabasianPrimary"
+            >
+              daily
+            </Button>
+          </div> */}
+
+          <h1 className="scroll-m-20 font-extrabold tracking-tight text-emerald-400 text-9xl sm:text-9xl md:text-9xl break-words inline">
             {`${Math.floor(forecast)}%`}
           </h1>
           <h4 className="w-full sm:w-3/4 md:w-1/4 scroll-m-20 py-5 text-center sm:text-left text-pretty text-lg text-muted-foreground font-semibold tracking-tight">
