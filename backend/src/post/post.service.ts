@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import type { Predictions, WeeklyPredictions } from '@prisma/client';
 import axios from 'axios';
 import { UploadApiResponse } from 'cloudinary';
 import FormData from 'form-data';
@@ -14,7 +15,6 @@ import { SharpHelper } from 'src/sharp/sharp.service';
 import checkForCat from 'src/utils/CheckForCat';
 import uploadToCloudinary from 'src/utils/UploadToCloudinary';
 import { PredictionService } from './../prediction/prediction.service';
-import { Predictions, WeeklyPredictions } from '@prisma/client';
 
 interface forecastOptions {
   state: number;
