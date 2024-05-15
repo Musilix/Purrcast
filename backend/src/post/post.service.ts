@@ -14,6 +14,14 @@ import { SharpHelper } from 'src/sharp/sharp.service';
 import checkForCat from 'src/utils/CheckForCat';
 import uploadToCloudinary from 'src/utils/UploadToCloudinary';
 import { PredictionService } from './../prediction/prediction.service';
+import { Predictions, WeeklyPredictions } from '@prisma/client';
+
+interface forecastOptions {
+  state: number;
+  city: number;
+  timezoneOffset: number;
+  scope?: 'daily' | 'weekly';
+}
 
 @Injectable()
 export class PostService {
@@ -328,20 +336,45 @@ export class PostService {
   }
 
   // TODO - add try-catch?
-  async getForecast(state: number, city: number) {
-    console.log(`Someone wants the forecast for ${state}, ${city}!`);
-    const currDate = new Date();
-    const foreCastDate = `${currDate.getFullYear()}/${
-      currDate.getMonth() + 1
-    }/${currDate.getDate()}`;
+  async getForecast({
+    state,
+    city,
+    timezoneOffset,
+    scope = 'daily',
+  }: forecastOptions) {
+    console.log(
+      `Someone wants the forecast for ${state}, ${city}! They have a timezone offset of ${timezoneOffset}!`,
+    );
 
-    const forecast = await this.prisma.predictions.findFirst({
-      where: {
-        us_state: state,
-        us_city: city,
-        date: new Date(foreCastDate),
-      },
-    });
+    // The date is in UTC, so we will subtract the given time zone offset from it to decide what day we're
+    // working for in the given users time zone.
+    const currDate = new Date(new Date().toUTCString());
+    const adjustedCurrDate = new Date(
+      currDate.getTime() - timezoneOffset * 60000,
+    );
+    const foreCastDateString = `${adjustedCurrDate.getUTCFullYear()}/${
+      adjustedCurrDate.getUTCMonth() + 1
+    }/${adjustedCurrDate.getUTCDate()}`;
+
+    let forecast: Predictions | WeeklyPredictions | null = null;
+
+    if (scope === 'daily') {
+      forecast = await this.prisma.predictions.findFirst({
+        where: {
+          us_state: state,
+          us_city: city,
+          date: new Date(foreCastDateString),
+        },
+      });
+    } else if (scope === 'weekly') {
+      forecast = await this.prisma.weeklyPredictions.findFirst({
+        where: {
+          us_state: state,
+          us_city: city,
+          weekPivot: new Date(foreCastDateString),
+        },
+      });
+    }
 
     // No forecast found for the given location, so we return -1
     if (!forecast || !forecast.prediction) {

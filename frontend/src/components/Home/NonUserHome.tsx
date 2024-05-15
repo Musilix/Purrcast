@@ -15,20 +15,21 @@ export default function NonUserHome() {
         The weather app made by cats.
       </p>
 
-      <div id="splash-intro-wrap" className="!my-5 p-5 overflow-hidden">
-        <div className="w-full flex justify-center align-middle p-2.5">
-          <img
-            src="/purrcaster-home.png"
-            className={`${
-              isImageLoaded ? 'opacity-1' : 'opacity-0'
-            } top-50 w-3/4 min-w-[100px] max-w-[250px] transition-all duration-500 ease-in-out`}
-            onLoad={() => {
-              setIsImageLoaded(true);
-            }}
-          />
-        </div>
+      <div
+        id="splash-intro-wrap"
+        className="relative !my-5 p-5 flex flex-col justify-center items-center"
+      >
+        <img
+          src="/purrcaster-home-temp.png"
+          className={`${
+            isImageLoaded ? 'opacity-1' : 'opacity-0 -mb-[100px] '
+          } -z-10 w-3/4 min-w-[100px] max-w-3/4 -m-[20px] sm:-m-[20px] md:-m-[20px] lg:-m-[20px] transition-all duration-500 ease-in-out`}
+          onLoad={() => {
+            setIsImageLoaded(true);
+          }}
+        />
 
-        <Card className="w-full md:w-full p-6 max-w-[500px] min-w-[300px] mt-2.5 text-center">
+        <Card className="z-10 w-full md:w-full p-6 max-w-[500px] min-w-[300px] text-center">
           {/* create an absolute positioned triangle div that makes it's parent div look like a speech bubble */}
           {/* <div className='absolute -bottom-6 left-2 w-[25px] h-[25px] border-solid border-b-slate-400  border-r-slate-400 border-opacity-0 border-8'></div> */}
 
@@ -47,21 +48,24 @@ export default function NonUserHome() {
 
       <div
         id="splash-buttons"
-        className="flex flex-col md:flex-row lg:flex-row justify-center align-middle w-5/6 sm:w-3/4 md:w-full mt-4 *:mx-2 space-y-4 md:space-y-0 lg:space-y-0 "
+        className="flex flex-col md:flex-row lg:flex-row justify-center align-middle w-5/6 sm:w-3/4 md:w-full mt-4 *:mx-0 *:sm:mx-2 space-y-4 md:space-y-0 lg:space-y-0 "
       >
         <Link href="/posts/nearby">
-          <Button className="p-6 text-lg w-1/4" variant="funky">
+          <Button className="p-6 text-lg w-full md:w-1/4" variant="funky">
             Posts Near You
           </Button>
         </Link>
         <Link href="/create-post">
-          <Button className="p-6 text-lg w-1/2 " variant="supabasianPrimary">
+          <Button
+            className="p-6 text-lg w-full md:w-1/2 "
+            variant="supabasianPrimary"
+          >
             Post a Cat
           </Button>
         </Link>
         <Link href="/faq">
           <Button
-            className="p-6 text-lg flex-1 w-1/4"
+            className="p-6 text-lg flex-1 w-full md:w-1/4"
             variant="supabasianSecondary"
           >
             I'm Confused

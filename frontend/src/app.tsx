@@ -15,18 +15,21 @@ import faq from './components/faq/faq';
 import AuthProvider from './context/AuthContext';
 // import { ErrorBoundary } from "react-error-boundary";
 // import RequestResponse from './components/RequestResponse/RequestResponse';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import FormWithMessage from './components/CreatePost/FormWithMessage/FormWithMessage';
 // import SplineRenderer from './components/SplineRenderer/SplineRenderer';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import CenterThis from './components/Utility/CenterThis/CenterThis';
 import { Toaster } from './components/ui/toaster';
 import ContentLoadingProvider from './context/ContentLoadingContext';
+// import useLocalStorage from './hooks/useLocalStorage';
 function App() {
   const queryClient = new QueryClient();
+  // const [forecastForHome] = useLocalStorage<number>('forecast');
 
   return (
     <>
-      {/* <SplineRenderer /> */}
+      {/* {forecastForHome && forecastForHome > 50 ? <SplineRenderer /> : ''} */}
+
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">

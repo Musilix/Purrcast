@@ -60,26 +60,29 @@ model Upvotes {
 }
 
 model us_states {
-  id          Int           @id @default(autoincrement())
-  state_code  String
-  state_name  String
-  us_cities   us_cities[]
-  predictions Predictions[]
-  posts       Post[]
+  id                Int                 @id @default(autoincrement())
+  state_code        String
+  state_name        String
+  us_cities         us_cities[]
+  predictions       Predictions[]
+  weeklyPredictions WeeklyPredictions[]
+
+  posts Post[]
 
   @@schema("geo")
 }
 
 model us_cities {
-  id          Int           @id @default(autoincrement())
-  city        String
-  county      String
-  latitude    Float
-  longitude   Float
-  us_state    us_states     @relation(fields: [id_state], references: [id])
-  id_state    Int
-  predictions Predictions[]
-  posts       Post[]
+  id                Int                 @id @default(autoincrement())
+  city              String
+  county            String
+  latitude          Float
+  longitude         Float
+  us_state          us_states           @relation(fields: [id_state], references: [id])
+  id_state          Int
+  predictions       Predictions[]
+  weeklyPredictions WeeklyPredictions[]
+  posts             Post[]
 
   @@schema("geo")
 }
@@ -95,5 +98,23 @@ model Predictions {
   us_city Int
 
   @@id(name: "id", [us_state, us_city, date])
+  @@schema("predictions")
+}
+
+// TODO - the way we're going about generating rolling predictions could theoretically lead to a lot of 
+// storage being used to hold prediction date. 52 (weeks) * ~109,000 (cities) = 5,668,000 rows per year of stale data...
+// Because of this, we should maybe generate predictions for us_city and us_state combinations, overwriting both the weekPivot and prediction during each iteration of our weekly prediction function
+// thereby having a maximum of 52 rows per city per year. This would be a much more manageable, but we would lose prediction data over the years...
+model WeeklyPredictions {
+  prediction Int
+  weekPivot  DateTime @db.Date
+
+  id_state us_states @relation(fields: [us_state], references: [id])
+  us_state Int
+
+  id_city us_cities @relation(fields: [us_city], references: [id])
+  us_city Int
+
+  @@id(name: "id", [us_state, us_city])
   @@schema("predictions")
 }
