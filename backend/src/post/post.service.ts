@@ -131,8 +131,8 @@ export class PostService {
     const pageOffset = __post_page_offset__;
 
     const findAllFilters = userId
-      ? { published: true, author: { uuid: userId } }
-      : { published: true };
+      ? { published: true, isDeleted: false, author: { uuid: userId } }
+      : { published: true, isDeleted: false };
 
     try {
       const res = await this.prisma.post.findMany({
@@ -193,6 +193,7 @@ export class PostService {
           postState: userState,
           postCity: userCity,
           published: true,
+          isDeleted: false,
         },
         select: {
           published: true,

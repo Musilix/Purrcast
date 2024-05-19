@@ -289,6 +289,22 @@ export default function faq() {
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mt-6"></h3>
         <p className="leading-7 [&:not(:first-child)]:mt-6 break-words"></p>
       </section>
+
+      <footer>
+        <p className="text-primary-glow">
+          Made with{' '}
+          <span role="img" aria-label="heart">
+            ❤️
+          </span>{' '}
+          by{' '}
+          <a
+            href="https://www.instagram.com/keem.korn/"
+            className="bg-indigo-700 rounded-md p-y-1 px-1 hover:bg-indigo-300 hover:text-black transition-all"
+          >
+            @keem.korn
+          </a>
+        </p>
+      </footer>
     </>
   );
 }
