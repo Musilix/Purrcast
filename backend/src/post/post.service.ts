@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Predictions, WeeklyPredictions } from '@prisma/client';
 import axios from 'axios';
 import { UploadApiResponse } from 'cloudinary';
 import FormData from 'form-data';
@@ -14,7 +15,6 @@ import { SharpHelper } from 'src/sharp/sharp.service';
 import checkForCat from 'src/utils/CheckForCat';
 import uploadToCloudinary from 'src/utils/UploadToCloudinary';
 import { PredictionService } from './../prediction/prediction.service';
-import { Predictions, WeeklyPredictions } from '@prisma/client';
 
 interface forecastOptions {
   state: number;
@@ -131,8 +131,8 @@ export class PostService {
     const pageOffset = __post_page_offset__;
 
     const findAllFilters = userId
-      ? { published: true, author: { uuid: userId } }
-      : { published: true };
+      ? { published: true, isDeleted: false, author: { uuid: userId } }
+      : { published: true, isDeleted: false };
 
     try {
       const res = await this.prisma.post.findMany({
@@ -193,6 +193,7 @@ export class PostService {
           postState: userState,
           postCity: userCity,
           published: true,
+          isDeleted: false,
         },
         select: {
           published: true,
