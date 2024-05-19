@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Predictions, WeeklyPredictions } from '@prisma/client';
+import type { Predictions, WeeklyPredictions } from '@prisma/client';
 import axios from 'axios';
 import { UploadApiResponse } from 'cloudinary';
 import FormData from 'form-data';
