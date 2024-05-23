@@ -30,6 +30,7 @@ export default function ContentLoadingProvider({
         }}
       >
         <div
+          id="content-loader-wrap"
           className={`h-full w-full ${
             isContentLoading ? 'overflow-hidden' : ''
           }`}
