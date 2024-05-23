@@ -70,7 +70,7 @@ export default function NewPostForm({
     >
       <div
         id="new-post-intro-wrap"
-        className="flex flex-col justify-center items-center mb-2"
+        className="flex flex-col justify-center items-center text-center *:text-center mb-2"
       >
         <h1 className="scroll-m-20 pb-4 text-3xl lg:text-4xl text-left break-words font-extrabold tracking-tight">
           Upload a cat pic

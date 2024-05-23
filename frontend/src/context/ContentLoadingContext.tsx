@@ -29,18 +29,25 @@ export default function ContentLoadingProvider({
           setIsContentLoading,
         }}
       >
-        {isContentLoading ? (
-          <div className="absolute z-40 bg-background left-0 top-0 !m-0 w-full h-full flex flex-col items-center justify-center align-middle">
-            <Loader
-              size={50}
-              color={'hsl(var(--primary))'}
-              className="animate-spin"
-            />
-          </div>
-        ) : (
-          ''
-        )}
-        {children}
+        <div
+          id="content-loader-wrap"
+          className={`h-full w-full ${
+            isContentLoading ? 'overflow-hidden' : ''
+          }`}
+        >
+          {isContentLoading ? (
+            <div className="absolute z-40 bg-background left-0 top-0 !m-0 w-full h-full flex flex-col items-center justify-center align-middle">
+              <Loader
+                size={50}
+                color={'hsl(var(--primary))'}
+                className="animate-spin"
+              />
+            </div>
+          ) : (
+            ''
+          )}
+          {children}
+        </div>
       </ContentLoadingContext.Provider>
     </>
   );
