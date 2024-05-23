@@ -34,12 +34,14 @@ export default function NonUserHome() {
           id="splash-intro-wrap"
           className="relative !my-5 p-5 flex flex-col justify-center items-center *:transition-all *:duration-500 *:ease-in-out"
         >
+          <div
+            id="purrcaster-img-temp"
+            className={`w-3/4 ${isImageLoaded ? 'h-[0px]' : 'h-[50px]'}`}
+          ></div>
           <img
             src="/purrcaster-home-temp.png"
             className={`${
-              isImageLoaded
-                ? 'opacity-1 -mb-[10px] h-auto'
-                : 'opacity-0 -mb-[225px] h-[0px]'
+              isImageLoaded ? 'opacity-1' : 'opacity-0'
             } -z-10 w-3/4 min-w-[100px] max-w-3/4 `}
             onLoad={() => {
               setIsImageLoaded(true);
