@@ -32,8 +32,9 @@ export default function Login() {
           <CardContent>
             <CardDescription>
               <p className="leading-7 [&:not(:first-child)]:mt-6">
-                In order to post, you'll have to make an account. Currently, we
-                only support creating an account with Google.
+                You don't need an account to make posts, but if you'd like to
+                upvote posts, you'll have to make an account. Currently, we only
+                support creating an account with Google.
               </p>
             </CardDescription>
             <Auth

@@ -152,7 +152,7 @@ export default function PostList({
             {!isLoading &&
               flattenedPosts.map((post: Post) => (
                 <li className="post-content w-full h-full" key={post.id}>
-                  <PostPreviewCard author={post.author} post={post} />
+                  <PostPreviewCard author={post?.author} post={post} />
                 </li>
               ))}
           </ul>

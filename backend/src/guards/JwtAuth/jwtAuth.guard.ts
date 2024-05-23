@@ -8,6 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
+import { CustomAuthMessage } from './customAuthMessage.decorator';
 import { WhoAmIFor } from './whoAmIFor.decorator';
 
 @Injectable()
@@ -15,11 +16,16 @@ export class JwtAuthGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly reflector: Reflector = new Reflector(),
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(req);
+    const customMessage = this.reflector.get(
+      CustomAuthMessage,
+      context.getHandler(),
+    );
 
     if (!token) {
       throw new UnauthorizedException(
@@ -27,35 +33,31 @@ export class JwtAuthGuard implements CanActivate {
       );
     }
 
-    // FIXME - I don't like this
-    const user = await this.verifyToken(token);
-    if (!user) {
+    try {
+      const user = await this.verifyToken(token);
+      req.user = user;
+    } catch (e) {
       throw new UnauthorizedException(
-        "You aren't authorized to access this resource.",
+        customMessage
+          ? customMessage
+          : "You aren't authorized to access this resource.",
       );
     }
 
-    req.user = user;
     return true;
   }
 
-  private extractTokenFromHeader(request: Request): string | undefined {
+  protected extractTokenFromHeader(request: Request): string | undefined {
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     return type === 'Bearer' ? token : undefined;
   }
 
-  private async verifyToken(token: string): Promise<boolean> {
-    try {
-      const payload = await this.jwtService.verifyAsync(token, {
-        secret: this.configService.get('SUPABASE_JWT_SECRET'),
-      });
+  protected async verifyToken(token: string): Promise<boolean> {
+    const payload = await this.jwtService.verifyAsync(token, {
+      secret: this.configService.get('SUPABASE_JWT_SECRET'),
+    });
 
-      return payload;
-    } catch {
-      throw new UnauthorizedException(
-        'For some reason, we had a problem while trying to verify your account. Please try logging in again later.',
-      );
-    }
+    return payload;
   }
 }
 
@@ -80,5 +82,32 @@ export class JwtSuperAuthGuard implements CanActivate {
         `You are not authorized to access this resource. You must be a ${whoAmIFor} to access this.`,
       );
     }
+  }
+}
+
+// More lax version of JwtAuthGuard, allowing someone to access a resource even if they aren't logged in, but tacking on their user info if they are logged in
+@Injectable()
+export class JwtOptionalGuard extends JwtAuthGuard implements CanActivate {
+  constructor(jwtService: JwtService, configService: ConfigService) {
+    super(jwtService, configService);
+  }
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const req = context.switchToHttp().getRequest();
+    const token = this.extractTokenFromHeader(req);
+
+    if (token) {
+      try {
+        const user = await this.verifyToken(token);
+        req.user = user;
+      } catch (e) {
+        // Token verification failed, but we proceed without throwing an error
+        req.user = null;
+      }
+    } else {
+      req.user = null;
+    }
+
+    return true;
   }
 }

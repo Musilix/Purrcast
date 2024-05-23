@@ -34,27 +34,34 @@ export class PostService {
 
   async upload(
     image: any,
-    userId: string,
+    userId: string | null,
     userState: number,
     userCity: number,
     timezoneOffset: number,
   ) {
-    // TODO - I wish I could method chain here, but idk how...
+    // ------------------------------------------------------------------------------------
+    // --- Sharp Image Reformatting -------------------------------------------------------
+    // ------------------------------------------------------------------------------------
+    // Use Sharp to resize image to 500x500 px and convert it to PNG format
     let reformattedImg = new SharpHelper(image.mimetype, image.buffer);
     // Somewhat nasty way to do method chaining... since these are async functions, we can't just chain them together as normal sadly
     reformattedImg = await (
       await reformattedImg.resizeImage(500)
     ).toFormat('png');
 
+    // Get buffer and mimetype of Sharp converted image
     const reformattedImgDetails = reformattedImg.getImgDetails();
 
-    // TODO - this bundle of logic down to checkForCats() should maybe be nested in a helper function of some sort...?
+    // ------------------------------------------------------------------------------------
+    // --- Imagga Image Tagging -----------------------------------------------------------
+    // ------------------------------------------------------------------------------------
+    // Create a FormData object to send to Imagga API
     const fd = new FormData();
     fd.append(
       'image_base64',
       Buffer.from(reformattedImgDetails.buffer).toString('base64'),
     );
-    fd.append('threshold', '49');
+    fd.append('threshold', '49'); // This is the threshold for the confidence level of the tags we want to get back
 
     // Get an idea if there is a cat in the image... or if the image is a drawing. We must ensure the image is of a valid format...
     const tags = await axios
@@ -78,23 +85,32 @@ export class PostService {
 
     // I made some random utility functions (probably not with the best practices in mind) to clear up some of the bloat
     checkForCat(tags);
+
+    // ------------------------------------------------------------------------------------
+    // --- Upload Image to Cloudinary -----------------------------------------------------
+    // ------------------------------------------------------------------------------------
     const res: UploadApiResponse = await uploadToCloudinary(
       this.cloudinary,
       reformattedImgDetails,
     );
 
-    // NOTE: if this user search fails, the post creation will fail due to a 500 server error...
-    // The user search WILL fail if we didn't properly include the UUID provided by supabase auth upon authenticating with Google OAuth...
-    // TODO - we need to find a way to consistently identify our native users w/ the metadata provided by google/supabase auth
-    const user = await this.prisma.user.findFirst({
-      where: { uuid: userId },
-    });
+    // ------------------------------------------------------------------------------------
+    // --- Create New Post ----------------------------------------------------------------
+    // ------------------------------------------------------------------------------------
+    // Find User account associated with the user metadata sent with the POST request
+    // It could be possible that there is no user data; in that case, we set the user as null
+    const user = userId
+      ? await this.prisma.user.findFirst({
+          where: { uuid: userId },
+        })
+      : null;
 
+    // Leave the foreign key connector column (authorId) as null if there is no user associated with the post
     const newPost = await this.prisma.post
       .create({
         data: {
           contentId: res.secure_url,
-          authorId: user?.id ?? 1,
+          authorId: user ? user.id : null,
           published: true,
           isCatOnHead: null,
           postState: userState,
@@ -108,10 +124,14 @@ export class PostService {
         );
       });
 
+    // ------------------------------------------------------------------------------------
+    // --- Generate isOnHead prediction for image------------------------------------------
+    // ------------------------------------------------------------------------------------
     // After post has been created, make a call to the predictions svc to start generating a prediction for the post.
     // TODO - is this a blocking operation for other people who are trying to make posts? I'm not fully sure...
     this.predictionService.generatePrediction(res.secure_url, newPost.id);
 
+    // return resource url (cloudinary img url) and the posts id from the DB
     return { resource: res.secure_url, postId: newPost.id };
   }
 
@@ -148,7 +168,6 @@ export class PostService {
           author: {
             select: {
               bio: true,
-              location: true,
               name: true,
               username: true,
             },
@@ -205,7 +224,6 @@ export class PostService {
           author: {
             select: {
               bio: true,
-              location: true,
               name: true,
               username: true,
             },
@@ -269,7 +287,6 @@ export class PostService {
           author: {
             select: {
               bio: true,
-              location: true,
               name: true,
               username: true,
             },

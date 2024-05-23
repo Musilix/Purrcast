@@ -1,14 +1,25 @@
 // import PostsPreview from '@/components/PostsPreview/PostsPreview';
 import useGeo from '@/hooks/useGeo';
 import { Session } from '@supabase/supabase-js';
+import { ChevronUp } from 'lucide-react';
 import { Link } from 'wouter';
 import GeoSpecificSplashMessage from '../Geo/GeoSpecificSplashMessage/GeoSpecificSplashMessage';
 import UnknownLocation from '../Geo/UnknownLocation/UnknownLocation';
 import { Button } from '../ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
 
 export default function UserHome({ session }: { session: Session }) {
   // TODO / FIXME - maybe define proper types here for these values and then somehow utilize them in all the components that use em??? IDK!
   const [, forecast, reverseGeoCoords, overwriteGeoCoords] = useGeo();
+  // const forecastScope = 'daily';
 
   return (
     <div className="flex flex-col items-center align-middle *:my-2.5">
@@ -44,7 +55,7 @@ export default function UserHome({ session }: { session: Session }) {
         <>
           <div
             id="cta-wrap"
-            className="flex flex-row sm:flex-row w-full align-center place-items-center place-content-center *:my-2.5 *:sm:my-0"
+            className="flex flex-row w-full align-center place-items-center place-content-center "
           >
             <div>
               <Link href="/create-post">
@@ -56,15 +67,52 @@ export default function UserHome({ session }: { session: Session }) {
                 </Button>
               </Link>
             </div>
-            <div>
-              <Link href="/posts/nearby">
-                <Button
-                  className="p-6 text-lg w-full rounded-r-full"
-                  variant="supabasianSecondary"
-                >
-                  See Posts Near You
-                </Button>
-              </Link>
+            <div className="h-full">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="supabasianSecondary"
+                    className="rounded-r-full h-full"
+                  >
+                    <ChevronUp size={24} />
+                  </Button>
+                </DropdownMenuTrigger>
+
+                <DropdownMenuContent className="w-56">
+                  <DropdownMenuLabel>View Posts</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem>
+                      {' '}
+                      <Link href="/posts/nearby">
+                        <Button className="p-3 w-full" variant="funky">
+                          Near You
+                        </Button>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      {' '}
+                      <Link href="/posts/">
+                        <Button className="p-3 w-full animate-bg outline-text ">
+                          Random
+                        </Button>
+                      </Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+
+                  {/* TODO - add forecast scoping */}
+                  {/* <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem disabled={forecastScope === 'weekly'}>
+                      Weekly Forecast
+                    </DropdownMenuItem>
+                    <DropdownMenuItem disabled={forecastScope === 'daily'}>
+                      Daily Forecast
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup> */}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
 

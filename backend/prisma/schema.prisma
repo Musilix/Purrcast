@@ -19,14 +19,15 @@ model Post {
   isDeleted      Boolean   @default(false)
   isCatOnHead    Boolean?
   timeZoneOffset Int?      @default(0)
+  
   id_state       us_states @relation(fields: [postState], references: [id])
   postState      Int
-
   id_city  us_cities @relation(fields: [postCity], references: [id])
   postCity Int
 
-  author   User      @relation(fields: [authorId], references: [id])
-  authorId Int
+  author   User?      @relation(fields: [authorId], references: [id])
+  authorId Int?
+  
   upvotes  Upvotes[]
 
   @@schema("public")
@@ -38,9 +39,9 @@ model User {
   name          String?
   bio           String?
   username      String    @unique
-  location      String    @default("Earth") @db.VarChar(255) // todo : remove
-  posts         Post[]
   isDeactivated Boolean   @default(false)
+  
+  posts         Post[]
   upvotes       Upvotes[]
 
   @@schema("public")
