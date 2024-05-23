@@ -17,13 +17,12 @@ async function main() {
       uuid: '',
       name: 'Kareem',
       username: 'keem',
-      location: 'Atlanta, GA',
       posts: {
         create: [
           {
             published: true,
             isDeleted: true,
-            createdAt: new Date(2024, 3, 15),
+            createdAt: new Date(2024, 3, 17),
             contentId: "What's the deal with all these cats",
             isCatOnHead: true,
             postState: 25,
@@ -32,7 +31,7 @@ async function main() {
           {
             published: true,
             isDeleted: false,
-            createdAt: new Date(2024, 3, 16),
+            createdAt: new Date(2024, 3, 17),
             contentId: "What's the deal with all these cats",
             isCatOnHead: true,
             postState: 38,
@@ -41,7 +40,7 @@ async function main() {
           {
             published: true,
             isDeleted: false,
-            createdAt: new Date(2024, 3, 16),
+            createdAt: new Date(2024, 3, 17),
             contentId: "What's the deal with all these cats",
             isCatOnHead: true,
             postState: 38,
@@ -49,7 +48,7 @@ async function main() {
           },
           {
             published: true,
-            createdAt: new Date(2024, 3, 15),
+            createdAt: new Date(2024, 3, 17),
             contentId: 'Cat On Head',
             isCatOnHead: true,
             postState: 25,
@@ -58,7 +57,7 @@ async function main() {
           {
             published: false,
             contentId: 'Kill incels',
-            createdAt: new Date(2024, 3, 15),
+            createdAt: new Date(2024, 3, 17),
             isCatOnHead: true,
             postState: 25,
             postCity: 1,
@@ -71,13 +70,12 @@ async function main() {
       uuid: '',
       name: 'Kareem',
       username: 'keem',
-      location: 'Atlanta, GA',
       posts: {
         create: [
           {
             published: true,
             isDeleted: true,
-            createdAt: new Date(2024, 3, 15),
+            createdAt: new Date(2024, 3, 17),
             contentId: "What's the deal with all these cats",
             isCatOnHead: true,
             postState: 25,
@@ -94,7 +92,7 @@ async function main() {
           {
             published: true,
             isDeleted: false,
-            createdAt: new Date(2024, 3, 16),
+            createdAt: new Date(2024, 3, 17),
             contentId: "What's the deal with all these cats",
             isCatOnHead: true,
             postState: 38,
@@ -103,7 +101,7 @@ async function main() {
           {
             published: true,
             isDeleted: false,
-            createdAt: new Date(2024, 3, 16),
+            createdAt: new Date(2024, 3, 17),
             contentId: "What's the deal with all these cats",
             isCatOnHead: true,
             postState: 38,
@@ -111,7 +109,7 @@ async function main() {
           },
           {
             published: false,
-            createdAt: new Date(2024, 3, 15),
+            createdAt: new Date(2024, 3, 17),
             contentId: 'Kill incels',
             isCatOnHead: true,
             postState: 25,
@@ -129,7 +127,6 @@ async function main() {
       uuid: '',
       name: 'Runt Runner',
       username: 'Runt Runner',
-      location: 'Corvallis, OR',
       posts: {
         create: [
           {
@@ -141,7 +138,7 @@ async function main() {
           },
           {
             published: false,
-            createdAt: new Date(2024, 3, 15),
+            createdAt: new Date(2024, 3, 17),
             contentId: 'How do I use this thing',
             isCatOnHead: true,
             postState: 10,
@@ -149,7 +146,7 @@ async function main() {
           },
           {
             published: true,
-            createdAt: new Date(2024, 3, 15),
+            createdAt: new Date(2024, 3, 17),
             contentId: 'Another day, another cat on their head',
             isCatOnHead: false,
             postState: 10,
@@ -158,7 +155,7 @@ async function main() {
           {
             published: true,
             isDeleted: false,
-            createdAt: new Date(2024, 3, 16),
+            createdAt: new Date(2024, 3, 17),
             contentId: "What's the deal with all these cats",
             isCatOnHead: true,
             postState: 38,
@@ -167,7 +164,7 @@ async function main() {
           {
             published: true,
             isDeleted: false,
-            createdAt: new Date(2024, 3, 16),
+            createdAt: new Date(2024, 3, 17),
             contentId: "What's the deal with all these cats",
             isCatOnHead: false,
             postState: 38,
@@ -181,7 +178,6 @@ async function main() {
       uuid: '',
       name: 'Runt Runner',
       username: 'Runt Runner',
-      location: 'Corvallis, OR',
       posts: {
         create: [
           {
@@ -193,7 +189,7 @@ async function main() {
           },
           {
             published: false,
-            createdAt: new Date(2024, 3, 15),
+            createdAt: new Date(2024, 3, 17),
             contentId: 'How do I use this thing',
             isCatOnHead: true,
             postState: 10,
@@ -201,7 +197,7 @@ async function main() {
           },
           {
             published: true,
-            createdAt: new Date(2024, 3, 15),
+            createdAt: new Date(2024, 3, 17),
             contentId: 'Another day, another cat on their head',
             isCatOnHead: false,
             postState: 10,
@@ -210,7 +206,7 @@ async function main() {
           {
             published: true,
             isDeleted: false,
-            createdAt: new Date(2024, 3, 16),
+            createdAt: new Date(2024, 3, 17),
             contentId: "What's the deal with all these cats",
             isCatOnHead: true,
             postState: 38,
@@ -219,7 +215,7 @@ async function main() {
           {
             published: true,
             isDeleted: false,
-            createdAt: new Date(2024, 3, 16),
+            createdAt: new Date(2024, 3, 17),
             contentId: "What's the deal with all these cats",
             isCatOnHead: false,
             postState: 38,
@@ -237,7 +233,6 @@ async function main() {
       uuid: '',
       name: 'Sunni',
       username: 'sunndawg',
-      location: 'Corvallis, OR',
       posts: {
         create: [
           {
@@ -251,7 +246,7 @@ async function main() {
           },
           {
             published: true,
-            createdAt: new Date(2024, 3, 15),
+            createdAt: new Date(2024, 3, 17),
             contentId: 'Another day, another cat on their head',
             isCatOnHead: true,
             postState: 1,
@@ -259,7 +254,7 @@ async function main() {
           },
           {
             published: true,
-            createdAt: new Date(2024, 3, 15),
+            createdAt: new Date(2024, 3, 17),
             contentId: 'Another day, another cat on their head',
             isCatOnHead: true,
             postState: 1,
@@ -267,7 +262,7 @@ async function main() {
           },
           {
             published: true,
-            createdAt: new Date(2024, 3, 15),
+            createdAt: new Date(2024, 3, 17),
             contentId: 'Another day, another cat on their head',
             isCatOnHead: false,
             postState: 1,
@@ -281,7 +276,6 @@ async function main() {
       uuid: '',
       name: 'Sunni',
       username: 'sunndawg',
-      location: 'Corvallis, OR',
       posts: {
         create: [
           {
@@ -295,7 +289,7 @@ async function main() {
           },
           {
             published: true,
-            createdAt: new Date(2024, 3, 15),
+            createdAt: new Date(2024, 3, 17),
             contentId: 'Another day, another cat on their head',
             isCatOnHead: true,
             postState: 1,
@@ -303,7 +297,7 @@ async function main() {
           },
           {
             published: true,
-            createdAt: new Date(2024, 3, 15),
+            createdAt: new Date(2024, 3, 17),
             contentId: 'Another day, another cat on their head',
             isCatOnHead: true,
             postState: 1,
@@ -311,7 +305,7 @@ async function main() {
           },
           {
             published: true,
-            createdAt: new Date(2024, 3, 15),
+            createdAt: new Date(2024, 3, 17),
             contentId: 'Another day, another cat on their head',
             isCatOnHead: false,
             postState: 1,
