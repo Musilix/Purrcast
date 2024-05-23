@@ -46,7 +46,9 @@ function RealCard({ author, postedAt, content, location }: PostProps) {
 
               <img
                 src={content}
-                alt={`A preview card for a post made by ${author!.username}`}
+                alt={`A preview card for a post made by ${
+                  author?.username ?? 'Anonymous Purrcaster'
+                }`}
                 className={`${
                   postImageLoaded ? 'opacity-1' : 'opacity-0'
                 } size-full p-2 object-cover rounded-lg transition-all ease-in-out duration-500`}
@@ -62,7 +64,9 @@ function RealCard({ author, postedAt, content, location }: PostProps) {
         </div>
       </CardContent>
       <CardFooter className="flex flex-col flex-auto  pb-5">
-        <CardTitle>Posted by {author.username}</CardTitle>
+        <CardTitle>
+          Posted by {author?.username ?? 'Anonymous Purrcaster'}
+        </CardTitle>
         <CardDescription>{`${location.city}, ${location.state}`}</CardDescription>
         <CardDescription>
           {postedAt

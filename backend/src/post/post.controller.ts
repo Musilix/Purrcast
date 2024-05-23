@@ -17,7 +17,11 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { SkipThrottle } from '@nestjs/throttler';
 import { __file_parse_validators__ } from 'src/constants';
-import { JwtAuthGuard } from 'src/guards/JwtAuth/jwtAuth.guard';
+import { CustomAuthMessage } from 'src/guards/JwtAuth/customAuthMessage.decorator';
+import {
+  JwtAuthGuard,
+  JwtOptionalGuard,
+} from 'src/guards/JwtAuth/jwtAuth.guard';
 import { LocationTamperGuard } from 'src/guards/LocationTamper/locationTamper.guard';
 import UserLocationValidationPipe from 'src/pipes/UserLocationValidationPipe';
 import { PostService } from './post.service';
@@ -26,7 +30,7 @@ export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Post('upload')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtOptionalGuard)
   @UseInterceptors(FileInterceptor('userUploadedFile'))
   // @UsePipes(new ZodValidationPipe(createPostSchema)) test
   create(
@@ -44,12 +48,13 @@ export class PostController {
         and published will always instrinically be true, but can be switched to false if a user "deletes" their post
     */
     const { userState, userCity, timezoneOffset } = body;
+    const user = req?.user ? req.user.sub : null;
 
     // FIXME - I don't like having to parse out/manually write out each field I want from the body. The controller shouldnt care!
     // I should just be able to pass the body object to the service and let it handle the parsing
     return this.postService.upload(
       file,
-      req.user.sub,
+      user,
       parseInt(userState),
       parseInt(userCity),
       parseInt(timezoneOffset),
@@ -57,6 +62,7 @@ export class PostController {
   }
 
   @Put(':id')
+  @CustomAuthMessage('You need to be logged in to upvote this post... sorry.')
   @UseGuards(JwtAuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
   @SkipThrottle()

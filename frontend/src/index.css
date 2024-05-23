@@ -20,3 +20,56 @@ body {
     0px 1px 1px black,
     1px 0px 1px black !important;
 }
+
+.animate-bg {
+  animation: animate-background 2.5s ease-in infinite;
+  color: white;
+
+}
+
+/* rainbow background color animator */
+@keyframes animate-background {
+  0% {
+    background-color: #ff0000;
+  }
+
+  10% {
+    background-color: #ff8000;
+  }
+
+  20% {
+    background-color: #ffff00;
+  }
+
+  30% {
+    background-color: #80ff00;
+  }
+
+  40% {
+    background-color: #00ff00;
+  }
+
+  50% {
+    background-color: #00ffff;
+  }
+
+  60% {
+    background-color: #00ff00;
+  }
+
+  70% {
+    background-color: #80ff00;
+  }
+
+  80% {
+    background-color: #ffff00;
+  }
+
+  90% {
+    background-color: #ff8000;
+  }
+
+  100% {
+    background-color: #ff0000;
+  }
+}
