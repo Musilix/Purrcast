@@ -62,63 +62,70 @@ export default function NonUserHome() {
 
       <div
         id="splash-buttons"
-        className="flex flex-row justify-center align-middle w-5/6 sm:w-3/4 md:w-full mt-4 mx-0 "
+        className="flex flex-row justify-center align-middle w-full mt-4 mx-0 "
       >
         {/* TODO - make the dom element structure a bit... cleaner? */}
-        <Link href="/create-post">
-          <Button
-            className="p-6 text-lg w-full md:w-1/2 rounded-l-full"
-            variant="supabasianPrimary"
-          >
-            Post a Cat
-          </Button>
-        </Link>
-
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+        <div>
+          <Link href="/create-post">
             <Button
-              variant="supabasianSecondary"
-              className="rounded-r-full h-full"
+              className="p-6 text-lg rounded-l-full"
+              variant="supabasianPrimary"
             >
-              <ChevronUp size={24} />
+              Post a Cat
             </Button>
-          </DropdownMenuTrigger>
+          </Link>
+        </div>
 
-          <DropdownMenuContent className="w-56">
-            <DropdownMenuLabel>View Posts</DropdownMenuLabel>
-            <DropdownMenuSeparator />
+        <div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="supabasianSecondary"
+                className="rounded-r-full h-full"
+              >
+                <ChevronUp size={24} />
+              </Button>
+            </DropdownMenuTrigger>
 
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                {' '}
-                <Link href="/posts/nearby">
-                  <Button className="p-3 w-full" variant="funky">
-                    Near You
-                  </Button>
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                {' '}
-                <Link href="/posts/">
-                  <Button className="p-3 w-full animate-bg outline-text ">
-                    Random
-                  </Button>
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                {' '}
-                <Link href="/faq">
-                  <Button className="p-3 w-full" variant="supabasianSecondary">
-                    I'm Confused
-                  </Button>
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
+            <DropdownMenuContent className="w-56">
+              <DropdownMenuLabel>View Posts</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+
+              <DropdownMenuGroup>
+                <DropdownMenuItem>
+                  {' '}
+                  <Link href="/posts/nearby">
+                    <Button className="p-3 w-full" variant="funky">
+                      Near You
+                    </Button>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  {' '}
+                  <Link href="/posts/">
+                    <Button className="p-3 w-full animate-bg outline-text ">
+                      Random
+                    </Button>
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem>
+                  {' '}
+                  <Link href="/faq">
+                    <Button
+                      className="p-3 w-full"
+                      variant="supabasianSecondary"
+                    >
+                      I'm Confused
+                    </Button>
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
     </>
   );

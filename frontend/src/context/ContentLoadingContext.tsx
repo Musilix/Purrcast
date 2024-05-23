@@ -38,9 +38,8 @@ export default function ContentLoadingProvider({
             />
           </div>
         ) : (
-          ''
+          <>{children}</>
         )}
-        {children}
       </ContentLoadingContext.Provider>
     </>
   );

@@ -60,6 +60,10 @@ export default function useGeo() {
     // Should we also had some form of try-catch somewhere if the server fails to return a fingerprinted geoCoords object?
     navigator.geolocation.getCurrentPosition(
       async (position) => {
+        if (!position) {
+          return;
+        }
+
         const geoCoordsWithFingerPrint = (await axios
           .post(
             `${import.meta.env.VITE_API_HOST}/users/location/special-coords`,
@@ -85,6 +89,8 @@ export default function useGeo() {
               description: (err as Error)?.message,
               variant: 'destructive',
             });
+
+            setIsContentLoading(false);
           })) as Coordinates;
 
         // Update local storage with retrieved coords only if it has a defined value

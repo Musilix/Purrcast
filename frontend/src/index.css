@@ -21,6 +21,34 @@ body {
     1px 0px 1px black !important;
 }
 
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border)); 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--secondary)); 
+  /* box-shadow: inset 0 0 5px rgba(49, 255, 186, 10);   */
+  border-radius: 10px;
+  border: 1px solid hsl(var(--card-dim)); 
+
+  /* bg-primary border text-white border-primary-glow  shadow hover:border-primary-glow/70  hover:bg-primary-dim */
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  border: 1px solid hsl(var(--primary)); 
+  transition: all 0.3s ease;
+}
+
+
 .animate-bg {
   animation: animate-background 2.5s ease-in infinite;
   color: white;
