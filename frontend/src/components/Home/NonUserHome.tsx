@@ -76,7 +76,55 @@ export default function NonUserHome() {
           </Link>
         </div>
 
-        <div>
+        <div className="h-full">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="supabasianSecondary"
+                className="rounded-r-full h-full"
+              >
+                <ChevronUp size={24} />
+              </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent className="w-56">
+              <DropdownMenuLabel>View Posts</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+
+              <DropdownMenuGroup>
+                <DropdownMenuItem>
+                  {' '}
+                  <Link href="/posts/nearby">
+                    <Button className="p-3 w-full" variant="funky">
+                      Near You
+                    </Button>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  {' '}
+                  <Link href="/posts/">
+                    <Button className="p-3 w-full animate-bg outline-text ">
+                      Random
+                    </Button>
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+
+              {/* TODO - add forecast scoping */}
+              {/* <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem disabled={forecastScope === 'weekly'}>
+                      Weekly Forecast
+                    </DropdownMenuItem>
+                    <DropdownMenuItem disabled={forecastScope === 'daily'}>
+                      Daily Forecast
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup> */}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        {/* <div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -125,7 +173,7 @@ export default function NonUserHome() {
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
-        </div>
+        </div> */}
       </div>
     </>
   );
