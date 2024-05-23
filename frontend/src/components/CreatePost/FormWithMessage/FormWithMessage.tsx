@@ -1,8 +1,8 @@
-import { AuthContext } from '@/context/AuthContext';
+// import { AuthContext } from '@/context/AuthContext';
 import axios, { AxiosError } from 'axios';
 import { BadgeAlert, BadgeCheck } from 'lucide-react';
-import { useContext, useState } from 'react';
-import { Redirect } from 'wouter';
+import { useState } from 'react';
+// import { Redirect } from 'wouter';
 import { Alert, AlertDescription, AlertTitle } from '../../ui/alert';
 
 // TODO - move this to a shared file
@@ -29,7 +29,7 @@ export default function FormWithMessage<FormDataType>({
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<ResponseMessageType | null>();
-  const { session } = useContext(AuthContext);
+  // const { session } = useContext(AuthContext);
 
   // TODO - define hook to grab local storage items, make this prettier
   const userSession = JSON.parse(
@@ -87,28 +87,48 @@ export default function FormWithMessage<FormDataType>({
       });
   };
 
-  if (session && session.user) {
-    return (
-      <div className="relative">
-        <div className="z-0">
-          <FormComponent
-            handleSubmit={handleSubmit}
-            setMessage={setMessage}
-            isSubmitting={isSubmitting}
+  // Temporarily remove the need to login to post
+  // if (session && session.user) {
+  //   return (
+  //     <div className="relative">
+  //       <div className="z-0">
+  //         <FormComponent
+  //           handleSubmit={handleSubmit}
+  //           setMessage={setMessage}
+  //           isSubmitting={isSubmitting}
+  //         />
+  //         {message && (
+  //           <ResponseMessage
+  //             type={message.type}
+  //             title={message.title}
+  //             content={message.content}
+  //           />
+  //         )}
+  //       </div>
+  //     </div>
+  //   );
+  // } else {
+  //   return <Redirect to="/login" />;
+  // }
+
+  return (
+    <div className="relative">
+      <div className="z-0">
+        <FormComponent
+          handleSubmit={handleSubmit}
+          setMessage={setMessage}
+          isSubmitting={isSubmitting}
+        />
+        {message && (
+          <ResponseMessage
+            type={message.type}
+            title={message.title}
+            content={message.content}
           />
-          {message && (
-            <ResponseMessage
-              type={message.type}
-              title={message.title}
-              content={message.content}
-            />
-          )}
-        </div>
+        )}
       </div>
-    );
-  } else {
-    return <Redirect to="/login" />;
-  }
+    </div>
+  );
 }
 
 // TODO - put this somewhere else maybe?

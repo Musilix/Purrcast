@@ -2,7 +2,7 @@ import Spline from '@splinetool/react-spline';
 
 export default function SplineRenderer() {
   return (
-    <div className="w-full h-full absolute m-0 p-0 -z-10">
+    <div className="w-full h-full absolute m-0 p-0 top-0 -z-10 overflow-hidden!">
       <Spline scene="https://prod.spline.design/ugKgLYqZQ-qGjCiV/scene.splinecode" />
     </div>
   );

@@ -76,7 +76,10 @@ export default function NewPostForm({
           Upload a cat pic
         </h1>
         <small className="text-sm font-medium leading-none text-muted-foreground">
-          Post a picture of your cat to help predict the weather
+          Post a picture of your cat to help predict the weather.
+        </small>
+        <small className="text-sm font-normal leading-5 text-muted-foreground">
+          Make sure it's a picture from today!
         </small>
       </div>
 

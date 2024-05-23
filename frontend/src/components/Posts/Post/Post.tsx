@@ -146,7 +146,9 @@ function PostContent({ post }: { post: Post }) {
             <>
               <img
                 src={post.contentId}
-                alt={`A cat photo posted by ${post.author!.username}`}
+                alt={`A cat photo posted by ${
+                  post.author?.username ?? 'Anonymous Purrcaster'
+                }`}
                 className={`${
                   postImageLoaded ? 'opacity-1' : 'opacity-0'
                 } w-full h-full object-cover rounded-md transition-all ease-in-out duration-500`}
@@ -169,10 +171,11 @@ function PostContent({ post }: { post: Post }) {
         )}
       </section>
       <section className="post-details text-center p-4">
-        {post?.author?.username && postLocation.city && postLocation.state ? (
+        {post && postLocation.city && postLocation.state ? (
           <>
             <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight place-item-end">
-              Posted by {post.author?.username}
+              Posted by{' '}
+              {post?.author ? post.author?.username : 'Anonymous Purrcaster'}
             </h3>
             <p className="leading-5 [&:not(:first-child)]:mt-1 place-item-start">
               {postLocation.city && postLocation.state

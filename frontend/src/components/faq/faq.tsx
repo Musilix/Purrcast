@@ -2,19 +2,33 @@ export default function faq() {
   return (
     <>
       <section id="intro" className="w-full *:m-0">
-        <h1 className="scroll-m-20 pb-4 text-4xl font-extrabold tracking-tight drop-shadow-custom lg:text-5xl break-words">
+        <h1 className="scroll-m-20 pb-4 text-4xl font-extrabold tracking-tight lg:text-5xl break-words">
           What is this?
         </h1>
+        <p className="leading-7 [&:not(:first-child)]:mt-6 break-words drop-shadow-custom">
+          Purrcast in the most simple terms is an app that uses cat pics
+          uploaded by people in your city to predict the weather. The more cats
+          laying on their heads, the higher the chance of rain in the coming
+          days.
+        </p>
+
+        <div
+          id="splash-buttons"
+          className="flex flex-row justify-start w-full mt-8 space-x-4"
+        ></div>
+      </section>
+
+      <section id="still-confused" className="w-full *:m-0">
+        <h1 className="scroll-m-20 pb-0 text-3xl font-bold tracking-tight break-word">
+          Wait What?
+        </h1>
         <p className="leading-7 [&:not(:first-child)]:mt-6 break-words">
-          You may be wondering what Purrcast even is. To describe the goal of
-          Purrcast simply, it's here to serve as a caveman-like weather
-          prediction app, taking a daily rolling average of the amount of cats
-          laying on their heads in your area to determine if it's going to rain
-          in the coming days.
+          To get a better idea of our goal, think about the following example:
         </p>
         <p className="leading-7 [&:not(:first-child)]:mt-6 break-words">
-          For example, imagine 3 of your friends (or just randos) have posted
-          images of their cats sleeping in your area in the past 2 days.
+          Fire up those neurons and imagine 3 of your friends (or just randos)
+          in your city have posted images of their cats - preferably sleeping -
+          over the past 2 days.
         </p>
         <p className="leading-7 [&:not(:first-child)]:mt-6 break-words">
           Of those 3 sleepings cats, 2 of them are laying on their heads. This
@@ -70,13 +84,13 @@ export default function faq() {
               As already mentioned, the means for us predicting the weather is
               solely based on whether a cat is sleeping on it's head or not. You
               may confused as to what we consider a cat sleeping on it's head,
-              so please refer to the examples below for the 3 types of sleeping
+              so please refer to the examples below for the 2 types of sleeping
               cats we consider:
             </p>
           </div>
           <div
             id="pic-details-example-images"
-            className="w-full flex flex-col justify-center place-items-center mt-10 *:m-5 md:flex-row md:justify-between"
+            className="w-full flex flex-col justify-center place-items-center mt-10 *:m-5 md:flex-row md:justify-between items-center md:items-start"
           >
             <div className="w-[250px] sm:w-3/4 md:w-1/2">
               <div
