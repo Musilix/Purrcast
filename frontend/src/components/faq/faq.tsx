@@ -1,6 +1,6 @@
 export default function faq() {
   return (
-    <>
+    <div id="faq-wrap" className="*:my-[45px]">
       <section id="intro" className="w-full *:m-0">
         <h1 className="scroll-m-20 pb-4 text-4xl font-extrabold tracking-tight lg:text-5xl break-words">
           What is this?
@@ -18,9 +18,9 @@ export default function faq() {
         ></div>
       </section>
 
-      <section id="still-confused" className="w-full *:m-0">
-        <h1 className="scroll-m-20 pb-0 text-3xl font-bold tracking-tight break-word">
-          Wait What?
+      <section id="still-confused" className="w-full *:m-0 border-s-2 pl-4">
+        <h1 className="scroll-m-20 pb-0 text-3xl font-bold tracking-tight break-word text-primary-glow drop-shadow-custom">
+          Wait.. What?
         </h1>
         <p className="leading-7 [&:not(:first-child)]:mt-6 break-words">
           To get a better idea of our goal, think about the following example:
@@ -319,6 +319,6 @@ export default function faq() {
           </a>
         </p>
       </footer>
-    </>
+    </div>
   );
 }
