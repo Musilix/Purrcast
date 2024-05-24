@@ -1,6 +1,6 @@
 export default function faq() {
   return (
-    <>
+    <div id="faq-wrap" className="*:my-[45px]">
       <section id="intro" className="w-full *:m-0">
         <h1 className="scroll-m-20 pb-4 text-4xl font-extrabold tracking-tight lg:text-5xl break-words">
           What is this?
@@ -19,7 +19,7 @@ export default function faq() {
       </section>
 
       <section id="still-confused" className="w-full *:m-0">
-        <h1 className="scroll-m-20 pb-0 text-3xl font-bold tracking-tight break-word">
+        <h1 className="scroll-m-20 pb-0 text-3xl font-bold tracking-tight break-word text-yellow-300 drop-shadow-custom animate-pulse">
           Wait What?
         </h1>
         <p className="leading-7 [&:not(:first-child)]:mt-6 break-words">
@@ -319,6 +319,6 @@ export default function faq() {
           </a>
         </p>
       </footer>
-    </>
+    </div>
   );
 }
